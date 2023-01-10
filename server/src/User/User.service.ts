@@ -29,7 +29,7 @@ export default class UserService implements IUserService {
 			State: true,
 		},
 		relations: {
-			profile: true
+			Profile: true
 		}
 	})
 
@@ -40,7 +40,7 @@ export default class UserService implements IUserService {
 		try {
 			await queryRunner.connect()
 			await queryRunner.startTransaction()
-			model.profile = { id: 0, Description: "" }
+			model.Profile = { id: 0, Description: "" }
 			const modelCreated = this.repository.create(model)
 			const userSave: User = await queryRunner.manager.getRepository(User).save(modelCreated)
 			const { emailMessage, newEmail } = this.emailService.prepareActivationEmail(userSave)

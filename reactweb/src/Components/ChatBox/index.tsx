@@ -50,7 +50,7 @@ const ChatBox = (props: IChat) => {
 
 		const messageToSend: IMessage = {
 			fromId: userId,
-			toId: props.userId,
+			toId: props.targetUserId,
 			message: message.trim(),
 			id: "",
 		}

@@ -30,13 +30,11 @@ export default class FriendshipController implements IFriendshipController {
 		if (await this.service.checkIfItAlreadyExists(SourceId, userTarget.id)) return response.status(StatusCode.ClientErrorConflict).json({ message: "Already exists" })
 		this.service.createFriendshipRequest(Number(SourceId), userTarget.id)
 		return response.status(StatusCode.SuccessNoContent).send()
-
 	}
 
 	findAllByUser = async (request: Request, response: Response): Promise<Response | null> => {
 		const { UserId } = request.body as IFindAllByUserBodyRequest
 		return response.status(StatusCode.SuccessOK).send(await this.service.findAllByUser(Number(UserId)))
-
 	}
 
 	reactToFriendRequest = async (request: Request, response: Response): Promise<Response | null> => {

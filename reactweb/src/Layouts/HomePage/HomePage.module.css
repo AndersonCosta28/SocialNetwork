@@ -22,6 +22,10 @@
 #header__leftSide {
 	width: 20vw;
 }
+
+#header__leftSide__title:hover {
+	cursor: pointer;
+}
 /*#endregion */
 
 /*#region header__midSide*/

@@ -1,10 +1,10 @@
 import React, { ReactNode, useContext } from "react"
 import { createContext, useState } from "react"
-import { ISocketUser } from "./SocketIoContext"
 import { v4 as uuid4 } from "uuid"
+import { IUserInfo } from "common/Types/User"
 
 interface IChatContext {
-	openChat: (socketUser: ISocketUser) => void
+	openChat: (targetId: IUserInfo) => void
 	closeChat: (chatId: string) => void
 	chats: IChat[]
 	toggleMinimizeChat: (chatId: string, value: boolean) => void
@@ -13,9 +13,8 @@ interface IChatContext {
 const ChatContext = createContext<IChatContext | null>(null)
 export interface IChat {
 	targetNickname: string
-	targetSocketId: string
+	targetUserId: string
 	chatId: string
-	userId: string
 	isMinimized: boolean
 }
 
@@ -28,13 +27,12 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
 		sessionStorage.setItem("chats", JSON.stringify(chats))
 	}, [chats])
 
-	const openChat = (socketUser: ISocketUser) => {
-		if (chats.find((chat: IChat) => chat.userId === socketUser.UserId)) return
+	const openChat = (targetId: IUserInfo) => {
+		if (chats.find((chat: IChat) => chat.targetUserId === targetId.id)) return
 		const newChat: IChat = {
-			targetNickname: socketUser.Nickname,
-			targetSocketId: socketUser.SocketID,
+			targetNickname: targetId.Nickname,
+			targetUserId: targetId.id,
 			chatId: uuid4(),
-			userId: socketUser.UserId,
 			isMinimized: false,
 		}
 		setChats((prevState: IChat[]) => [...prevState, newChat])

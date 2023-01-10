@@ -25,7 +25,7 @@ export default class User {
 
   @OneToOne(() => Profile, { cascade: true, onDelete: "CASCADE", eager: true })
   @JoinColumn()
-  	profile: Profile
+  	Profile: Profile
 
   // @Column()
   // Level: number

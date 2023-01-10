@@ -6,17 +6,19 @@ import { IUserInfo } from "common/Types/User"
 import { API_AXIOS } from "../../Providers/axios"
 import { toast } from "react-hot-toast"
 import { getAxiosErrorMessage } from "common"
+import { useNavigate } from "react-router-dom"
 
 const index = () => {
 	const [textSearch, setTextSearch] = React.useState<string>("")
 	const ListOfItemsElementRef = React.useRef<HTMLUListElement>(null)
-	const [allUsers, setAllUsers ] = React.useState<IUserInfo[]>([])
+	const [allUsers, setAllUsers] = React.useState<IUserInfo[]>([])
 	const ListItems: IUserInfo[] = allUsers.filter((item: IUserInfo) => item.Nickname.toLowerCase().includes(textSearch.toLowerCase()))
+	const navigate = useNavigate()
 
 	React.useEffect(() => {
 		API_AXIOS("/user")
-			.then(res => setAllUsers(res.data))
-			.catch(error => toast.error(getAxiosErrorMessage(error)))
+			.then((res) => setAllUsers(res.data))
+			.catch((error) => toast.error(getAxiosErrorMessage(error)))
 	}, [])
 
 	const handlerTextSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -24,14 +26,19 @@ const index = () => {
 		setTextSearch(value)
 	}
 
+	const navigateToProfile = (userInfo: IUserInfo) => {
+		navigate("/profile/" + userInfo.Nickname)
+		setTextSearch("")
+	}
+
 	return (
 		<div id={styles.searchBar}>
 			<AiOutlineSearch id={styles.searchBar__icon} />
-			<input type="search" list="data" name="" className={`shadow_white`} onChange={handlerTextSearch} />
+			<input type="search" list="data" name="" className={`shadow_white`} onChange={handlerTextSearch} value={textSearch} />
 			{textSearch.trim().length > 0 ? (
 				<ul id={styles.searchBar__list} ref={ListOfItemsElementRef} className="shadow_white">
 					{ListItems.map((item: IUserInfo, index: number, array) => (
-						<li key={`${index + 1}/${array.length}-itemFinded`}>
+						<li key={`${index + 1}/${array.length}-itemFinded`} onClick={() => navigateToProfile(item)}>
 							<IoPerson size={30} />
 							<span>{item.Nickname}</span>
 						</li>

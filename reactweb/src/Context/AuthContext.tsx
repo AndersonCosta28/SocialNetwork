@@ -51,7 +51,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 			.post<null>("user", userRegister)
 			.then((res: AxiosResponse) => {
 				toast.success("User created")
-				console.log(res.data)
 				callbackSucess(res.data)
 			})
 			.catch((e) => {

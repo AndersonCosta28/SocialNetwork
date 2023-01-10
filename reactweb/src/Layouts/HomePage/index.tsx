@@ -7,6 +7,7 @@ import DataList from "../../Components/DataList"
 import styles from "./HomePage.module.css"
 import ChatBox from "../../Components/ChatBox"
 import { IChat, useChat } from "../../Context/ChatContext"
+import { useNavigate } from "react-router-dom"
 
 const HomePage = ({ children }: { children: ReactNode }) => {
 
@@ -15,6 +16,7 @@ const HomePage = ({ children }: { children: ReactNode }) => {
 	const handlerShowArrowOptions = () => setShowArrowOptions(!showArrowOptions)
 	const arrowOptionsRef = React.useRef<HTMLDivElement>(null)
 	const { chats } = useChat()
+	const navigate = useNavigate()
 
 	React.useEffect(() => {
 		if (arrowOptionsRef.current) {
@@ -29,12 +31,14 @@ const HomePage = ({ children }: { children: ReactNode }) => {
 		onClickOutSideComponent(arrowOptionsRef.current, e.target as Node, () => showArrowOptions && handlerShowArrowOptions())
 	}
 
+	const goToHomePage = () => navigate("/")
+
 	return (
         
 		<div id={styles.feed} onClick={onClickPage}>
 			<div id={styles.header} className={`shadow_white`}>
 				<div id={styles.header__leftSide}>
-					<h1>Social Network</h1>
+					<h1 onClick={goToHomePage} id={styles.header__leftSide__title}>Social Network</h1>
 				</div>
 				<div id={styles.header__midSide}>
 					<DataList />
@@ -52,7 +56,7 @@ const HomePage = ({ children }: { children: ReactNode }) => {
 			{showArrowOptions ? <ModalArrowOptions /> : null}
 			{children}
 			<div id="chatContainer">
-				{chats.map((chat: IChat, index: number) => <ChatBox isMinimized={chat.isMinimized} chatId={chat.chatId} userId={chat.userId} targetNickname={chat.targetNickname} targetSocketId={chat.targetSocketId} key={`${index}-chat`}/>)}
+				{chats.map((chat: IChat, index: number) => <ChatBox isMinimized={chat.isMinimized} chatId={chat.chatId} targetUserId={chat.targetUserId} targetNickname={chat.targetNickname} key={`${index}-chat`}/>)}
 			</div>
 		</div>
 	)

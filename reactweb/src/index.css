@@ -135,8 +135,17 @@ code {
 	width: 100%;
 	position: fixed;
 	bottom: 0px;
-	/* background-color: yellow; */
 	display: flex;
 	flex-direction: row;
 	align-items: flex-end;
+}
+
+.blueButton {
+	border-radius: 3px;
+	border-style: none;
+	background-color: #027ad6;
+	padding: 5px;
+	color: #fff;
+	font-size: 1.1rem;
+	margin: 10px;
 }
