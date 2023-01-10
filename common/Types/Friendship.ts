@@ -1,7 +1,8 @@
 export enum TypeOfFriendship {
   "Requested",
   "Friend",
-  "Blocked"
+  "Blocked",
+  "Removed"
 }
 
 export interface ICreateBodyRequest {
@@ -20,8 +21,14 @@ export type IReactToFriendRequestBodyRequest = {
 }
 
 export interface IMessage {
-  fromId: string
-  toId: string
-  message: string
-  id:string
+  FromId: number
+  ToId: number
+  Message: string
+  Id: number
+}
+
+export interface IFriend {
+  FriendshipId: number
+  FriendId: number 
+  Type: TypeOfFriendship | string
 }

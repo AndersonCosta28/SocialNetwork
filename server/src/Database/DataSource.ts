@@ -18,6 +18,7 @@ const AppDataSource = new DataSource({
 	entities: [User, Friendship, Email, Profile],
 	// url: "mysql://root:mysqlpw@localhost:55000", //DOCKER
 	synchronize: true,
+	cache: true
 })
 
 AppDataSource.initialize()

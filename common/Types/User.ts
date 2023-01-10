@@ -5,12 +5,12 @@ export interface IUserLogin {
 
 export interface IUserSocket {
   SocketID: string,
-  UserId: string,
+  UserId: number,
   Nickname: string
 }
 
 export interface IUserInfo {
-  id: string,
+  id: number,
   Nickname: string,
   Email: string,
   State: string,

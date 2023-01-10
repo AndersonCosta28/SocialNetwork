@@ -13,7 +13,7 @@ interface IChatContext {
 const ChatContext = createContext<IChatContext | null>(null)
 export interface IChat {
 	targetNickname: string
-	targetUserId: string
+	targetUserId: number
 	chatId: string
 	isMinimized: boolean
 }

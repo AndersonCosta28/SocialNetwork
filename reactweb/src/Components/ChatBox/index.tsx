@@ -44,15 +44,15 @@ const ChatBox = (props: IChat) => {
 	//#region Functions
 	const handleSendMessage = (e: FormEvent<HTMLFormElement>) => {
 		e.preventDefault()
-		const userId = getUserId()
+		const userId = Number(getUserId())
 		console.log("O id do usuário local é:" + userId)
 		if (!socket || !userId) return
 
 		const messageToSend: IMessage = {
-			fromId: userId,
-			toId: props.targetUserId,
-			message: message.trim(),
-			id: "",
+			FromId: userId,
+			ToId: props.targetUserId,
+			Message: message.trim(),
+			Id: 0,
 		}
 
 		socket.timeout(4000).emit("message", messageToSend, (error: unknown, response: unknown) => {
@@ -99,7 +99,7 @@ const ChatBox = (props: IChat) => {
 				<>
 					<div className={styles.content__body} ref={chatBodyRef}>
 						<ul>
-							{messages.map(({ message, fromId, id }: IMessage, index: number) => {
+							{messages.map(({ Message: message, FromId: fromId, Id: id }: IMessage, index: number) => {
 								if (fromId === getUserId())
 									return (
 										<li className={styles.message_mine} key={`message-${index}-${id}`}>

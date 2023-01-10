@@ -45,17 +45,17 @@ io.on("connection", (socket: Socket) => {
 		users.push({
 			SocketID: socket.id,
 			Nickname: String(Nickname ?? "Não identificado"),
-			UserId: String(UserId ?? "Não identificado"),
+			UserId: Number(UserId),
 		})
 
 	io.emit("onlineUsers", users)
 	socket.on("message", (data: IMessage, callback) => {
-		const target = users.find((userSocket: IUserSocket) => userSocket.UserId === data.toId)		
+		const target = users.find((userSocket: IUserSocket) => userSocket.UserId === data.ToId)
 		if (target)
-			io.to(socket.id).to(target.SocketID).emit("message", { id: v4(), message: data.message, fromId: data.fromId, toId: data.toId })
+			io.to(socket.id).to(target.SocketID).emit("message", { id: v4(), message: data.Message, fromId: data.FromId, toId: data.ToId })
 		else
-			io.to(socket.id).emit("message", { id: v4(), message: data.message, fromId: data.fromId, toId: data.toId })
-		callback({response: "OK"})
+			io.to(socket.id).emit("message", { id: v4(), message: data.Message, fromId: data.FromId, toId: data.ToId })
+		callback({ response: "OK" })
 	})
 
 	socket.on("disconnect", () => {

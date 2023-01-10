@@ -5,9 +5,9 @@ export default interface IController {
 }
 
 export interface IControllerCrud extends IController {    
-    findAll : (request: Request, response: Response) => Promise<Response | null>
-    findOneById : (request: Request, response: Response) => Promise<Response | null>
-    create : (request: Request, response: Response) => Promise<Response | null>
-    update : (request: Request, response: Response) => Promise<Response | null>
-    delete : (request: Request, response: Response) => Promise<Response | null>
+    findAll : (request: Request, response: Response) => Promise<Response>
+    findOneById : (request: Request, response: Response) => Promise<Response>
+    create : (request: Request, response: Response) => Promise<Response>
+    update : (request: Request, response: Response) => Promise<Response>
+    delete : (request: Request, response: Response) => Promise<Response>
 }

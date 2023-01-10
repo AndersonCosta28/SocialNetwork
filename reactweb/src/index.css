@@ -140,10 +140,20 @@ code {
 	align-items: flex-end;
 }
 
-.blueButton {
+.blueButtonActive {
 	border-radius: 3px;
 	border-style: none;
 	background-color: #027ad6;
+	padding: 5px;
+	color: #fff;
+	font-size: 1.1rem;
+	margin: 10px;
+}
+
+.blueButtonDisable {
+	border-radius: 3px;
+	border-style: none;
+	background-color: rgba(2, 122, 214, 0.5);
 	padding: 5px;
 	color: #fff;
 	font-size: 1.1rem;

@@ -1,6 +1,6 @@
 export const getIsAuthenticated = () => localStorage.getItem("authenticated")
 export const getNickname = () => localStorage.getItem("nickname")
-export const getUserId = () => localStorage.getItem("iduser")
+export const getUserId = () => Number(localStorage.getItem("iduser"))
 
 export const onClickOutSideComponent = (element: HTMLElement | null, target: Node, callback: VoidFunction) => {
 	if (!element) return

@@ -6,6 +6,7 @@ import HomePage from "../Layouts/HomePage"
 import { ChatProvider } from "../Context/ChatContext"
 import { ProtectedProvider } from "../Context/ProtectedContext"
 import { ProfileRoute } from "../Pages/Profile"
+import { FriendshipProvider } from "../Context/FriendshipContext"
 
 const Protected = () => {
 	const { isAuthenticated } = useAuth()
@@ -14,13 +15,15 @@ const Protected = () => {
 	else
 		return (
 			<ProtectedProvider>
-				<ChatProvider>
-					<div className="BackgrounGreyFullSize">
-						<HomePage>
-							<Outlet />
-						</HomePage>
-					</div>
-				</ChatProvider>
+				<FriendshipProvider>
+					<ChatProvider>
+						<div className="BackgrounGreyFullSize">
+							<HomePage>
+								<Outlet />
+							</HomePage>
+						</div>
+					</ChatProvider>
+				</FriendshipProvider>
 			</ProtectedProvider>
 		)
 }

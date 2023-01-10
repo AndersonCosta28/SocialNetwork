@@ -7,8 +7,8 @@ import { IEmailService } from "Email/Email.service"
 import { Email } from "Email/Email.entity"
 
 export interface IUserController extends IControllerCrud {
-	activation: (request: Request, response: Response) => Promise<Response | null>
-	resendActivationEmail: (request: Request, response: Response) => Promise<Response | null>
+	activation: (request: Request, response: Response) => Promise<Response>
+	resendActivationEmail: (request: Request, response: Response) => Promise<Response>
 }
 export default class UserController implements IUserController {
 	constructor(private readonly service: IUserService, private readonly emailService: IEmailService) { }
@@ -28,39 +28,39 @@ export default class UserController implements IUserController {
 		return router
 	}
 
-	findAll = async (request: Request, response: Response): Promise<Response | null> => response.status(StatusCode.SuccessOK).send(await this.service.findAll())
+	findAll = async (request: Request, response: Response): Promise<Response> => response.status(StatusCode.SuccessOK).send(await this.service.findAll())
 
-	findOneById = async (request: Request, response: Response): Promise<Response | null> => {
+	findOneById = async (request: Request, response: Response): Promise<Response> => {
 		const { id } = request.params
 		return response.status(StatusCode.SuccessOK).send(await this.service.findOneById(Number(id)))
 
 	}
 
-	create = async (request: Request, response: Response): Promise<Response | null> => {
+	create = async (request: Request, response: Response): Promise<Response> => {
 		const model = request.body
 		await this.service.create(model)
 		return response.status(StatusCode.SuccessNoContent).send()
 	}
 
-	update = async (request: Request, response: Response): Promise<Response | null> => {
+	update = async (request: Request, response: Response): Promise<Response> => {
 		const { id } = request.params
 		const model = request.body
 		await this.service.update(Number(id), model)
 		return response.status(StatusCode.SuccessNoContent).send()
 	}
 
-	delete = async (request: Request, response: Response): Promise<Response | null> => {
+	delete = async (request: Request, response: Response): Promise<Response> => {
 		const { id } = request.params
 		await this.service.delete(Number(id))
 		return response.status(StatusCode.SuccessNoContent).send()
 	}
 
-	activation = async (request: Request, response: Response): Promise<Response | null> => {
+	activation = async (request: Request, response: Response): Promise<Response> => {
 		const { idemail } = request.body
 		return response.status(StatusCode.SuccessNoContent).send(await this.service.activation(idemail))
 	}
 
-	resendActivationEmail = async (request: Request, response: Response): Promise<Response | null> => {
+	resendActivationEmail = async (request: Request, response: Response): Promise<Response> => {
 		const { idemail, idUser } = request.body
 		if (!idemail) {
 			const email: Email | null = await this.emailService.findOneByIdUserAndType(idUser, EmailTypes.Activation)
@@ -71,18 +71,18 @@ export default class UserController implements IUserController {
 			return response.status(StatusCode.SuccessNoContent).send(await this.service.resendActivationEmail(idemail))
 	}
 
-	sendRedefinePasswordEmail = async (request: Request, response: Response): Promise<Response | null> => {
+	sendRedefinePasswordEmail = async (request: Request, response: Response): Promise<Response> => {
 		const { emailUser } = request.body
 		return response.status(StatusCode.SuccessNoContent).send(await this.service.sendRedefinePasswordEmail(emailUser))
 	}
 
-	checkRedefinePasswordEmail = async (request: Request, response: Response): Promise<Response | null> => {
+	checkRedefinePasswordEmail = async (request: Request, response: Response): Promise<Response> => {
 		const { idemail } = request.body
 		await this.emailService.checkEmailRedefinePassword(idemail)
 		return response.status(StatusCode.SuccessNoContent).send()
 	}
 
-	redefinePassword = async (request: Request, response: Response): Promise<Response | null> => {
+	redefinePassword = async (request: Request, response: Response): Promise<Response> => {
 		const { idemail, newPassword } = request.body
 		await this.emailService.checkEmailRedefinePassword(idemail)
 		const email: Email | null = await this.emailService.findOneByUUIDAndType(idemail, EmailTypes.RedefinePassword)

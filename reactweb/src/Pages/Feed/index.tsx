@@ -43,7 +43,7 @@ const Feed = () => {
 				<div id={styles.WritePost}>
 					<TextareaAutosize maxRows={10} id={styles.WritePost__TextArea} ref={textAreaWritePost} placeholder="Write a post..." onChange={handlerTextPost} />
 					<div id={styles.WritePost__Options}>
-						<input type="button" value="send" className="blueButton" />
+						<input type="button" value="send" className="blueButtonActive" />
 					</div>
 				</div>
 			</div>

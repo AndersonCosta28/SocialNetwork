@@ -4,7 +4,7 @@ import { BASE_URL_API_V1 } from "../../../Providers/axios"
 import { getAxiosErrorMessage } from "common"
 
 
-const ResendEmailActivation = (props: { idUser?: string | null, idEmail?: string | null}) => {
+const ResendEmailActivation = (props: { idUser?: number, idEmail?: string | null}) => {
 	const {idEmail, idUser} = props
 	const [disableButton, setDisableButton] = useState(false)
 	const [message, setMessage] =  useState("")

@@ -30,7 +30,11 @@ export default class UserService implements IUserService {
 		},
 		relations: {
 			Profile: true
-		}
+		},
+		// cache: {
+		// 	id: "users",
+		// 	milliseconds: 60000
+		// }
 	})
 
 	findOneById = async (id: number): Promise<User | null> => await this.repository.findOne({ where: { id } })

@@ -1,4 +1,4 @@
-import { ICreateBodyRequest, IFindAllByUserBodyRequest, IReactToFriendRequestBodyRequest, TypeOfFriendship } from "./Types/Friendship"
+import { ICreateBodyRequest, IFindAllByUserBodyRequest, IReactToFriendRequestBodyRequest, TypeOfFriendship, IFriend } from "./Types/Friendship"
 import IResponse, {IResponseLogin} from "./Types/Response"
 import { IUserLogin, IUserSocket, IUserRegister, UserStates } from "./Types/User"
 import { EmailTypes, IAddress, IEmailMessage } from "./Types/Email"
@@ -18,7 +18,8 @@ export {
     IAddress,
     IEmailMessage,
     CustomErrorAPI,
-    IResponse
+    IResponse,
+    IFriend
 }
 
 export const addHours = (date: Date, hours: number) => {
