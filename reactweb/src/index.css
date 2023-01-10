@@ -1,0 +1,142 @@
+* {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+	/* font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif; */
+	font-family: "Roboto", cursive;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+
+code {
+	font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New", monospace;
+}
+
+.form {
+	display: flex;
+	align-items: center;
+	flex-direction: column;
+	justify-content: center;
+	width: 100%;
+}
+
+.form__field {
+	display: flex;
+	flex-direction: column;
+	margin: 5px;
+	width: 250px;
+}
+
+.form__field__container__label {
+	margin: 10px;
+	font-size: smaller;
+	font-weight: bold;
+	color: rgb(127, 122, 122);
+}
+
+.form__field__container {
+	display: flex;
+	border-radius: 10px;
+	flex-direction: column;
+	width: 100%;
+	justify-content: space-between;
+}
+
+.form__field__container input {
+	border-radius: 20px;
+	padding-left: 5px;
+	height: 30px;
+	width: 100%;
+	border: rgb(127, 122, 122) solid 0.5px;
+	/* background-color: rgb(0, 0, 255, 0.1); */
+}
+
+.form__field__container__backgroundicon {
+	border-top-left-radius: 10px;
+	border-bottom-right-radius: 10px;
+	border-top-right-radius: 5px;
+	border-bottom-left-radius: 5px;
+}
+
+.form__field__message {
+	font-size: small;
+	color: red;
+	text-align: start;
+}
+
+.form__options {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	width: 250px;
+	justify-content: space-around;
+}
+
+.form__options a {
+	font-size: small;
+}
+
+.form__options__buttonSubmit {
+	margin: 30px 0px 10px 0px;
+	padding: 10px;
+	border-radius: 10px;
+	border-style: none;
+	width: 150px;
+}
+
+.form__options__buttonSubmit:hover {
+	cursor: pointer;
+}
+
+.page {
+	height: 100vh;
+}
+
+.page__header {
+	height: 10vh;
+}
+
+.page__body {
+	height: 80vh;
+}
+
+.page__footer {
+	height: 10vh;
+}
+
+.flex_row_center_center {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: center;
+}
+
+.flex_column_center_center {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+}
+
+.shadow_white {
+	box-shadow: 0px 0px 5px 2px rgb(182, 182, 182);
+}
+
+.BackgrounGreyFullSize {
+	width: 100%;
+	height: 100%;
+	position: relative;
+	background-color: rgb(240, 240, 240);
+}
+
+#chatContainer {
+	width: 100%;
+	position: fixed;
+	bottom: 0px;
+	/* background-color: yellow; */
+	display: flex;
+	flex-direction: row;
+	align-items: flex-end;
+}

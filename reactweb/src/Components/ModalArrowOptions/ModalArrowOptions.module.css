@@ -1,0 +1,21 @@
+.modal {
+    position: absolute;
+    top: 80px;
+    right: 20px;
+    height: max-content;
+    width: max-content;
+    background: whitesmoke;
+    border-radius: 10px;
+    padding: 10px;
+}
+
+.modal__list__item {
+    list-style-type: none;
+    padding: 10px;
+    margin: 10px;
+}
+
+.modal__list__item:hover{
+    cursor: pointer;
+    background-color: blue;
+}

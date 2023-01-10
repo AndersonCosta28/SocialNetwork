@@ -1,0 +1,34 @@
+{
+  "name": "socialnetwork",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "private": true,
+  "dependencies": {
+    "concurrently": "^7.6.0",
+    "cross-env": "5.0.5",
+    "dotenv": "^16.0.3",
+    "nodemailer": "^6.8.0",
+    "status-code-enum": "^1.0.0",
+    "uuid": "^9.0.0"
+  },
+  "scripts": {
+    "start": "yarn start:prebuild && yarn start:run",
+    "start:run": "cross-env concurrently \"yarn workspace server start\" \"yarn workspace reactweb start \" \"yarn workspace common start\"",
+    "start:prebuild": "yarn lint:fixAll && yarn build",
+    "dev": "cross-env NODE_ENV=development concurrently \"yarn workspace server dev\" \"yarn workspace reactweb start \" \"yarn workspace common start\"",
+    "build": "cross-env yarn workspace common build && concurrently \"yarn workspace server build\" \"yarn workspace reactweb build \" ",
+    "lint:fixAll": "yarn workspace server eslint --fix && yarn workspace reactweb eslint --fix"
+  },
+  "workspaces": [
+    "reactweb",
+    "server",
+    "common"
+  ],
+  "devDependencies": {
+    "@types/nodemailer": "^6.4.7",
+    "@types/uuid": "^9.0.0",
+    "eslint": "^8.30.0",
+    "prettier": "^2.8.1"
+  }
+}

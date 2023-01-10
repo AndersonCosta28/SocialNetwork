@@ -1,0 +1,45 @@
+/*#region header*/
+#header {
+	height: 10vh;
+}
+
+#header,
+#header__leftSide,
+#header__midSide {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: center;
+}
+
+#header__leftSide,
+#header__midSide,
+#header__rightSide {
+	height: 100%;
+}
+
+/*#region header__leftSide*/
+#header__leftSide {
+	width: 20vw;
+}
+/*#endregion */
+
+/*#region header__midSide*/
+#header__midSide {
+	width: 60vw;
+	padding: 0% 17% 0% 17%;
+}
+
+/*#endregion */
+
+/*#region header__rigthSide*/
+#header__rightSide {
+	width: 20vw;
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: space-around;
+}
+/*#endregion */
+
+/*#endregion */

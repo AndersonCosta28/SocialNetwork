@@ -1,0 +1,14 @@
+{
+  "eslint.enable": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll": true
+  },
+  "eslint.workingDirectories": [
+    "./server",
+    "./reactweb"
+  ],
+  "prettier.tabWidth": 4,
+  "prettier.endOfLine": "lf",
+  "prettier.useTabs": true,
+  "prettier.semi": false
+}
