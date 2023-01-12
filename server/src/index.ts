@@ -1,4 +1,7 @@
-import "module-alias/register"
+import moduleAlias from "module-alias"
+moduleAlias.addAliases({
+	"@Types": "./Types"
+})
 import "reflect-metadata"
 import server from "./server"
 

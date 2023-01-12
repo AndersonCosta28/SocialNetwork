@@ -1,26 +1,9 @@
-import { ICreateBodyRequest, IFindAllByUserBodyRequest, IReactToFriendRequestBodyRequest, TypeOfFriendship, IFriend } from "./Types/Friendship"
-import IResponse, {IResponseLogin} from "./Types/Response"
-import { IUserLogin, IUserSocket, IUserRegister, UserStates } from "./Types/User"
-import { EmailTypes, IAddress, IEmailMessage } from "./Types/Email"
-import { CustomErrorAPI } from './Types/CustomErrors'
+export * from "./Types/Friendship"
+export *  from "./Types/Response"
+export * from "./Types/User"
+export *  from "./Types/Email"
+export *  from './Types/CustomErrors'
 
-export {
-    ICreateBodyRequest,
-    IFindAllByUserBodyRequest,
-    IReactToFriendRequestBodyRequest,
-    TypeOfFriendship,
-    IResponseLogin,
-    IUserLogin,
-    IUserSocket,
-    IUserRegister,
-    UserStates,
-    EmailTypes,
-    IAddress,
-    IEmailMessage,
-    CustomErrorAPI,
-    IResponse,
-    IFriend
-}
 
 export const addHours = (date: Date, hours: number) => {
     var copiedDate = new Date(date.getTime());

@@ -3,12 +3,16 @@
   "version": "1.0.0",
   "main": "index.js",
   "license": "MIT",
+  "type": "module",
   "private": true,
   "dependencies": {
     "concurrently": "^7.6.0",
     "cross-env": "5.0.5",
     "dotenv": "^16.0.3",
+    "esm": "^3.2.25",
+    "module-alias": "^2.2.2",
     "nodemailer": "^6.8.0",
+    "nodemon": "^2.0.20",
     "status-code-enum": "^1.0.0",
     "uuid": "^9.0.0"
   },
@@ -18,7 +22,8 @@
     "start:prebuild": "yarn lint:fixAll && yarn build",
     "dev": "cross-env NODE_ENV=development concurrently \"yarn workspace server dev\" \"yarn workspace reactweb start \" \"yarn workspace common start\"",
     "build": "cross-env yarn workspace common build && concurrently \"yarn workspace server build\" \"yarn workspace reactweb build \" ",
-    "lint:fixAll": "yarn workspace server eslint --fix && yarn workspace reactweb eslint --fix"
+    "lint:fixAll": "yarn workspace server eslint --fix && yarn workspace reactweb eslint --fix",
+    "server:dev": "cross-env NODE_ENV=development concurrently \"yarn workspace server dev\" \"yarn workspace common start\""
   },
   "workspaces": [
     "reactweb",

@@ -29,9 +29,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 			.then((res) => {
 				if (res.status === 202) {
 					const { idUser, nickname, authenticated } = res.data as IResponseLogin
-					localStorage.setItem("authenticated", String(authenticated))
-					localStorage.setItem("nickname", String(nickname))
-					localStorage.setItem("iduser", String(idUser))
+					sessionStorage.setItem("authenticated", String(authenticated))
+					sessionStorage.setItem("nickname", String(nickname))
+					sessionStorage.setItem("iduser", String(idUser))
 					setIsAuthenticated(true)
 					callbackSucess(res.data)
 				}
@@ -61,7 +61,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 	}
 
 	const logout = (callback: VoidFunction): void => {
-		localStorage.clear()
+		sessionStorage.clear()
 		setIsAuthenticated(false)
 		callback()
 	}

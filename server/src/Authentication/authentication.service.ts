@@ -1,4 +1,4 @@
-import StatusCode from "status-code-enum"
+import { StatusCode } from "status-code-enum"
 import User from "../User/User.entity"
 import { IUserLogin, UserStates } from "common/Types/User"
 import bcrypt from "bcrypt"
