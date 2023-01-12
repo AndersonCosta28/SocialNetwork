@@ -4,7 +4,7 @@ import { IUserService } from "./User.service"
 import { IControllerCrud } from "@Types/IController"
 import { CustomErrorAPI, EmailTypes } from "common"
 import { IEmailService } from "Email/Email.service"
-import { Email } from "Email/Email.entity"
+import Email from "Email/Email.entity"
 
 export interface IUserController extends IControllerCrud {
 	activation: (request: Request, response: Response) => Promise<Response>

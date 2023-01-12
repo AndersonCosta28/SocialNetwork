@@ -1,4 +1,4 @@
-import AppDataSource from "../Database/DataSource"
+import AppDataSource from "../Providers/Database/DataSource"
 import { Repository } from "typeorm"
 import UserController, { IUserController } from "./User.controller"
 import User from "./User.entity"

@@ -2,9 +2,9 @@ import { DeleteResult, Repository, UpdateResult } from "typeorm"
 import bcrypt from "bcrypt"
 import User from "./User.entity"
 import ICrud from "@Types/ICrud"
-import AppDataSource from "../Database/DataSource"
+import AppDataSource from "../Providers/Database/DataSource"
 import { IEmailService } from "../Email/Email.service"
-import { Email } from "../Email/Email.entity"
+import Email from "../Email/Email.entity"
 import { CustomErrorAPI, EmailTypes, UserStates } from "common"
 
 export interface IUserService extends ICrud<User> {

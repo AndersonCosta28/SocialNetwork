@@ -1,10 +1,10 @@
-import { Email } from "../Email/Email.entity"
-import Friendship from "../Friendship/Friendship.entity" 
-import User from "../User/User.entity"
-import { DataSource } from "typeorm"
+import Email from "../../Email/Email.entity"
+import Friendship from "../../Friendship/Friendship.entity" 
+import User from "../../User/User.entity"
+import Profile from "../../Profile/Profile.entity"
 import env from "dotenv"
 import { resolve } from "path"
-import Profile from "../Profile/Profile.entity"
+import { DataSource } from "typeorm"
 
 env.config({ path: resolve("../", ".env") })
 

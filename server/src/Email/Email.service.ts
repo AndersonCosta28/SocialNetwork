@@ -1,5 +1,5 @@
 import { Repository } from "typeorm"
-import { Email } from "./Email.entity"
+import Email from "./Email.entity"
 import nodemailer, { Transporter } from "nodemailer"
 import SMTPTransport from "nodemailer/lib/smtp-transport"
 import { EmailTypes, IEmailMessage } from "common/Types/Email"

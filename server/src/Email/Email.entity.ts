@@ -2,7 +2,7 @@ import { EmailTypes } from "common"
 import User from "../User/User.entity"
 import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm"
 @Entity()
-export class Email {
+export default class Email {
   @PrimaryGeneratedColumn()
   	id: number
 

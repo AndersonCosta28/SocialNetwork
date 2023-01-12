@@ -1,5 +1,5 @@
-import AppDataSource from "../Database/DataSource"
-import { Email } from "./Email.entity"
+import AppDataSource from "../Providers/Database/DataSource"
+import Email from "./Email.entity"
 import EmailService, { IEmailService } from "./Email.service"
 import { Repository } from "typeorm"
 import nodemailer, { Transporter } from "nodemailer"

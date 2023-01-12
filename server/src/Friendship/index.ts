@@ -1,5 +1,5 @@
 import { userService } from "../User"
-import AppDataSource from "../Database/DataSource"
+import AppDataSource from "../Providers/Database/DataSource"
 import FriendshipController, { IFriendshipController } from "./Friendship.controller"
 import FriendshipService, { IFriendshipService } from "./Friendship.service"
 import Friendship from "./Friendship.entity"

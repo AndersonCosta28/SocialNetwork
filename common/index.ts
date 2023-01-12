@@ -1,8 +1,8 @@
 export * from "./Types/Friendship"
-export *  from "./Types/Response"
+export * from "./Types/Response"
 export * from "./Types/User"
-export *  from "./Types/Email"
-export *  from './Types/CustomErrors'
+export * from "./Types/Email"
+export * from './Types/CustomErrors'
 
 
 export const addHours = (date: Date, hours: number) => {
