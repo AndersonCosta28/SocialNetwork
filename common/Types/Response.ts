@@ -1,4 +1,5 @@
-import StatusCode from "status-code-enum"
+import { StatusCode } from "status-code-enum"
+
 import { UserStates } from "./User"
 
 export default interface IResponse {

@@ -21,10 +21,7 @@ export const FriendshipProvider = ({ children }: { children: React.ReactNode }) 
 
 	React.useEffect(() => {
 		API_AXIOS.post("/friendship", { UserId: getUserId() })
-			.then((res) => {
-				console.log(res.data)
-				setFriendList(res.data)
-			})
+			.then((res) => setFriendList(res.data))
 			.catch(console.log)
 	}, [])
 

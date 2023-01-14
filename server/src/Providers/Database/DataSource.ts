@@ -1,5 +1,5 @@
 import Email from "../../Email/Email.entity"
-import Friendship from "../../Friendship/Friendship.entity" 
+import Friendship from "../../Friendship/Friendship.entity"
 import User from "../../User/User.entity"
 import Profile from "../../Profile/Profile.entity"
 import env from "dotenv"
@@ -18,7 +18,13 @@ const AppDataSource = new DataSource({
 	entities: [User, Friendship, Email, Profile],
 	// url: "mysql://root:mysqlpw@localhost:55000", //DOCKER
 	synchronize: true,
-	cache: true
+	cache: {
+		type: "redis",
+		options: {
+			host: "localhost",
+			port: 6379
+		}
+	}
 })
 
 AppDataSource.initialize()

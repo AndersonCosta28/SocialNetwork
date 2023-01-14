@@ -42,7 +42,8 @@ export default class FriendshipService implements IFriendshipService {
 			friendList.push({
 				FriendshipId: friendship.id,
 				Type: friendship.Type,
-				FriendId: friendship.UserSource.id === idUser ? friendship.UserTarget.id : friendship.UserSource.id
+				FriendId: friendship.UserSource.id === idUser ? friendship.UserTarget.id : friendship.UserSource.id,
+				FriendNickname: friendship.UserSource.id === idUser ? friendship.UserTarget.Nickname : friendship.UserSource.Nickname,
 			})
 
 		return friendList

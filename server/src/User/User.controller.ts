@@ -1,4 +1,4 @@
-import StatusCode from "status-code-enum"
+import { StatusCode } from "status-code-enum"
 import { Request, Response, Router } from "express"
 import { IUserService } from "./User.service"
 import { IControllerCrud } from "@Types/IController"

@@ -1,4 +1,5 @@
-import StatusCode from "status-code-enum";
+import { StatusCode } from "status-code-enum"
+;
 import { getErrorMessage } from "..";
 
 export class CustomErrorAPI extends Error {

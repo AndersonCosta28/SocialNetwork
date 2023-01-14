@@ -1,6 +1,5 @@
 import { Server, Socket } from "socket.io"
 import http from "http"
-import { v4 } from "uuid"
 import { IMessage } from "common/Types/Friendship"
 import { IUserSocket } from "common"
 
@@ -31,11 +30,16 @@ export const WebSocket = (server: http.Server) => {
 
 		io.emit("onlineUsers", users)
 		socket.on("message", (data: IMessage, callback) => {
-			const target = users.find((userSocket: IUserSocket) => userSocket.UserId === data.ToId)
-			if (target)
-				io.to(socket.id).to(target.SocketID).emit("message", { id: v4(), message: data.Message, fromId: data.FromId, toId: data.ToId })
-			else
-				io.to(socket.id).emit("message", { id: v4(), message: data.Message, fromId: data.FromId, toId: data.ToId })
+			const Message: IMessage = { ...data, Id: 0 }
+			users.forEach((userSocket: IUserSocket) => {
+				if (userSocket.UserId === data.ToId)
+					io.to(userSocket.SocketID).emit("message", Message)
+			})
+
+			users.forEach((userSocket: IUserSocket) => {
+				if (userSocket.UserId === data.FromId)
+					io.to(userSocket.SocketID).emit("message", Message)
+			})
 			callback({ response: "OK" })
 		})
 

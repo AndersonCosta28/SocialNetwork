@@ -1,6 +1,6 @@
-export const getIsAuthenticated = () => sessionStorage.getItem("authenticated")
-export const getNickname = () => sessionStorage.getItem("nickname")
-export const getUserId = () => Number(sessionStorage.getItem("iduser"))
+export const getIsAuthenticated = () => localStorage.getItem("authenticated") === "true"
+export const getNickname = () => localStorage.getItem("nickname")
+export const getUserId = () => Number(localStorage.getItem("iduser"))
 
 export const onClickOutSideComponent = (element: HTMLElement | null, target: Node, callback: VoidFunction) => {
 	if (!element) return

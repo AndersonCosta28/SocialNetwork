@@ -14,7 +14,17 @@ const App = () => {
 				families: ["Roboto"],
 			},
 		})
+		
 	}, [])
+	/* Controle de números de abas abertas, quando a quantidade de abas aberta for igual a zero, irá limpar o localStorage - Funcionamento perfeitamente */
+	// const tabsOpen: string | null = localStorage.getItem("tabsOpen")
+	// if (tabsOpen === null) localStorage.setItem("tabsOpen", (1).toString())
+	// else if (Number(tabsOpen) === 0) localStorage.clear()
+	// localStorage.setItem("tabsOpen", (Number(tabsOpen) + 1).toString())
+	// window.onunload = () => {
+	// 	const tabsOpen: string | null = localStorage.getItem("tabsOpen")
+	// 	if (tabsOpen !== null) localStorage.setItem("tabsOpen", (Number(tabsOpen) - 1).toString())
+	// }
 
 	const routes = createBrowserRouter([ProtectedRoutes, PublicRoutes])
 	return (

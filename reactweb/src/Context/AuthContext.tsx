@@ -11,14 +11,14 @@ export interface IAuthContext {
 	createAccount: (e: React.FormEvent<HTMLFormElement>, userRegister: IUserRegister, callbackSucses: (data: string) => void, callbackError: (error: string) => void) => void
 	logout: (callback: VoidFunction) => void
 	isAuthenticated: boolean
+	setIsAuthenticated: React.Dispatch<React.SetStateAction<boolean>>
 	disableButton: boolean
 }
 
 const AuthContext = createContext<IAuthContext | null>(null)
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-	// const navigate = useNavigate()
-	const [isAuthenticated, setIsAuthenticated] = useState(getIsAuthenticated() === "true")
+	const [isAuthenticated, setIsAuthenticated] = useState<boolean>(getIsAuthenticated())
 	const [disableButton, setDisableButton] = useState(false)
 
 	const login = (e: React.FormEvent<HTMLFormElement>, credential: IUserLogin, callbackSucess: (data: string) => void = () => null, callbackError: (errorMessage: string) => void = () => null): void => {
@@ -29,9 +29,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 			.then((res) => {
 				if (res.status === 202) {
 					const { idUser, nickname, authenticated } = res.data as IResponseLogin
-					sessionStorage.setItem("authenticated", String(authenticated))
-					sessionStorage.setItem("nickname", String(nickname))
-					sessionStorage.setItem("iduser", String(idUser))
+					localStorage.clear()
+					localStorage.setItem("authenticated", String(authenticated))
+					localStorage.setItem("nickname", String(nickname))
+					localStorage.setItem("iduser", String(idUser))
 					setIsAuthenticated(true)
 					callbackSucess(res.data)
 				}
@@ -61,12 +62,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 	}
 
 	const logout = (callback: VoidFunction): void => {
-		sessionStorage.clear()
+		localStorage.clear()
 		setIsAuthenticated(false)
 		callback()
 	}
 
-	const values: IAuthContext = { login, logout, isAuthenticated, createAccount, disableButton }
+	const values: IAuthContext = { login, logout, isAuthenticated, createAccount, disableButton, setIsAuthenticated }
 	return <AuthContext.Provider value={values}>{children}</AuthContext.Provider>
 }
 

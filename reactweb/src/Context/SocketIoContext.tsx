@@ -2,15 +2,12 @@ import React, { ReactNode, createContext, useContext, useEffect, useMemo, useSta
 import { connectToServerWebSocket } from "../Providers/axios"
 import { Socket } from "socket.io-client"
 import { useAuth } from "./AuthContext"
+import { IUserSocket } from "common"
 
 export interface ISocketIoContext {
   socket: Socket | null;
   isConnected: boolean;
-  onlineUsers: ISocketUser[];
-}
-
-export interface ISocketUser {
-	SocketID: string, Nickname: string, UserId: string
+  onlineUsers: IUserSocket[];
 }
 
 const SocketIoContext = createContext<ISocketIoContext | null>(null)
@@ -22,7 +19,7 @@ export const SocketIoProvider = ({ children }: { children: ReactNode }) => {
 		else return null
 	}, [isAuthenticated])
 	const [isConnected, setIsConnected] = useState(socket ? socket.connected : false)
-	const [onlineUsers, setOnlineUsers] = useState<ISocketUser[]>([])
+	const [onlineUsers, setOnlineUsers] = useState<IUserSocket[]>([])
 
 	useEffect(() => {
 		if (socket) {

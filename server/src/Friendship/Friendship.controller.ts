@@ -1,6 +1,7 @@
 import { ICreateBodyRequest, IFindAllByUserBodyRequest, IReactToFriendRequestBodyRequest, TypeOfFriendship } from "common/Types/Friendship"
 import { Request, Response, Router } from "express"
-import StatusCode from "status-code-enum"
+import { StatusCode } from "status-code-enum"
+
 import { IUserService } from "User/User.service"
 import { IFriendshipService } from "./Friendship.service"
 import IController from "@Types/IController"

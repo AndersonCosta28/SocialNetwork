@@ -17,5 +17,5 @@
 
 .modal__list__item:hover{
     cursor: pointer;
-    background-color: blue;
+    background-color: rgb(200, 200, 200);
 }

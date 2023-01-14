@@ -19,12 +19,12 @@ export interface IChat {
 }
 
 export const ChatProvider = ({ children }: { children: ReactNode }) => {
-	const chatInicialize = JSON.parse(sessionStorage.getItem("chats") ?? "[]")
+	const chatInicialize = JSON.parse(localStorage.getItem("chats") ?? "[]")
 	const [chats, setChats] = useState<IChat[]>(chatInicialize)
 
 	React.useEffect(() => {
-		sessionStorage.removeItem("chats")
-		sessionStorage.setItem("chats", JSON.stringify(chats))
+		localStorage.removeItem("chats")
+		localStorage.setItem("chats", JSON.stringify(chats))
 	}, [chats])
 
 	const openChat = (targetId: IUserInfo) => {

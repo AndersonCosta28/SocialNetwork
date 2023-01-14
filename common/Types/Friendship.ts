@@ -31,4 +31,5 @@ export interface IFriend {
   FriendshipId: number
   FriendId: number 
   Type: TypeOfFriendship | string
+  FriendNickname: string
 }

@@ -11,7 +11,7 @@ const ChatBox = (props: IChat) => {
 	//#region Hooks
 	const [message, setMessage] = useState<string>("")
 	const [messages, setMessages] = useState<IMessage[]>([])
-	const [textAreaFocused, setTextAreaFocused] = useState(false)
+	const [textAreaFocused, setTextAreaFocused] = useState<boolean>(false)
 	const [isMinimized, setIsMinimized] = useState<boolean>(props.isMinimized)
 
 	const { socket } = useSocketIo()
@@ -28,6 +28,7 @@ const ChatBox = (props: IChat) => {
 		const chatContainer = chatBodyRef.current!
 		if (socket)
 			socket.on("message", (data: IMessage) => {
+				console.log(data)
 				setMessages([...messages, { ...data }])
 				setTimeout(() => {
 					chatContainer.scrollTop = chatContainer.scrollHeight
@@ -99,17 +100,17 @@ const ChatBox = (props: IChat) => {
 				<>
 					<div className={styles.content__body} ref={chatBodyRef}>
 						<ul>
-							{messages.map(({ Message: message, FromId: fromId, Id: id }: IMessage, index: number) => {
-								if (fromId === getUserId())
+							{messages.map(({ Message, FromId, Id }: IMessage, index: number) => {
+								if (FromId === getUserId())
 									return (
-										<li className={styles.message_mine} key={`message-${index}-${id}`}>
-											<span className={styles.message}>{message}</span>
+										<li className={styles.message_mine} key={`message-${index}-${Id}`}>
+											<span className={styles.message}>{Message}</span>
 										</li>
 									)
 								else
 									return (
-										<li className={styles.message_other} key={`message-${index}-${id}`}>
-											<span className={styles.message}>{message}</span>
+										<li className={styles.message_other} key={`message-${index}-${Id}`}>
+											<span className={styles.message}>{Message}</span>
 										</li>
 									)
 							})}
