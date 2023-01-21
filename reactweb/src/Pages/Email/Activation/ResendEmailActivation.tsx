@@ -20,7 +20,7 @@ const ResendEmailActivation = (props: { idUser?: number, idEmail?: string | null
 	return (
 		<div>
 			<p>Your account is not activated, please resend the email to activate it</p>
-			<input type={"button"} value="Resend the email" onClick={resendEmail} disabled={disableButton} />
+			<input type={"button"} value="Resend the email" className={ disableButton ? "blueButtonDisable" : "blueButtonActive"} onClick={resendEmail} disabled={disableButton} />
 			<p>{message}</p>
 		</div>
 	)
