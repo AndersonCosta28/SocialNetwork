@@ -4,7 +4,7 @@ import { getIsAuthenticated, getNickname, getUserId } from "../utils"
 
 export const connectToServerWebSocket = () =>
 	io("http://localhost:3001", {
-		auth: { authenticated: !!getIsAuthenticated() },
+		auth: { authenticated: getIsAuthenticated() },
 		query: {
 			Nickname: getNickname(),
 			UserId: getUserId(),

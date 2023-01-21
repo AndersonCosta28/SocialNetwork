@@ -3,7 +3,7 @@ import ErrorPage from "../ErrorPage"
 import { RouteObject } from "react-router-dom"
 import styles from "./feed.module.css"
 import TextareaAutosize from "react-textarea-autosize"
-import OnlineFriendsSideBar from "../../Components/OnlineFriendsSideBar"
+import OnlineFriendsSideBar from "../../Components/FriendsSideBar"
 import MyProfileSideBar from "../../Components/MyProfileSideBar"
 
 const Feed = () => {

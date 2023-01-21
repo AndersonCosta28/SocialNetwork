@@ -3,6 +3,7 @@ import { API_AXIOS } from "../Providers/axios"
 import { getUserId } from "../utils"
 import { IFriend, getAxiosErrorMessage } from "common"
 import { toast } from "react-hot-toast"
+import { useSocketIo } from "./SocketIoContext"
 
 export interface IFriendshipContext {
 	addFriend: (sourceId: number, targetName: string) => void
@@ -19,30 +20,49 @@ export const FriendshipProvider = ({ children }: { children: React.ReactNode }) 
 	const [friendList, setFriendList] = React.useState<IFriend[]>([])
 	const [disableButton, setDisableButton] = React.useState<boolean>(false)
 
-	React.useEffect(() => {
+	const { socket } = useSocketIo()
+
+	const requestAPI = React.useCallback(() => {
 		API_AXIOS.post("/friendship", { UserId: getUserId() })
 			.then((res) => setFriendList(res.data))
 			.catch(console.log)
 	}, [])
 
+	React.useEffect(() => {
+		requestAPI()
+		if (socket !== null)
+		 socket.on("update_list_friend", () => {
+				console.log("Atualizando a lista de amigos a pedido do servidor")
+				requestAPI()
+		 })
+
+
+	}, [])
+
 	const addFriend = (sourceId: number, targetName: string) => {
 		setDisableButton(true)
-		console.log(sourceId + "/" + targetName)
 		API_AXIOS.post("/friendship/add", {
 			SourceId: sourceId,
 			TargetName: targetName,
 		})
 			.then(console.log)
 			.catch((error) => toast.error(getAxiosErrorMessage(error)))
-			.finally(() => setDisableButton(false))
+			.finally(() => {
+				requestAPI()
+				setDisableButton(false)
+			})
 	}
 
 	const removeFriend = (idFriendship: number) => {
+		
 		setDisableButton(true)
 		API_AXIOS.post("/friendship/RemoveFriend", { idFriendship })
 			.then(console.log)
 			.catch((error) => toast.error(getAxiosErrorMessage(error)))
-			.finally(() => setDisableButton(false))
+			.finally(() => {
+				requestAPI()
+				setDisableButton(false)
+			})
 	}
 
 	const acceptFriendshipRequest = (idFriendship: number) => {
@@ -54,7 +74,10 @@ export const FriendshipProvider = ({ children }: { children: React.ReactNode }) 
 		})
 			.then(console.log)
 			.catch((error) => toast.error(getAxiosErrorMessage(error)))
-			.finally(() => setDisableButton(false))
+			.finally(() => {
+				requestAPI()
+				setDisableButton(false)
+			})
 	}
 
 	const rejectFriendshipRequest = (idFriendship: number) => {
@@ -66,7 +89,10 @@ export const FriendshipProvider = ({ children }: { children: React.ReactNode }) 
 		})
 			.then(console.log)
 			.catch((error) => toast.error(getAxiosErrorMessage(error)))
-			.finally(() => setDisableButton(false))
+			.finally(() => {
+				requestAPI()
+				setDisableButton(false)
+			})
 	}
 
 	const values = { addFriend, acceptFriendshipRequest, rejectFriendshipRequest, removeFriend, friendList, disableButton }

@@ -31,9 +31,6 @@ export default class FriendshipController implements IFriendshipController {
 		if (userTarget.id === Number(SourceId)) return response.status(StatusCode.ClientErrorBadRequest).json({ message: "You cannot add yourself" })
 
 		const friendship = await this.service.findOneByUsersId(SourceId, userTarget.id)
-		console.log(friendship)
-		if (friendship)
-			console.log(friendship?.Type === TypeOfFriendship.Removed)
 		if (friendship)
 			if (friendship.Type === TypeOfFriendship.Removed) return response.status(StatusCode.SuccessNoContent).send(await this.service.updateTypeFriendship(friendship, TypeOfFriendship.Requested))
 			else return response.status(StatusCode.ClientErrorConflict).json({ message: "Already exists" })

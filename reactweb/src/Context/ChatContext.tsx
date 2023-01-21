@@ -1,10 +1,9 @@
 import React, { ReactNode, useContext } from "react"
 import { createContext, useState } from "react"
 import { v4 as uuid4 } from "uuid"
-import { IUserInfo } from "common/Types/User"
 
 interface IChatContext {
-	openChat: (targetId: IUserInfo) => void
+	openChat: (targetId: { Nickname: string, id: number }) => void
 	closeChat: (chatId: string) => void
 	chats: IChat[]
 	toggleMinimizeChat: (chatId: string, value: boolean) => void
@@ -27,7 +26,7 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
 		localStorage.setItem("chats", JSON.stringify(chats))
 	}, [chats])
 
-	const openChat = (targetId: IUserInfo) => {
+	const openChat = (targetId: { Nickname: string, id: number }) => {
 		if (chats.find((chat: IChat) => chat.targetUserId === targetId.id)) return
 		const newChat: IChat = {
 			targetNickname: targetId.Nickname,

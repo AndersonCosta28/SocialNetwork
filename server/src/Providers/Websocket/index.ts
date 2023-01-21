@@ -2,10 +2,15 @@ import { Server, Socket } from "socket.io"
 import http from "http"
 import { IMessage } from "common/Types/Friendship"
 import { IUserSocket } from "common"
+import { DefaultEventsMap } from "socket.io/dist/typed-events"
 
-export const WebSocket = (server: http.Server) => {
-	let users: Array<IUserSocket> = []
-	const io = new Server(server, {
+export let connectedUsers: Array<IUserSocket> = []
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+let io: Server<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>
+
+
+export const setIo = (server: http.Server) => {
+	io = new Server(server, {
 		cors: {
 			origin: "*",
 			methods: "*",
@@ -22,21 +27,21 @@ export const WebSocket = (server: http.Server) => {
 		const socketsIdArray = Array.from(io.sockets.sockets, ([name, value]) => ({ name, value })).map(value => value.value.id)
 		const { Nickname, UserId } = socket.handshake.query
 		if (socketsIdArray.some((value) => value.includes(socket.id)))
-			users.push({
+			connectedUsers.push({
 				SocketID: socket.id,
 				Nickname: String(Nickname ?? "Não identificado"),
 				UserId: Number(UserId),
 			})
 
-		io.emit("onlineUsers", users)
+		io.emit("onlineUsers", connectedUsers)
 		socket.on("message", (data: IMessage, callback) => {
 			const Message: IMessage = { ...data, Id: 0 }
-			users.forEach((userSocket: IUserSocket) => {
+			connectedUsers.forEach((userSocket: IUserSocket) => {
 				if (userSocket.UserId === data.ToId)
 					io.to(userSocket.SocketID).emit("message", Message)
 			})
 
-			users.forEach((userSocket: IUserSocket) => {
+			connectedUsers.forEach((userSocket: IUserSocket) => {
 				if (userSocket.UserId === data.FromId)
 					io.to(userSocket.SocketID).emit("message", Message)
 			})
@@ -45,10 +50,12 @@ export const WebSocket = (server: http.Server) => {
 
 		socket.on("disconnect", () => {
 			console.log("Desconectou")
-			users = users.filter((user) => user.SocketID !== socket.id)
-			io.emit("onlineUsers", users)
+			connectedUsers = connectedUsers.filter((user) => user.SocketID !== socket.id)
+			io.emit("onlineUsers", connectedUsers)
 		})
 	})
 
 	return io
 }
+
+export const getIo = () => io

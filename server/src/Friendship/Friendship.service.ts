@@ -1,6 +1,6 @@
 import { Repository } from "typeorm"
 import Friendship from "./Friendship.entity"
-import { IFriend, TypeOfFriendship } from "common/Types/Friendship"
+import { IFriend, TypesOfApplicants, TypeOfFriendship } from "common/Types/Friendship"
 import { CustomErrorAPI } from "common"
 
 export interface IFriendshipService {
@@ -26,12 +26,12 @@ export default class FriendshipService implements IFriendshipService {
 			select: {
 				UserSource: {
 					id: true,
-					// Nickname: true,
+					Nickname: true,
 					// Level: true,          
 				},
 				UserTarget: {
 					id: true,
-					// Nickname: true,
+					Nickname: true,
 					// Level: true,
 				},
 			},
@@ -44,6 +44,7 @@ export default class FriendshipService implements IFriendshipService {
 				Type: friendship.Type,
 				FriendId: friendship.UserSource.id === idUser ? friendship.UserTarget.id : friendship.UserSource.id,
 				FriendNickname: friendship.UserSource.id === idUser ? friendship.UserTarget.Nickname : friendship.UserSource.Nickname,
+				WhoRequested: friendship.UserSource.id === idUser ? TypesOfApplicants.Me : TypesOfApplicants.Other
 			})
 
 		return friendList
@@ -64,16 +65,19 @@ export default class FriendshipService implements IFriendshipService {
 		await this.repository.update(friendship.id, friendshipCreated)
 	}
 
-	reactToFriendRequest = async (react: boolean, userId: number, friendId: number): Promise<void> => {
-		const friendShip = await this.findOneByFriendshipId(friendId)
+	reactToFriendRequest = async (react: boolean, userId: number, friendShipId: number): Promise<void> => {
+		const friendShip = await this.findOneByFriendshipId(friendShipId)
 		if (!friendShip) throw new CustomErrorAPI("Friendship not found")
 		if (friendShip.UserTarget.id !== userId) throw new CustomErrorAPI("Only the recipient can react to the request")
-		if (react) await this.repository.update(friendId, { ...friendShip, Type: TypeOfFriendship.Friend })
-		else await this.repository.delete(friendId)
+		if (react) await this.updateTypeFriendship(friendShip, TypeOfFriendship.Friend )
+		else await this.repository.delete(friendShipId)
 	}
 
 	findOneByFriendshipId = async (id: number): Promise<Friendship | null> => {
-		const result = await this.repository.findOne({ where: { id } })
+		const result = await this.repository.findOne({ where: { id }, relations: {
+			UserSource: true,
+			UserTarget: true
+		} })
 		return result
 	}
 

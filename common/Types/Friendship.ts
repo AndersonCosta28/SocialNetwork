@@ -5,6 +5,8 @@ export enum TypeOfFriendship {
   "Removed"
 }
 
+export enum TypesOfApplicants { Me, Other }
+
 export interface ICreateBodyRequest {
   SourceId: number
   TargetName: string
@@ -29,7 +31,8 @@ export interface IMessage {
 
 export interface IFriend {
   FriendshipId: number
-  FriendId: number 
+  FriendId: number
   Type: TypeOfFriendship | string
   FriendNickname: string
+  WhoRequested: TypesOfApplicants
 }
