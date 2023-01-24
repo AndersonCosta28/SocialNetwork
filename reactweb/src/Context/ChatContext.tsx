@@ -1,12 +1,13 @@
+import { IFriend } from "common"
 import React, { ReactNode, useContext } from "react"
 import { createContext, useState } from "react"
 import { v4 as uuid4 } from "uuid"
 
 interface IChatContext {
-	openChat: (targetId: { Nickname: string, id: number }) => void
+	openChat: (friend: IFriend) => void
 	closeChat: (chatId: string) => void
 	chats: IChat[]
-	toggleMinimizeChat: (chatId: string, value: boolean) => void
+	toggleMinimizeChat: (chatId: string, value: boolean) => void	
 }
 
 const ChatContext = createContext<IChatContext | null>(null)
@@ -26,11 +27,38 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
 		localStorage.setItem("chats", JSON.stringify(chats))
 	}, [chats])
 
-	const openChat = (targetId: { Nickname: string, id: number }) => {
-		if (chats.find((chat: IChat) => chat.targetUserId === targetId.id)) return
+	// React.useEffect(() => {
+	// 	if (socket)
+	// 		socket.on("message", (data: IMessage) => {
+	// 			// É quando estou com o chat fechado e a origem não é essa instância (isso equivale é !isLocalPlayer)
+	// 			// Não faz sentido ter que verificar junto com o data.ToId, pois de qualquer forma, preciso do chat aberto para enviar a mensagem
+	// 			const idToCompare = data.FromId === getUserId() ? data.ToId : data.FromId
+	// 			console.log("ID para comparação -> " + idToCompare)
+	// 			const chat = chats.find((chat: IChat) => chat.targetUserId === idToCompare)
+	// 			if (!chat) {
+	// 				const friend = friendList.find((_friend: IFriend) => _friend.FriendId === idToCompare)
+	// 				if (!friend) throw new Error("Friend not Found to open a chat")
+	// 				// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+	// 				openChat(friend)
+	// 			}
+	// 			const _chats = chats.map((chat: IChat) => {
+	// 				if (chat.targetUserId === idToCompare)
+	// 					chat?.messages?.push(data)
+	// 				return chat
+	// 			})
+	// 			setChats(_chats)
+	// 		})
+
+	// 	return () => {
+	// 		if (socket) socket.off("message")
+	// 	}
+	// }, [socket])
+
+	const openChat = (friend: IFriend) => {
+		if (chats.find((chat: IChat) => chat.targetUserId === friend.FriendId)) return
 		const newChat: IChat = {
-			targetNickname: targetId.Nickname,
-			targetUserId: targetId.id,
+			targetNickname: friend.FriendNickname,
+			targetUserId: friend.FriendId,
 			chatId: uuid4(),
 			isMinimized: false,
 		}

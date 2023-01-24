@@ -94,7 +94,5 @@ export default class FriendshipService implements IFriendshipService {
 		if (!modelFinded) throw new CustomErrorAPI("Friendship not found")
 		modelFinded.Type = TypeOfFriendship.Removed
 		await this.repository.update(id, modelFinded)
-		// const resultDelete: DeleteResult = await this.repository.delete({ id: id })
-		// return (resultDelete.affected ?? 0) > 0
 	}
 }

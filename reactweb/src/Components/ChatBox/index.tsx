@@ -28,18 +28,19 @@ const ChatBox = (props: IChat) => {
 		const chatContainer = chatBodyRef.current!
 		if (socket)
 			socket.on("message", (data: IMessage) => {
-				console.log(data)
-				setMessages([...messages, { ...data }])
-				setTimeout(() => {
-					chatContainer.scrollTop = chatContainer.scrollHeight
-				}, 500)
+				if ((data.FromId === props.targetUserId && data.ToId === getUserId()) || (data.ToId === props.targetUserId && data.FromId === getUserId())) {
+					setMessages((prevState: IMessage[]) => ([ ...prevState, data ]))
+					setTimeout(() => {
+						chatContainer.scrollTop = chatContainer.scrollHeight
+					}, 500)
+				}
 			})
 
 		return () => {
+			console.log("Desligou")
 			if (socket) socket.off("message")
 		}
-	}, [messages, socket])
-
+	}, [socket])
 	//#endregion
 
 	//#region Functions
@@ -89,7 +90,7 @@ const ChatBox = (props: IChat) => {
 
 	//#endregion
 	return (
-		<div className={styles.content}>
+		<div className={styles.content} id={props.chatId}>
 			<div className={styles.content__header} onClick={onClickOnHeaderElement} ref={headerElementRef}>
 				<span>{props.targetNickname}</span>
 				<div ref={closeElementRef}>

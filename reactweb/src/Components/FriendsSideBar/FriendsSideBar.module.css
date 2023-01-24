@@ -26,6 +26,12 @@
 	transition: background-color 0.3s;
 }
 
+.list__item__online span {
+	width: 100%;
+	padding-left: 10px;
+}
+
+
 .list__item__request {
 	flex-direction: column;
 }

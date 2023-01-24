@@ -41,9 +41,9 @@ const OnlineFriendsSideBar = () => {
 					friendList
 						.filter((item: IFriend) => item.Type === TypeOfFriendship.Friend)
 						.map((item: IFriend) => ({ ...item, online: onlineUsersId.includes(item.FriendId) }))
-						.sort((item1: IFriend & {online: boolean}, item2:  IFriend & {online: boolean}) => item2.online ? 1 : -1)
+						.sort((_, item2:  IFriend & {online: boolean}) => item2.online ? 1 : -1)
 						.map((item:  IFriend & {online: boolean}, index: number) => (
-							<li className={styles.list__item__online} key={index + "-friendOnline"} onClick={() => openChat({id: item.FriendId, Nickname: item.FriendNickname})}>
+							<li className={styles.list__item__online} key={index + "-friendOnline"} onClick={() => openChat(item)}>
 								<BsPersonCircle size={30} />
 								<span>{item.FriendNickname}</span>
 								{ item.online && <BsFillCircleFill size={7} color={"green"} /> }
