@@ -5,12 +5,12 @@ import { CustomErrorAPI } from "common"
 
 export interface IFriendshipService {
 	findAllByUser: (idUser: number) => Promise<IFriend[]>
+	findOneById: (id: number) => Promise<Friendship>
+	findOneByUsersId: (idSource: number, idTarget: number) => Promise<Friendship | null>
 	createFriendshipRequest: (userSource: number, userTarget: number) => Promise<void>
 	reactToFriendRequest: (react: boolean, userId: number, friendId: number) => Promise<void>
-	findOneByFriendshipId: (id: number) => Promise<Friendship | null>
 	remove: (id: number) => Promise<void>
 	updateTypeFriendship: (friendship: Friendship, type: TypeOfFriendship) => Promise<void>
-	findOneByUsersId: (idSource: number, idTarget: number) => Promise<Friendship | null>
 }
 
 export default class FriendshipService implements IFriendshipService {
@@ -66,18 +66,19 @@ export default class FriendshipService implements IFriendshipService {
 	}
 
 	reactToFriendRequest = async (react: boolean, userId: number, friendShipId: number): Promise<void> => {
-		const friendShip = await this.findOneByFriendshipId(friendShipId)
-		if (!friendShip) throw new CustomErrorAPI("Friendship not found")
+		const friendShip = await this.findOneById(friendShipId)
+		
 		if (friendShip.UserTarget.id !== userId) throw new CustomErrorAPI("Only the recipient can react to the request")
 		if (react) await this.updateTypeFriendship(friendShip, TypeOfFriendship.Friend )
 		else await this.repository.delete(friendShipId)
 	}
 
-	findOneByFriendshipId = async (id: number): Promise<Friendship | null> => {
-		const result = await this.repository.findOne({ where: { id }, relations: {
+	findOneById = async (id: number): Promise<Friendship> => {
+		const result : Friendship | null = await this.repository.findOne({ where: { id }, relations: {
 			UserSource: true,
 			UserTarget: true
 		} })
+		if (result === null) throw new CustomErrorAPI("Friendship not found")
 		return result
 	}
 
@@ -90,8 +91,8 @@ export default class FriendshipService implements IFriendshipService {
 	}
 
 	remove = async (id: number): Promise<void> => {
-		const modelFinded: Friendship | null = await this.findOneByFriendshipId(id)
-		if (!modelFinded) throw new CustomErrorAPI("Friendship not found")
+		const modelFinded: Friendship | null = await this.findOneById(id)
+
 		modelFinded.Type = TypeOfFriendship.Removed
 		await this.repository.update(id, modelFinded)
 	}

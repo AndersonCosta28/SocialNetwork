@@ -1,8 +1,14 @@
-import { Server, Socket } from "socket.io"
 import http from "http"
+import { Server, Socket } from "socket.io"
+import { DefaultEventsMap } from "socket.io/dist/typed-events"
 import { IMessage } from "common/Types/Friendship"
 import { IUserSocket } from "common"
-import { DefaultEventsMap } from "socket.io/dist/typed-events"
+import { messageService } from "../../Message"
+import Message from "../../Message/Message.entity"
+import { friendshipService } from "../../Friendship"
+import Friendship from "../../Friendship/Friendship.entity"
+import User from "../../User/User.entity"
+import { userService } from "../../User"
 
 export let connectedUsers: Array<IUserSocket> = []
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -34,18 +40,34 @@ export const setIo = (server: http.Server) => {
 			})
 
 		io.emit("onlineUsers", connectedUsers)
-		socket.on("message", (data: IMessage, callback) => {
-			const Message: IMessage = { ...data, Id: 0 }
-			connectedUsers.forEach((userSocket: IUserSocket) => {
-				if (userSocket.UserId === data.ToId)
-					io.to(userSocket.SocketID).emit("message", Message)
-			})
+		socket.on("message", async (data: IMessage, callback) => {
+			try {
+				const friendship: Friendship = await friendshipService.findOneById(data.FriendshipId)
+				const fromUser: User = await userService.findOneById(data.FromId)
+				const toUser: User = await userService.findOneById(data.ToId)
+				let message: Message = {
+					Friendship: friendship,
+					From: fromUser,
+					To: toUser,
+					id: 0,
+					Message: data.Message
+				}
+				message = await messageService.create(message)				
+				
+				connectedUsers.forEach((userSocket: IUserSocket) => {
+					if (userSocket.UserId === data.ToId)
+						io.to(userSocket.SocketID).emit("message", message)
+				})
 
-			connectedUsers.forEach((userSocket: IUserSocket) => {
-				if (userSocket.UserId === data.FromId)
-					io.to(userSocket.SocketID).emit("message", Message)
-			})
-			callback({ response: "OK" })
+				connectedUsers.forEach((userSocket: IUserSocket) => {
+					if (userSocket.UserId === data.FromId)
+						io.to(userSocket.SocketID).emit("message", message)
+				})
+				callback({ response: "OK" })
+			}
+			catch (error) {
+				callback({ response: "ERROR" })
+			}
 		})
 
 		socket.on("disconnect", () => {

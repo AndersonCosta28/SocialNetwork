@@ -23,10 +23,11 @@ export type IReactToFriendRequestBodyRequest = {
 }
 
 export interface IMessage {
+  FriendshipId: number
   FromId: number
   ToId: number
   Message: string
-  Id: number
+  id: number
 }
 
 export interface IFriend {

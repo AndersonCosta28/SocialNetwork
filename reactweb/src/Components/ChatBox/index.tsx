@@ -6,6 +6,9 @@ import { BiSend } from "react-icons/bi"
 import { GrClose } from "react-icons/gr"
 import { IChat, useChat } from "../../Context/ChatContext"
 import { getUserId } from "../../utils"
+import { API_AXIOS } from "../../Providers/axios"
+import { toast } from "react-hot-toast"
+import { getAxiosErrorMessage } from "common"
 
 const ChatBox = (props: IChat) => {
 	//#region Hooks
@@ -24,6 +27,15 @@ const ChatBox = (props: IChat) => {
 	const buttonSubmitMessageElementRef = useRef<HTMLInputElement>(null)
 
 	useEffect(() => {
+		API_AXIOS.get("/message/findByFriendship/" + props.friendshipId)
+			.then(res => {
+				console.log(res.data)
+				setMessages(res.data)
+			})
+			.catch(error => {
+				toast.error(getAxiosErrorMessage(error))
+			})
+
 		// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 		const chatContainer = chatBodyRef.current!
 		if (socket)
@@ -54,7 +66,8 @@ const ChatBox = (props: IChat) => {
 			FromId: userId,
 			ToId: props.targetUserId,
 			Message: message.trim(),
-			Id: 0,
+			id: 0,
+			FriendshipId: props.friendshipId
 		}
 
 		socket.timeout(4000).emit("message", messageToSend, (error: unknown, response: unknown) => {
@@ -101,16 +114,16 @@ const ChatBox = (props: IChat) => {
 				<>
 					<div className={styles.content__body} ref={chatBodyRef}>
 						<ul>
-							{messages.map(({ Message, FromId, Id }: IMessage, index: number) => {
+							{messages.map(({ Message, FromId, id }: IMessage, index: number) => {
 								if (FromId === getUserId())
 									return (
-										<li className={styles.message_mine} key={`message-${index}-${Id}`}>
+										<li className={styles.message_mine} key={`message-${index}-${id}`}>
 											<span className={styles.message}>{Message}</span>
 										</li>
 									)
 								else
 									return (
-										<li className={styles.message_other} key={`message-${index}-${Id}`}>
+										<li className={styles.message_other} key={`message-${index}-${id}`}>
 											<span className={styles.message}>{Message}</span>
 										</li>
 									)

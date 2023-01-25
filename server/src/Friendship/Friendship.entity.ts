@@ -27,7 +27,6 @@ export default class Friendship {
 	afterUpdate() {
 		if (this.Type === TypeOfFriendship.Friend) {
 			const connectecUserSource = connectedUsers.find((user: IUserSocket) => user.UserId === this.UserSource.id)
-			console.log(connectecUserSource)
 			if (connectecUserSource)
 				getIo().to(connectecUserSource.SocketID).emit("update_list_friend", "Teste")
 		}
@@ -43,7 +42,6 @@ export default class Friendship {
 		}
 
 		if (this.Type === TypeOfFriendship.Requested) { // Só acontece quando a amizade foi excluída e solicitada novamente, quando é a primeira vez tem que fazer essa verificação no after insert
-			console.log(this)
 			const connectecUserTarget = connectedUsers.find((user: IUserSocket) => user.UserId === this.UserTarget.id)
 			if (connectecUserTarget)
 				getIo().to(connectecUserTarget.SocketID).emit("update_list_friend", "Teste")

@@ -9,6 +9,7 @@ import { CustomErrorAPI, EmailTypes, UserStates } from "common"
 
 export interface IUserService extends ICrud<User> {
 	findOneByName: (name: string) => Promise<User | null>
+	findOneById: (id: number) => Promise<User>
 	activation: (uuid: string) => Promise<boolean>
 	resendActivationEmail: (uuid: string) => Promise<void>
 	sendRedefinePasswordEmail: (emailUser: string) => Promise<void>
@@ -37,7 +38,11 @@ export default class UserService implements IUserService {
 		// }
 	})
 
-	findOneById = async (id: number): Promise<User | null> => await this.repository.findOne({ where: { id } })
+	findOneById = async (id: number): Promise<User> => {
+		const user = await this.repository.findOne({ where: { id } })
+		if (!user) throw new CustomErrorAPI("User not found", 404)
+		return user
+	}
 
 	create = async (model: User): Promise<void> => {
 		const queryRunner = AppDataSource.createQueryRunner()
@@ -63,20 +68,17 @@ export default class UserService implements IUserService {
 	}
 
 	update = async (id: number, model: User): Promise<boolean> => {
-		const modelFinded: User | null = await this.findOneById(id)
-		if (!modelFinded) throw new CustomErrorAPI("User not found", 404)
-
+		const modelFinded: User = await this.findOneById(id)
 		const modelCreated = this.repository.create(model)
 		modelCreated.Password = await bcrypt.hash(modelCreated.Password, 10)
-		const resultUpdate: UpdateResult = await this.repository.update(id, modelCreated)
+		const resultUpdate: UpdateResult = await this.repository.update(modelFinded.id, modelCreated)
 		return (resultUpdate.affected ?? 0) > 0
 	}
 
 	delete = async (id: number): Promise<boolean> => {
-		const modelFinded: User | null = await this.findOneById(id)
-		if (!modelFinded != null) throw new CustomErrorAPI("User not found", 404)
+		const modelFinded: User = await this.findOneById(id)
 
-		const resultDelete: DeleteResult = await this.repository.delete({ id: id })
+		const resultDelete: DeleteResult = await this.repository.delete({ id: modelFinded.id })
 		return (resultDelete.affected ?? 0) > 0
 	}
 
@@ -84,8 +86,7 @@ export default class UserService implements IUserService {
 		const email: Email | null = await this.emailService.findOneByUUIDAndType(uuid, EmailTypes.Activation)
 		if (!email) throw new CustomErrorAPI("Email not found", 404)
 
-		const user: User | null = await this.findOneById(email.user.id)
-		if (!user) throw new CustomErrorAPI("User not found", 404)
+		const user: User = await this.findOneById(email.user.id)
 
 		if (Number(email.ExpiresAt) < new Date().getTime() && user.State === UserStates.WaitingForActivation) throw new CustomErrorAPI("The email has expired")
 
@@ -103,8 +104,7 @@ export default class UserService implements IUserService {
 			const email: Email | null = await this.emailService.findOneByUUIDAndType(uuid, EmailTypes.Activation)
 			if (!email) throw new CustomErrorAPI("Email not found", 404)
 
-			const user: User | null = await this.findOneById(email.user.id)
-			if (!user) throw new CustomErrorAPI("User not found", 404)
+			const user: User = await this.findOneById(email.user.id)
 
 			if (user.State !== UserStates.WaitingForActivation) throw new CustomErrorAPI(`User is ${user.State.toString()}`)
 
