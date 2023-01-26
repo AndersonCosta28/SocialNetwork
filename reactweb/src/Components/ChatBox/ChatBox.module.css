@@ -27,6 +27,7 @@
 	height: 200px;
 	overflow: auto;
 	scroll-behavior: smooth;
+	background-color: whitesmoke;
 	/* overflow-y: hidden; */
 }
 
@@ -57,6 +58,7 @@
 .message_other {
 	width: 100%;
 	display: flex;
+	overflow-wrap: anywhere;
 }
 
 .message_mine {
@@ -65,10 +67,12 @@
 
 .message_mine span {
 	background-color: rgb(0 128 0 / 50%);
+	width: 80%;
 }
 
 .message_other span {
 	background-color: rgb(0 55 255 / 50%);
+	width: 80%;
 }
 .message {
 	margin: 10px;

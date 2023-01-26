@@ -55,7 +55,7 @@ const HomePage = ({ children }: { children: ReactNode }) => {
 			</div>
 			{showArrowOptions ? <ModalArrowOptions /> : null}
 			{children}
-			<div id="chatContainer">
+			<div id="chatContainer">sad
 				{chats.map((chat: IChat, index: number) => <ChatBox friendshipId={chat.friendshipId} isMinimized={chat.isMinimized} chatId={chat.chatId} targetUserId={chat.targetUserId} targetNickname={chat.targetNickname} key={`${index}-chat`}/>)}
 			</div>
 		</div>

@@ -15,7 +15,7 @@ const OnlineFriendsSideBar = () => {
 	//#region External Hooks
 
 	const { onlineUsers } = useSocketIo()
-	const { openChat } = useChat()
+	const { openChatByFriend: openChat } = useChat()
 	const { friendList, acceptFriendshipRequest, rejectFriendshipRequest, removeFriend, disableButton } = useFriendship()
 
 	//#endregion

@@ -26,18 +26,21 @@ const ChatBox = (props: IChat) => {
 	const textAreaElementRef = useRef<HTMLTextAreaElement>(null)
 	const buttonSubmitMessageElementRef = useRef<HTMLInputElement>(null)
 
-	useEffect(() => {
+	useEffect(() => {	
+		// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+		const chatContainer = chatBodyRef.current!
 		API_AXIOS.get("/message/findByFriendship/" + props.friendshipId)
 			.then(res => {
 				console.log(res.data)
 				setMessages(res.data)
+				setTimeout(() => {
+					chatContainer.scrollTop = chatContainer.scrollHeight
+				}, 500)
 			})
 			.catch(error => {
 				toast.error(getAxiosErrorMessage(error))
-			})
+			})			
 
-		// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-		const chatContainer = chatBodyRef.current!
 		if (socket)
 			socket.on("message", (data: IMessage) => {
 				if ((data.FromId === props.targetUserId && data.ToId === getUserId()) || (data.ToId === props.targetUserId && data.FromId === getUserId())) {
