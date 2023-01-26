@@ -14,7 +14,7 @@ export default class AuthenticationService implements IAuthenticationService {
 	constructor(private readonly userService: IUserService) {}
 
 	login = async (usuarioLogin: IUserLogin): Promise<IResponseLogin> => {
-		const user = (await this.userService.findOneByName(usuarioLogin.Login)) as User
+		const user = (await this.userService.findOneByName(usuarioLogin.Login, true)) as User
 		if (!user) 
 			return { code: StatusCode.ClientErrorNotFound, message: "User doesn't exist", authenticated: false }		
 

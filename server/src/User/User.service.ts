@@ -8,7 +8,7 @@ import Email from "../Email/Email.entity"
 import { CustomErrorAPI, EmailTypes, UserStates } from "common"
 
 export interface IUserService extends ICrud<User> {
-	findOneByName: (name: string) => Promise<User | null>
+	findOneByName: (name: string, bringPassword?: boolean) => Promise<User | null>
 	findOneById: (id: number) => Promise<User>
 	activation: (uuid: string) => Promise<boolean>
 	resendActivationEmail: (uuid: string) => Promise<void>
@@ -19,8 +19,18 @@ export interface IUserService extends ICrud<User> {
 export default class UserService implements IUserService {
 	constructor(private readonly repository: Repository<User>, private readonly emailService: IEmailService) { }
 
-	findOneByName = async (name: string): Promise<User | null> =>
-		await this.repository.findOneBy({ Login: name.toLowerCase() })
+	findOneByName = async (name: string, bringPassword = false): Promise<User | null> =>
+		await this.repository.findOne({
+			where: { Login: name.toLowerCase() },
+			select:	{
+				id: true,
+				Login: true,
+				Email: true,
+				Nickname: true,				
+				Password: bringPassword,
+				State: true
+			}
+		})
 
 	findAll = async (): Promise<User[]> => await this.repository.find({
 		select: {

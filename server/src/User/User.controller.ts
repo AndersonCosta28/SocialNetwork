@@ -17,9 +17,10 @@ export default class UserController implements IUserController {
 		const router: Router = Router()
 		router.get("/", this.findAll)
 		router.get("/:id", this.findOneById)
-		router.post("/", this.create)
+		router.get("/findOneByName/:nickname", this.findOneByName)
 		router.put("/:id", this.update)
 		router.delete("/:id", this.delete)
+		router.post("/", this.create)
 		router.post("/activation", this.activation)
 		router.post("/resendActivationEmail", this.resendActivationEmail)
 		router.post("/sendRedefinePasswordEmail", this.sendRedefinePasswordEmail)
@@ -33,7 +34,11 @@ export default class UserController implements IUserController {
 	findOneById = async (request: Request, response: Response): Promise<Response> => {
 		const { id } = request.params
 		return response.status(StatusCode.SuccessOK).send(await this.service.findOneById(Number(id)))
+	}
 
+	findOneByName = async (request: Request, response: Response): Promise<Response> => {
+		const { nickname } = request.params
+		return response.status(StatusCode.SuccessOK).send(await this.service.findOneByName(String(nickname)))
 	}
 
 	create = async (request: Request, response: Response): Promise<Response> => {

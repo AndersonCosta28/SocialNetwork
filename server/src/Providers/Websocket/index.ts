@@ -52,16 +52,25 @@ export const setIo = (server: http.Server) => {
 					id: 0,
 					Message: data.Message
 				}
-				message = await messageService.create(message)				
-				
+
+
+				message = await messageService.create(message)
+				const imessage: IMessage = {
+					FriendshipId: message.Friendship.id,
+					FromId: message.From.id,
+					id: message.id,
+					Message: message.Message,
+					ToId: message.To.id
+				}
+
 				connectedUsers.forEach((userSocket: IUserSocket) => {
 					if (userSocket.UserId === data.ToId)
-						io.to(userSocket.SocketID).emit("message", message)
+						io.to(userSocket.SocketID).emit("message", imessage)
 				})
 
 				connectedUsers.forEach((userSocket: IUserSocket) => {
 					if (userSocket.UserId === data.FromId)
-						io.to(userSocket.SocketID).emit("message", message)
+						io.to(userSocket.SocketID).emit("message", imessage)
 				})
 				callback({ response: "OK" })
 			}
