@@ -1,5 +1,5 @@
 import React, { ReactNode, createContext, useContext, useEffect, useMemo, useState } from "react"
-import { connectToServerWebSocket } from "../Providers/axios"
+import { connectToServerWebSocket } from "Providers/axios"
 import { Socket } from "socket.io-client"
 import { useAuth } from "./AuthContext"
 import { IUserSocket } from "common"

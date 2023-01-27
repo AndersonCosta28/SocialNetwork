@@ -1,10 +1,10 @@
 import React, { useEffect, useState, useRef } from "react"
 import styles from "./login.module.css"
 import { IUserLogin } from "common/Types/User"
-import { useAuth } from "../../Context/AuthContext"
+import { useAuth } from "Context/AuthContext"
 import { NavLink, RouteObject, useNavigate } from "react-router-dom"
 import Typed from "typed.js"
-import FormField from "../../Components/FormField"
+import FormField from "Components/FormField"
 
 const Login = () => {
 	const navigate = useNavigate()

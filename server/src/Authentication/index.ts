@@ -1,4 +1,4 @@
-import { userService } from "../User"
+import { userService } from "User"
 import AuthenticationController, { IAuthenticationController } from "./authentication.controller"
 import AuthenticationService, { IAuthenticationService } from "./authentication.service"
 

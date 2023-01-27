@@ -1,8 +1,8 @@
 import React, { useState } from "react"
 import { NavLink, RouteObject } from "react-router-dom"
-import { API_AXIOS } from "../../Providers/axios"
+import { API_AXIOS } from "Providers/axios"
 import { getAxiosErrorMessage } from "common"
-import FormField from "../../Components/FormField"
+import FormField from "Components/FormField"
 
 enum ScreenForgetPassword {
 	"Default",

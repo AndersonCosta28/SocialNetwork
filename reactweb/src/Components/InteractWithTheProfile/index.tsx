@@ -1,9 +1,9 @@
 import React from "react"
 import { BsFillPersonPlusFill, BsFillPersonCheckFill, BsFillPersonDashFill } from "react-icons/bs"
 import { IFriend, TypeOfFriendship } from "common"
-import { useFriendship } from "../../Context/FriendshipContext"
-import { getUserId } from "../../utils"
-import { API_AXIOS } from "../../Providers/axios"
+import { useFriendship } from "Context/FriendshipContext"
+import { getUserId } from "utils"
+import { API_AXIOS } from "Providers/axios"
 import { toast } from "react-hot-toast"
 
 const InteractWithTheProfile = (props: { FriendId: number; FriendNickname: string }) => {

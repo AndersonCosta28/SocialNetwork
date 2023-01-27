@@ -3,12 +3,12 @@ import { Server, Socket } from "socket.io"
 import { DefaultEventsMap } from "socket.io/dist/typed-events"
 import { IMessage } from "common/Types/Friendship"
 import { IUserSocket } from "common"
-import { messageService } from "../../Message"
-import Message from "../../Message/Message.entity"
-import { friendshipService } from "../../Friendship"
-import Friendship from "../../Friendship/Friendship.entity"
-import User from "../../User/User.entity"
-import { userService } from "../../User"
+import { messageService } from "Message"
+import Message from "Message/Message.entity"
+import { friendshipService } from "Friendship"
+import Friendship from "Friendship/Friendship.entity"
+import User from "User/User.entity"
+import { userService } from "User"
 
 export let connectedUsers: Array<IUserSocket> = []
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -52,8 +52,7 @@ export const setIo = (server: http.Server) => {
 					id: 0,
 					Message: data.Message
 				}
-
-
+				
 				message = await messageService.create(message)
 				const imessage: IMessage = {
 					FriendshipId: message.Friendship.id,

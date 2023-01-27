@@ -4,7 +4,7 @@ import { StatusCode } from "status-code-enum"
 
 import { IUserService } from "User/User.service"
 import { IFriendshipService } from "./Friendship.service"
-import IController from "@Types/IController"
+import IController from "Types/IController"
 
 export interface IFriendshipController extends IController {
 	create: (request: Request, response: Response) => Promise<Response>

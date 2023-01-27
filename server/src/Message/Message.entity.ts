@@ -1,6 +1,6 @@
-import Friendship from "../Friendship/Friendship.entity"
+import Friendship from "Friendship/Friendship.entity"
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm"
-import User from "../User/User.entity"
+import User from "User/User.entity"
 
 @Entity()
 export default class Message {

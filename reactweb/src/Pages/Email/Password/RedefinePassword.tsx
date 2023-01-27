@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react"
 import { LoaderFunctionArgs, NavLink, RouteObject } from "react-router-dom"
-import { API_AXIOS } from "../../../Providers/axios"
+import { API_AXIOS } from "Providers/axios"
 import { getAxiosErrorMessage, regexPassword } from "common"
 import RedefinePasswordError from "./RedefinePasswordError"
-import FormField from "../../../Components/FormField"
+import FormField from "Components/FormField"
 
 type Passwords = {
 	password: string

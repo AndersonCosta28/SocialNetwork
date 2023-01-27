@@ -7,6 +7,7 @@ import http from "http"
 import { MiddlewareError } from "./Middleware/Error"
 import "express-async-errors"
 import { messageController } from "./Message"
+import { profileController } from "./Profile"
 
 const app = express()
 app.use(express.json())
@@ -18,6 +19,7 @@ app.use(prefix + "user", userController.routers())
 app.use(prefix + "authentication", authenticationController.routers())
 app.use(prefix + "friendship", friendshipController.routers())
 app.use(prefix + "message", messageController.routers())
+app.use(prefix + "profile", profileController.routers())
 app.get(prefix + "ping", (request: Request, response: Response) => response.send("<b>pong</b>"))
 
 app.use(MiddlewareError) // TODO: https://expressjs.com/en/guide/error-handling.html // Writing error handlers (using next(error in controllers))

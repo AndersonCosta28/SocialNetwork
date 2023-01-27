@@ -1,10 +1,10 @@
 import React, { useReducer, useState } from "react"
 import { RouteObject, useNavigate } from "react-router-dom"
-import { IUserRegister } from "common/Types/User"
-import { useAuth } from "../../Context/AuthContext"
-import styles from "./register.module.css"
-import FormField from "../../Components/FormField"
 import { regexPassword } from "common"
+import { IUserRegister } from "common/Types/User"
+import { useAuth } from "Context/AuthContext"
+import styles from "./register.module.css"
+import FormField from "Components/FormField"
 
 type FormError = {
 	Nickname: {

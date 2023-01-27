@@ -1,5 +1,5 @@
 import { EmailTypes } from "common"
-import User from "../User/User.entity"
+import User from "User/User.entity"
 import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm"
 @Entity()
 export default class Email {

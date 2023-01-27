@@ -1,10 +1,10 @@
 import React from "react"
 import { BsPersonCircle } from "react-icons/bs"
 import styles from "./MyProfileSideBar.module.css"
-import { getNickname, getUserId } from "../../utils"
-import { useProtected } from "../../Context/ProtectedContext"
+import { getNickname, getUserId } from "utils"
+import { useProtected } from "Context/ProtectedContext"
 import { IUserInfo, UserStates } from "common/Types/User"
-import ResendEmailActivation from "../../Pages/Email/Activation/ResendEmailActivation"
+import ResendEmailActivation from "Pages/Email/Activation/ResendEmailActivation"
 import { useNavigate } from "react-router-dom"
 
 const MyProfileSideBar = () => {
@@ -29,7 +29,7 @@ const MyProfileSideBar = () => {
 
 	return (
 		<div id={styles.content}>
-			<div onClick={goToMyProfile} >
+			<div onClick={goToMyProfile} className={`flex_column_center_center ${styles.content__profile}`}>
 				<div id={styles.content__top}>
 					<BsPersonCircle size={100} />
 				</div>

@@ -1,8 +1,8 @@
-import { connectedUsers, getIo } from "../Providers/Websocket"
+import { connectedUsers, getIo } from "Providers/Websocket"
 import { IUserSocket } from "common"
 import { TypeOfFriendship } from "common/Types/Friendship"
 import { AfterInsert, AfterUpdate, Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm"
-import User from "../User/User.entity"
+import User from "User/User.entity"
 
 @Entity()
 export default class Friendship {

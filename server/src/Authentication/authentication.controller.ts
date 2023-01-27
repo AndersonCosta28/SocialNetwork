@@ -1,7 +1,7 @@
 import { Request, Response, Router } from "express"
 import { IAuthenticationService } from "./authentication.service"
 import { IUserLogin } from "common/Types/User"
-import IController from "@Types/IController"
+import IController from "Types/IController"
 
 export interface IAuthenticationController extends IController {
 	login: (request: Request, response: Response) => Promise<Response>

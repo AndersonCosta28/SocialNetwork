@@ -1,4 +1,4 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm"
+import { AfterLoad, Column, Entity, PrimaryGeneratedColumn } from "typeorm"
 
 @Entity()
 export default class Profile {
@@ -6,5 +6,18 @@ export default class Profile {
     	id: number
 
     @Column({ default: "" })
-    	Description: string
+    	Description?: string
+
+    @Column({ type: "blob" })
+    	Photo?: Buffer | string
+
+    @Column()
+    	Local?: string
+
+
+    @AfterLoad()
+    afterLoad?() {
+    	this.Photo = this.Photo?.toString("base64")
+    	console.log(this)
+    }
 }

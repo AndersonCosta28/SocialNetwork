@@ -1,4 +1,4 @@
-import IController from "@Types/IController"
+import IController from "Types/IController"
 import { Request, Response, Router } from "express"
 import { StatusCode } from "status-code-enum"
 import MessageService from "./Message.service"

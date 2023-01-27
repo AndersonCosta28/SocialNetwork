@@ -1,6 +1,6 @@
 import axios from "axios"
 import React, { useState } from "react"
-import { BASE_URL_API_V1 } from "../../../Providers/axios"
+import { BASE_URL_API_V1 } from "Providers/axios"
 import { getAxiosErrorMessage } from "common"
 
 
@@ -18,7 +18,7 @@ const ResendEmailActivation = (props: { idUser?: number, idEmail?: string | null
 			.finally(() => setDisableButton(false))
 	}
 	return (
-		<div>
+		<div className="flex_column_center_center">
 			<p>Your account is not activated, please resend the email to activate it</p>
 			<input type={"button"} value="Resend the email" className={ disableButton ? "blueButtonDisable" : "blueButtonActive"} onClick={resendEmail} disabled={disableButton} />
 			<p>{message}</p>

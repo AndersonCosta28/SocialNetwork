@@ -1,10 +1,10 @@
 import { DeleteResult, Repository, UpdateResult } from "typeorm"
 import bcrypt from "bcrypt"
 import User from "./User.entity"
-import ICrud from "@Types/ICrud"
-import AppDataSource from "../Providers/Database/DataSource"
-import { IEmailService } from "../Email/Email.service"
-import Email from "../Email/Email.entity"
+import ICrud from "Types/ICrud"
+import AppDataSource from "Providers/Database/DataSource"
+import { IEmailService } from "Email/Email.service"
+import Email from "Email/Email.entity"
 import { CustomErrorAPI, EmailTypes, UserStates } from "common"
 
 export interface IUserService extends ICrud<User> {
@@ -59,7 +59,7 @@ export default class UserService implements IUserService {
 		try {
 			await queryRunner.connect()
 			await queryRunner.startTransaction()
-			model.Profile = { id: 0, Description: "" }
+			// model.Profile = { id: 0, Description: "" }
 			const modelCreated = this.repository.create(model)
 			const userSave: User = await queryRunner.manager.getRepository(User).save(modelCreated)
 			const { emailMessage, newEmail } = this.emailService.prepareActivationEmail(userSave)

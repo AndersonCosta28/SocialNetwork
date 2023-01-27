@@ -4,8 +4,8 @@ import styles from "./DataList.module.css"
 import { IoPerson } from "react-icons/io5"
 import { IUserInfo } from "common/Types/User"
 import { useNavigate } from "react-router-dom"
-import { getUserId } from "../../utils"
-import { useProtected } from "../../Context/ProtectedContext"
+import { getUserId } from "utils"
+import { useProtected } from "Context/ProtectedContext"
 
 const index = () => {
 	const [textSearch, setTextSearch] = React.useState<string>("")

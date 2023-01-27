@@ -1,6 +1,6 @@
 import React from "react"
 import { LoaderFunctionArgs, RouteObject, useLoaderData } from "react-router-dom"
-import { API_AXIOS } from "../../../Providers/axios"
+import { API_AXIOS } from "Providers/axios"
 import { getAxiosErrorMessage } from "common"
 import EmailActivationError from "./EmailActivationError"
 

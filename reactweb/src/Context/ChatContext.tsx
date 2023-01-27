@@ -2,7 +2,7 @@ import { IFriend, IMessage } from "common"
 import React, { ReactNode, useContext } from "react"
 import { createContext, useState } from "react"
 import { v4 as uuid4 } from "uuid"
-import { getUserId } from "../utils"
+import { getUserId } from "utils"
 import { useFriendship } from "./FriendshipContext"
 import { useSocketIo } from "./SocketIoContext"
 

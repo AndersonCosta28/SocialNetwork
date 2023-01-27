@@ -1,10 +1,10 @@
 import React from "react"
 import styles from "./FriendsSideBar.module.css"
 import { BsPersonCircle, BsFillCircleFill } from "react-icons/bs"
-import { useChat } from "../../Context/ChatContext"
+import { useChat } from "Context/ChatContext"
 import { IUserSocket } from "common/Types/User"
-import { useSocketIo } from "../../Context/SocketIoContext"
-import { useFriendship } from "../../Context/FriendshipContext"
+import { useSocketIo } from "Context/SocketIoContext"
+import { useFriendship } from "Context/FriendshipContext"
 import { IFriend, TypeOfFriendship, TypesOfApplicants } from "common"
 
 const OnlineFriendsSideBar = () => {
@@ -29,10 +29,10 @@ const OnlineFriendsSideBar = () => {
 	return (
 		<div id={styles.list}>
 			<div className={styles.list__header}>
-				<h3 className={`${styles.list__header__title} ${tab === Tab.FriendList ? styles.title__active : ""}`} onClick={() => setTab(Tab.FriendList)}>
+				<h3 className={`${tab === Tab.FriendList ? styles.title__active : ""}`} onClick={() => setTab(Tab.FriendList)}>
 					Friends
 				</h3>
-				<h3 className={`${styles.list__header__title} ${tab === Tab.RequestList ? styles.title__active : ""}`} onClick={() => setTab(Tab.RequestList)}>
+				<h3 className={`${tab === Tab.RequestList ? styles.title__active : ""}`} onClick={() => setTab(Tab.RequestList)}>
 					Request
 				</h3>
 			</div>

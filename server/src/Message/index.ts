@@ -1,4 +1,4 @@
-import AppDataSource from "../Providers/Database/DataSource"
+import AppDataSource from "Providers/Database/DataSource"
 import MessageController from "./Message.controller"
 import Message from "./Message.entity"
 import MessageService from "./Message.service"

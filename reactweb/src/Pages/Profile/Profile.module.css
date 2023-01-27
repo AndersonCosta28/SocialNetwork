@@ -3,6 +3,21 @@
 	position: relative
 }
 
+#photo__img {
+	width: 150px;
+	height: 150px;
+}
+
+#photo__pen {
+    position: absolute;
+	right: 0px;
+    bottom: 0px;
+}
+
+#photo__input {
+	display: none
+}
+
 #photo, .button__editANDsave {
 	position: absolute;
 	top: 30px;
@@ -12,10 +27,19 @@
 	right: 300px;
 }
 
-.input__edit {
+.fieldEdit {
+	position: relative
+}
+
+.fieldEdit > input {
 	background-color: white;
 	border-style: none;
 	text-align: center;
+}
+
+.fieldEdit > svg {
+	position: absolute; 
+	right: -20px;
 }
 
 /*#region container*/
@@ -27,6 +51,7 @@
 	padding: 30px;
 	border-radius: 20px;
 	margin-top: 70px;
+	padding-top: 100px;
 }
 
 #container > div {
@@ -42,7 +67,7 @@
 #container__top__name {
 	font-size: 30px;
 	font-weight: bold;
-	margin: 100px 10px 10px 10px;
+	margin: 10px 0px;
 	border-style: none;
 	text-align: center;
 }

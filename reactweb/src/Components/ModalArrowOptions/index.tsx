@@ -1,6 +1,6 @@
 import React from "react"
 import styles from "./ModalArrowOptions.module.css"
-import { useAuth } from "../../Context/AuthContext"
+import { useAuth } from "Context/AuthContext"
 import { useNavigate } from "react-router-dom"
 
 const ModalArrowOptions = () => {

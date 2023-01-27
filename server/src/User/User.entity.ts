@@ -1,7 +1,7 @@
 import { Entity, Column, BeforeInsert, PrimaryGeneratedColumn, OneToOne, JoinColumn } from "typeorm"
 import bcrypt from "bcrypt"
 import { UserStates } from "common/Types/User"
-import Profile from "../Profile/Profile.entity"
+import Profile from "Profile/Profile.entity"
 
 @Entity()
 export default class User {

@@ -1,6 +1,6 @@
 import { IUserInfo } from "common/Types/User"
 import React from "react"
-import { API_AXIOS } from "../Providers/axios"
+import { API_AXIOS } from "Providers/axios"
 import { getErrorMessage } from "common"
 import { toast } from "react-hot-toast"
 
@@ -12,7 +12,9 @@ const ProtectedContext = React.createContext<IProtectedContext | null>(null)
 
 export const ProtectedProvider = ({ children }: { children: React.ReactNode }) => {
 	const [allUsers, setAllUser] = React.useState<IUserInfo[]>([])
+	
 	React.useEffect(() => {
+		console.log("RENDERIZOU DE NOVO")
 		API_AXIOS.get("/user")
 			.then((res) => setAllUser(res.data))
 			.catch((error) => toast.error(getErrorMessage(error)))

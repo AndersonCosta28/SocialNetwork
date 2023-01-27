@@ -1,6 +1,6 @@
 import React, { createContext, useContext } from "react"
-import { API_AXIOS } from "../Providers/axios"
-import { getUserId } from "../utils"
+import { API_AXIOS } from "Providers/axios"
+import { getUserId } from "utils"
 import { IFriend, getAxiosErrorMessage } from "common"
 import { toast } from "react-hot-toast"
 import { useSocketIo } from "./SocketIoContext"
@@ -35,8 +35,6 @@ export const FriendshipProvider = ({ children }: { children: React.ReactNode }) 
 				console.log("Atualizando a lista de amigos a pedido do servidor")
 				requestAPI()
 		 })
-
-
 	}, [])
 
 	const addFriend = (sourceId: number, targetName: string) => {

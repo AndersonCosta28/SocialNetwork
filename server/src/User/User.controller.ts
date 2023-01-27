@@ -1,7 +1,7 @@
 import { StatusCode } from "status-code-enum"
 import { Request, Response, Router } from "express"
 import { IUserService } from "./User.service"
-import { IControllerCrud } from "@Types/IController"
+import { IControllerCrud } from "Types/IController" 
 import { CustomErrorAPI, EmailTypes } from "common"
 import { IEmailService } from "Email/Email.service"
 import Email from "Email/Email.entity"

@@ -1,7 +1,7 @@
-import { setIo } from "./Providers/Websocket"
+import { setIo } from "Providers/Websocket"
 import "reflect-metadata"
 import server from "./server"
-import "./Providers/Redis"
+import "Providers/Redis"
 
 // await redisClient.connect()
 setIo(server)

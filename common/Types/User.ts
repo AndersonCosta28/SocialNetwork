@@ -15,7 +15,10 @@ export interface IUserInfo {
   Email: string,
   State: string,
   Profile: {
+    id?: number
+    Photo: string | File | null
     Description: string
+    Local: string
   }
 }
 

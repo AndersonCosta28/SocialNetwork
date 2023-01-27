@@ -1,9 +1,9 @@
 import { AxiosResponse } from "axios"
 import { IResponseLogin, IUserLogin, IUserRegister, getAxiosErrorMessage } from "common"
 import React, { useContext, createContext, ReactNode, useState } from "react"
-import { getIsAuthenticated } from "../utils"
+import { getIsAuthenticated } from "utils"
 import { toast } from "react-hot-toast"
-import { API_AXIOS } from "../Providers/axios"
+import { API_AXIOS } from "Providers/axios"
 
 
 export interface IAuthContext {

@@ -1,6 +1,6 @@
 import axios from "axios"
 import { io } from "socket.io-client"
-import { getIsAuthenticated, getNickname, getUserId } from "../utils"
+import { getIsAuthenticated, getNickname, getUserId } from "utils"
 
 export const connectToServerWebSocket = () =>
 	io("http://localhost:3001", {

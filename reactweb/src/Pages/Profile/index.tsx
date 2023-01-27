@@ -1,16 +1,17 @@
 import React from "react"
 import { LoaderFunctionArgs, RouteObject, useLoaderData } from "react-router-dom"
-import styles from "./Profile.module.css"
+import { BiMessageDetail } from "react-icons/bi"
+import { RiMapPin2Line, RiPencilLine } from "react-icons/ri"
 import { BsPersonCircle } from "react-icons/bs"
 import { IUserInfo } from "common/Types/User"
-import { getUserId } from "../../utils"
-import { useChat } from "../../Context/ChatContext"
-import { useFriendship } from "../../Context/FriendshipContext"
-import InteractWithTheProfile from "../../Components/InteractWithTheProfile"
-import { BiMessageDetail } from "react-icons/bi"
-import { API_AXIOS } from "../../Providers/axios"
-import { RiMapPin2Line } from "react-icons/ri"
+import styles from "./Profile.module.css"
+import { getUserId } from "utils"
+import { useChat } from "Context/ChatContext"
+import { useFriendship } from "Context/FriendshipContext"
+import InteractWithTheProfile from "Components/InteractWithTheProfile"
+import { API_AXIOS } from "Providers/axios"
 import { getErrorMessage, IFriend, TypeOfFriendship } from "common"
+import { toast } from "react-hot-toast"
 
 const Profile = () => {
 	//#region Functions
@@ -25,7 +26,7 @@ const Profile = () => {
 
 	const onSaveProfile = () => {
 		API_AXIOS.post("/profile/" + user.id)
-			.then(res => {
+			.then((res) => {
 				console.log(res)
 				handlerIsEdit()
 			})
@@ -54,28 +55,89 @@ const Profile = () => {
 	const EditSaveButtons = () =>
 		user.id === getUserId() ? (
 			isEdit ? (
-				<input type="button" value="Save" className={`blueButtonActive ${styles.button__editANDsave}`} onClick={handlerIsEdit} />
+				<input type="button" value="Save" className={`blueButtonActive ${styles.button__editANDsave}`} onClick={onSaveProfile} />
 			) : (
-				<input type="button" value="Edit" className={`blueButtonActive ${styles.button__editANDsave}`} onClick={onSaveProfile} />
+				<input type="button" value="Edit" className={`blueButtonActive ${styles.button__editANDsave}`} onClick={handlerIsEdit} />
 			)
 		) : null
 
-	const Nickname = () =>
-		isEdit ? (
-			<input type={"text"} id={styles.container__top__name} className={styles.input__edit} value={user.Nickname} onChange={(e) => setUser((prev) => ({ ...prev, Nickname: e.target.value }))} />
+	const Nickname = () => {
+		const handlerNickname = (e: React.ChangeEvent<HTMLInputElement>) => {
+			const _user = user
+			_user.Nickname = e.target.value
+			setUser(_user)
+		}
+		return isEdit ? (
+			<div className={`flex_row_center_center ${styles.fieldEdit}`}>
+				<input type={"text"} id={styles.container__top__name} defaultValue={user.Nickname} onChange={handlerNickname} />
+				<RiPencilLine />
+			</div>
 		) : (
 			<span id={styles.container__top__name}>{user.Nickname}</span>
 		)
+	}
 
-	const Description = () =>
-		isEdit ? (
-			<input type={"text"} id={styles.container__mid__description} className={styles.input__edit} value={user.Profile.Description} onChange={(e) => setUser((prev) => ({ ...prev, Profile: { ...prev.Profile, Description: e.target.value } }))} />
+	const Description = () => {
+		const handlerDescription = (e: React.ChangeEvent<HTMLInputElement>) => {
+			const _user = user
+			_user.Profile.Description = e.target.value
+			setUser(_user)
+		}
+
+		return isEdit ? (
+			<div className={`flex_row_center_center ${styles.fieldEdit}`}>
+				<input type={"text"} id={styles.container__mid__description} defaultValue={user.Profile.Description} onChange={handlerDescription} />
+				<RiPencilLine />
+			</div>
 		) : (
 			<span id={styles.container__mid__description}>{user.Profile.Description}</span>
 		)
+	}
+
+	const Photo = () => {
+		const handlerPhoto = (e: React.ChangeEvent<HTMLInputElement>) => {
+			const { files } = e.target
+			if (files === null) {
+				toast.error("Nothing file selected")
+				return
+			}
+			const formData = new FormData()			
+			formData.append("avatar", files[0])
+			console.log(formData)
+			API_AXIOS.post("/profile/editPhoto/" + user.id, {
+				data: formData,
+				headers: { "Content-Type": "multipart/form-data" },
+			  })
+				.then(function (response) {
+				  //handle success
+				  console.log(response)
+				})
+				.catch(function (response) {
+				  //handle error
+				  console.log(response)
+				})
+			// const _user = user
+			// const file: File | null = files[0]
+			// _user.Profile.Photo = file
+			// setUser(user)
+		}
+
+		return (
+			<div id={styles.photo}>
+				{isEdit ? (
+					<>
+						<label htmlFor={styles.photo__input} id={styles.photo__pen}>
+							<RiPencilLine />
+						</label>
+						<input type="file" name="photo__input" id={styles.photo__input} onChange={handlerPhoto} />
+					</>
+				) : null}
+				{user.Profile.Photo ? <img id={styles.photo__img} src={`data:image/png;base64, ${user.Profile.Photo}`} alt="photo_profile" /> : <BsPersonCircle size={150} />}
+			</div>
+		)
+	}
 
 	//#endregion
-
 	//#region Internal Hooks
 	const [isEdit, setIsEdit] = React.useState<boolean>(false)
 	const { user: _user, friends } = useLoaderData() as { user: IUserInfo; friends: IFriend[] }
@@ -88,9 +150,9 @@ const Profile = () => {
 
 	return (
 		<div id={styles.page} className="flex_column_center_center">
-			<BsPersonCircle size={150} id={styles.photo} />
 			<EditSaveButtons />
 			<div id={styles.container} className="flex_column_center_center shadow_white">
+				<Photo />
 				<div id={styles.container__top}>
 					<Nickname />
 					<div className="flex_row_center_center">

@@ -9,6 +9,7 @@ This is the social network project under construction, try it, have fun and cont
 * SocketIO (websocket)
 * Redis (cache)
 * ReactJS
+* Docker (optional)
 
 # Prerequisites
 * Have NodeJS in its LTS version

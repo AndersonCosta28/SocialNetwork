@@ -1,12 +1,12 @@
 import React, { ReactNode } from "react"
-import { onClickOutSideComponent } from "../../utils"
+import { onClickOutSideComponent } from "utils"
 import { MdOutlineNotificationsNone } from "react-icons/md"
 import { IoIosArrowDown } from "react-icons/io"
-import ModalArrowOptions from "../../Components/ModalArrowOptions" 
-import DataList from "../../Components/DataList"
+import ModalArrowOptions from "Components/ModalArrowOptions" 
+import DataList from "Components/DataList"
 import styles from "./HomePage.module.css"
-import ChatBox from "../../Components/ChatBox"
-import { IChat, useChat } from "../../Context/ChatContext"
+import ChatBox from "Components/ChatBox"
+import { IChat, useChat } from "Context/ChatContext"
 import { useNavigate } from "react-router-dom"
 
 const HomePage = ({ children }: { children: ReactNode }) => {
@@ -55,7 +55,7 @@ const HomePage = ({ children }: { children: ReactNode }) => {
 			</div>
 			{showArrowOptions ? <ModalArrowOptions /> : null}
 			{children}
-			<div id="chatContainer">sad
+			<div id="chatContainer">
 				{chats.map((chat: IChat, index: number) => <ChatBox friendshipId={chat.friendshipId} isMinimized={chat.isMinimized} chatId={chat.chatId} targetUserId={chat.targetUserId} targetNickname={chat.targetNickname} key={`${index}-chat`}/>)}
 			</div>
 		</div>

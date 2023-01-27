@@ -1,9 +1,17 @@
 #content {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
 }
 
-#content > div {
-    margin: 5px
+.content__profile {
+	padding: 10px;
+	width: 100%;
+	border-radius: 20px;
+	transition: background-color 0.5s;
+}
+
+.content__profile:hover {
+	cursor: pointer;
+	background-color: rgb(220, 220, 220);
 }
