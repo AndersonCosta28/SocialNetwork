@@ -25,7 +25,7 @@ const Protected = () => {
 			<ProtectedProvider>
 				<FriendshipProvider>
 					<ChatProvider>
-						<div className="BackgrounGreyFullSize">
+						<div className="BackgroundGreyFullSize">
 							<HomePage>
 								<Outlet />
 							</HomePage>

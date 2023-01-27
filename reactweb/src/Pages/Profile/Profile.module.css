@@ -1,13 +1,32 @@
 #page {
 	padding: 20px;
+	position: relative
+}
+
+#photo, .button__editANDsave {
+	position: absolute;
+	top: 30px;
+}
+
+.button__editANDsave {
+	right: 300px;
+}
+
+.input__edit {
+	background-color: white;
+	border-style: none;
+	text-align: center;
 }
 
 /*#region container*/
 
 #container {
-	width: 50%;
+	width: 60%;
 	height: fit-content;
-	/* background-color: rgb(0, 0, 255, 0.2); */
+	background-color: white;
+	padding: 30px;
+	border-radius: 20px;
+	margin-top: 70px;
 }
 
 #container > div {
@@ -20,14 +39,20 @@
 	align-items: center;
 	justify-content: center;
 }
-#container__top__span__name {
-	font-size: 24px;
+#container__top__name {
+	font-size: 30px;
+	font-weight: bold;
+	margin: 100px 10px 10px 10px;
+	border-style: none;
+	text-align: center;
 }
 
-#container__top__span__description {
+#container__mid__description {
 	font-size: 16px;
 	color: #8b94a2;
+	text-align: center;
 }
+
 /*#endregion */
 
 /*#region container__mid*/
@@ -47,6 +72,7 @@
 
 #container__mid__info div {
     margin: 10px;
+	padding: 5px;
 }
 
 .container__mid__info__div {
@@ -58,7 +84,12 @@
 }
 
 .container__mid__info__div > span {
-	margin: 10px 10px;
+	margin: 5px 5px;
+	text-align: center;
+}
+
+.container__mid__info__div__number {
+	font-weight: bold;
 }
 /*#endregion */
 

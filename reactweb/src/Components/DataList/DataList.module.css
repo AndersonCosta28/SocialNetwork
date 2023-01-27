@@ -30,6 +30,7 @@
 	top: 40px;
 	overflow-y: auto;
 	border-radius: 5px;
+	z-index: 9999;
 }
 
 #searchBar__list li {
