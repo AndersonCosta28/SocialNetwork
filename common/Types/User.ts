@@ -9,24 +9,26 @@ export interface IUserSocket {
   Nickname: string
 }
 
-export interface IUserInfo {
+export interface IProfileInfo {
   id: number,
   Nickname: string,
   Email: string,
   State: string,
-  Profile: {
-    id?: number
-    Photo: string | File | null
-    Description: string
-    Local: string
-  }
+  Avatar: string | File | null,
+  AvatarBase64: string,
+  AvatarType: string,
+  AvatarId: number,
+  Description: string,
+  Local: string,
 }
 
 export interface IUserRegister {
   Login: string
   Password: string
   Email: string
-  Nickname: string
+  Profile: {
+    Nickname: string
+  }
 }
 
 export enum UserStates {

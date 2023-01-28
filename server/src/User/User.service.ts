@@ -6,6 +6,7 @@ import AppDataSource from "Providers/Database/DataSource"
 import { IEmailService } from "Email/Email.service"
 import Email from "Email/Email.entity"
 import { CustomErrorAPI, EmailTypes, UserStates } from "common"
+import Files from "Files/Files.entity"
 
 export interface IUserService extends ICrud<User> {
 	findOneByName: (name: string, bringPassword?: boolean) => Promise<User | null>
@@ -19,22 +20,14 @@ export interface IUserService extends ICrud<User> {
 export default class UserService implements IUserService {
 	constructor(private readonly repository: Repository<User>, private readonly emailService: IEmailService) { }
 
-	findOneByName = async (name: string, bringPassword = false): Promise<User | null> =>
-		await this.repository.findOne({
-			where: { Login: name.toLowerCase() },
-			select:	{
-				id: true,
-				Login: true,
-				Email: true,
-				Nickname: true,				
-				Password: bringPassword,
-				State: true
-			}
-		})
+	findOneByName = async (name: string): Promise<User | null> => {
+		const user = await this.repository.findOne({ where: { Login: name.toLowerCase() } })
+		if (!user) throw new Error("User not found")
+		return user
+	}
 
 	findAll = async (): Promise<User[]> => await this.repository.find({
 		select: {
-			Nickname: true,
 			Email: true,
 			id: true,
 			State: true,
@@ -59,8 +52,8 @@ export default class UserService implements IUserService {
 		try {
 			await queryRunner.connect()
 			await queryRunner.startTransaction()
-			// model.Profile = { id: 0, Description: "" }
 			const modelCreated = this.repository.create(model)
+			modelCreated.Profile.Avatar = new Files()
 			const userSave: User = await queryRunner.manager.getRepository(User).save(modelCreated)
 			const { emailMessage, newEmail } = this.emailService.prepareActivationEmail(userSave)
 			await this.emailService.sendMail(emailMessage)

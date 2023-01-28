@@ -47,7 +47,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 	const createAccount = (e: React.FormEvent<HTMLFormElement>, userRegister: IUserRegister, callbackSucess: (data: string) => void = () => null, callbackError: (errorMessage: string) => void = () => null): void => {
 		e.preventDefault()
 		setDisableButton(true)
-		userRegister.Login = userRegister.Nickname.toLowerCase()
+		userRegister.Login = userRegister.Profile.Nickname.toLowerCase()
 		API_AXIOS
 			.post<null>("user", userRegister)
 			.then((res: AxiosResponse) => {

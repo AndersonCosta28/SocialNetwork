@@ -3,28 +3,47 @@
 	position: relative
 }
 
-#photo__img {
+#avatar__img {
 	width: 150px;
 	height: 150px;
+	border-radius: 50%;
 }
 
-#photo__pen {
-    position: absolute;
-	right: 0px;
-    bottom: 0px;
-}
-
-#photo__input {
+#avatar__input {
 	display: none
 }
 
-#photo, .button__editANDsave {
+#avatar, .button__editANDsave {
 	position: absolute;
 	top: 30px;
 }
 
+#previewImage {
+	height: 50vh; width: 50vw; position: absolute; 
+	background-color: white;
+	z-index: 1;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: space-evenly;
+}
+
+#previewImage__img {
+	height: 200px;
+	width: 200px;
+	border-radius: 50%;
+}
+
+#previewImage__buttons {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: space-between;
+	width: 50%;
+}
+
 .button__editANDsave {
-	right: 300px;
+	right: 20vw;
 }
 
 .fieldEdit {

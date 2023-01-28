@@ -2,22 +2,36 @@ import React from "react"
 import { LoaderFunctionArgs, RouteObject, useLoaderData } from "react-router-dom"
 import { BiMessageDetail } from "react-icons/bi"
 import { RiMapPin2Line, RiPencilLine } from "react-icons/ri"
-import { BsPersonCircle } from "react-icons/bs"
-import { IUserInfo } from "common/Types/User"
+import { IProfileInfo } from "common/Types/User"
 import styles from "./Profile.module.css"
 import { getUserId } from "utils"
 import { useChat } from "Context/ChatContext"
 import { useFriendship } from "Context/FriendshipContext"
 import InteractWithTheProfile from "Components/InteractWithTheProfile"
 import { API_AXIOS } from "Providers/axios"
-import { getErrorMessage, IFriend, TypeOfFriendship } from "common"
+import { getAxiosErrorMessage, getErrorMessage, IFriend, TypeOfFriendship } from "common"
 import { toast } from "react-hot-toast"
+import { Buffer } from "buffer"
+import Avatar from "Components/Avatar"
 
 const Profile = () => {
+	//#region Internal Hooks
+	const [isEdit, setIsEdit] = React.useState<boolean>(false)
+	const { profile: _profile, friends } = useLoaderData() as { profile: IProfileInfo; friends: IFriend[] }
+	const [profile, setProfile] = React.useState(_profile)
+	const [isPreview, setIsPreview] = React.useState<boolean>(false)
+	const [avatarFile, setAvatarFile] = React.useState<File | null>(null)
+
+	//#endregion
+	//#region External Hooks
+	const { friendList, disableButton } = useFriendship()
+	const { openChatByFriend: openChat } = useChat()
+	//#endregion
+
 	//#region Functions
 	let friendShip: IFriend
 	const getFriendShip = (): IFriend | undefined => {
-		const friendShipTemp: IFriend | undefined = friendList.find((friend) => friend.FriendId === user?.id && friend.Type === TypeOfFriendship.Friend)
+		const friendShipTemp: IFriend | undefined = friendList.find((friend) => friend.FriendId === profile?.id && friend.Type === TypeOfFriendship.Friend)
 		if (friendShipTemp) friendShip = friendShipTemp
 		return friendShipTemp
 	}
@@ -25,12 +39,49 @@ const Profile = () => {
 	const handlerIsEdit = () => setIsEdit(!isEdit)
 
 	const onSaveProfile = () => {
-		API_AXIOS.post("/profile/" + user.id)
+		API_AXIOS.put("/profile/" + profile.id, {
+			Description: profile.Description,
+			Local: profile.Local,
+		})
 			.then((res) => {
 				console.log(res)
 				handlerIsEdit()
 			})
 			.catch(console.log)
+	}
+
+	const handlerAvatar = (e: React.ChangeEvent<HTMLInputElement>) => {
+		const { files } = e.target
+		if (files === null) {
+			toast.error("Nothing file selected")
+			return
+		}
+		setAvatarFile(files[0])
+		setIsPreview(true)
+
+		// const _user = user
+		// const file: File | null = files[0]
+		// _user.Profile.Avatar= file
+		// setUser(user)
+	}
+
+	const sendAvatar = async () => {
+		if (!avatarFile) {
+			toast.error("The avatar imagem was not loaded")
+			return
+		}
+		const formData = new FormData()
+		formData.append("avatar", avatarFile)
+		try {
+			await API_AXIOS({ url: "/files/changeAvatar/" + profile.AvatarId, method: "post", headers: { "Content-Type": "multipart/form-data" }, data: formData })
+			const _user = profile
+			_user.Avatar = Buffer.from(await avatarFile.arrayBuffer()).toString("base64")
+			setProfile(_user)
+			setIsPreview(false)
+		}
+		catch (error) {
+			toast.error(getAxiosErrorMessage(error))
+		}
 	}
 
 	//#endregion
@@ -43,18 +94,18 @@ const Profile = () => {
 		) : null
 
 	const SocialButtons = () =>
-		user.id === getUserId() || !user ? null : (
+		profile.id === getUserId() || !profile ? null : (
 			<div id={styles.container__bottom} className="flex_row_center_center">
 				<Message />
 				<div className={`${disableButton ? "blueButtonDisable" : "blueButtonActive"}`}>
-					<InteractWithTheProfile FriendId={user.id} FriendNickname={user.Nickname} />
+					<InteractWithTheProfile FriendId={profile.id} FriendNickname={profile.Nickname} />
 				</div>
 			</div>
 		)
 
 	const EditSaveButtons = () =>
-		user.id === getUserId() ? (
-			isEdit ? (
+		profile.id === getUserId() ? (
+			isEdit && !isPreview ? (
 				<input type="button" value="Save" className={`blueButtonActive ${styles.button__editANDsave}`} onClick={onSaveProfile} />
 			) : (
 				<input type="button" value="Edit" className={`blueButtonActive ${styles.button__editANDsave}`} onClick={handlerIsEdit} />
@@ -63,96 +114,76 @@ const Profile = () => {
 
 	const Nickname = () => {
 		const handlerNickname = (e: React.ChangeEvent<HTMLInputElement>) => {
-			const _user = user
+			const _user = profile
 			_user.Nickname = e.target.value
-			setUser(_user)
+			setProfile(_user)
 		}
 		return isEdit ? (
 			<div className={`flex_row_center_center ${styles.fieldEdit}`}>
-				<input type={"text"} id={styles.container__top__name} defaultValue={user.Nickname} onChange={handlerNickname} />
+				<input type={"text"} id={styles.container__top__name} defaultValue={profile.Nickname} onChange={handlerNickname} />
 				<RiPencilLine />
 			</div>
 		) : (
-			<span id={styles.container__top__name}>{user.Nickname}</span>
+			<span id={styles.container__top__name}>{profile.Nickname}</span>
 		)
 	}
 
 	const Description = () => {
 		const handlerDescription = (e: React.ChangeEvent<HTMLInputElement>) => {
-			const _user = user
-			_user.Profile.Description = e.target.value
-			setUser(_user)
+			const _user = profile
+			_user.Description = e.target.value
+			setProfile(_user)
 		}
 
 		return isEdit ? (
 			<div className={`flex_row_center_center ${styles.fieldEdit}`}>
-				<input type={"text"} id={styles.container__mid__description} defaultValue={user.Profile.Description} onChange={handlerDescription} />
+				<input type={"text"} id={styles.container__mid__description} defaultValue={profile.Description ? profile.Description : ""} placeholder="No description provided" onChange={handlerDescription} />
 				<RiPencilLine />
 			</div>
 		) : (
-			<span id={styles.container__mid__description}>{user.Profile.Description}</span>
+			<span id={styles.container__mid__description}>{profile.Description ? profile.Description : "No description provided"}</span>
 		)
 	}
 
-	const Photo = () => {
-		const handlerPhoto = (e: React.ChangeEvent<HTMLInputElement>) => {
-			const { files } = e.target
-			if (files === null) {
-				toast.error("Nothing file selected")
-				return
-			}
-			const formData = new FormData()			
-			formData.append("avatar", files[0])
-			console.log(formData)
-			API_AXIOS.post("/profile/editPhoto/" + user.id, {
-				data: formData,
-				headers: { "Content-Type": "multipart/form-data" },
-			  })
-				.then(function (response) {
-				  //handle success
-				  console.log(response)
-				})
-				.catch(function (response) {
-				  //handle error
-				  console.log(response)
-				})
-			// const _user = user
-			// const file: File | null = files[0]
-			// _user.Profile.Photo = file
-			// setUser(user)
-		}
-
-		return (
-			<div id={styles.photo}>
-				{isEdit ? (
+	const _Avatar = () => (
+		<div id={styles.avatar}>
+			<label htmlFor={styles.avatar__input} id={styles.avatar__pen}>
+				<RiPencilLine />
+			</label>
+			<input type="file" name="avatar__input" id={styles.avatar__input} onChange={handlerAvatar} />
+			{/* {isEdit ? (
 					<>
-						<label htmlFor={styles.photo__input} id={styles.photo__pen}>
+						<label htmlFor={styles.avatar__input} id={styles.avatar__pen}>
 							<RiPencilLine />
 						</label>
-						<input type="file" name="photo__input" id={styles.photo__input} onChange={handlerPhoto} />
+						<input type="file" name="avatar__input" id={styles.avatar__input} onChange={handlerPhoto} />
 					</>
-				) : null}
-				{user.Profile.Photo ? <img id={styles.photo__img} src={`data:image/png;base64, ${user.Profile.Photo}`} alt="photo_profile" /> : <BsPersonCircle size={150} />}
-			</div>
-		)
-	}
+				) : null} */}
+			<Avatar size={150} base64={profile.AvatarBase64} type={profile.AvatarType} />
+		</div>
+	)
 
-	//#endregion
-	//#region Internal Hooks
-	const [isEdit, setIsEdit] = React.useState<boolean>(false)
-	const { user: _user, friends } = useLoaderData() as { user: IUserInfo; friends: IFriend[] }
-	const [user, setUser] = React.useState(_user)
-	//#endregion
-	//#region External Hooks
-	const { friendList, disableButton } = useFriendship()
-	const { openChatByFriend: openChat } = useChat()
+	const PreviewAvatar = React.useMemo(
+		() =>
+			isPreview ? (
+				<div className="shadow_white" id={styles.previewImage}>
+					<img id={styles.previewImage__img} src={URL.createObjectURL(avatarFile as File)} alt="Profile_Photo_Preview" />
+					<div id={styles.previewImage__buttons}>
+						<input type="button" value="Confirm" className="blueButtonActive" onClick={sendAvatar} />
+						<input type="button" value="Cancel" className="blueButtonActive" onClick={() => setIsPreview(false)} />
+					</div>
+				</div>
+			) : null, [isPreview]
+	)
+
 	//#endregion
 
 	return (
 		<div id={styles.page} className="flex_column_center_center">
+			{PreviewAvatar}
 			<EditSaveButtons />
 			<div id={styles.container} className="flex_column_center_center shadow_white">
-				<Photo />
+				<_Avatar />
 				<div id={styles.container__top}>
 					<Nickname />
 					<div className="flex_row_center_center">
@@ -183,12 +214,15 @@ export const ProfileRoute: RouteObject = {
 	loader: async (args: LoaderFunctionArgs) => {
 		try {
 			const { nickname } = args.params
-			const requestUser = await API_AXIOS.get("/user/findOneByName/" + nickname)
-			const user = requestUser.data
-			console.log(user)
-			const requestFriends = await API_AXIOS.post("/friendship", { UserId: user.id })
+			const requestUser = await API_AXIOS.get("/profile/findOneByNickname/" + nickname)
+			const profile = requestUser.data
+
+			profile.AvatarId = profile.Avatar.id
+			profile.AvatarBase64 = profile.Avatar.buffer ? Buffer.from(profile.Avatar.buffer).toString("base64") : ""
+			console.log(profile)
+			const requestFriends = await API_AXIOS.post("/friendship", { UserId: profile.id })
 			const friends = requestFriends.data
-			return { user: user, friends: friends }
+			return { profile: profile, friends: friends }
 		}
 		catch (error) {
 			throw new Error(getErrorMessage(error))

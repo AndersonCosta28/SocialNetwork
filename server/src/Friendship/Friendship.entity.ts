@@ -2,18 +2,18 @@ import { connectedUsers, getIo } from "Providers/Websocket"
 import { IUserSocket } from "common"
 import { TypeOfFriendship } from "common/Types/Friendship"
 import { AfterInsert, AfterUpdate, Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm"
-import User from "User/User.entity"
+import Profile from "Profile/Profile.entity"
 
 @Entity()
 export default class Friendship {
 	@PrimaryGeneratedColumn()
 		id: number
 
-	@ManyToOne(() => User, (user) => user.id, { eager: true })
-		UserSource: User
+	@ManyToOne(() => Profile, (profile) => profile.id, { eager: true })
+		UserSource: Profile
 
-	@ManyToOne(() => User, (user) => user.id, { eager: true })
-		UserTarget: User
+	@ManyToOne(() => Profile, (profile) => profile.id, { eager: true })
+		UserTarget: Profile
 
 	@Column({
 		type: "enum",

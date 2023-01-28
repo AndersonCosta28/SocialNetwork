@@ -62,8 +62,10 @@ const Register = () => {
 	const [user, setUser] = useState<IUserRegister>({
 		Login: "",
 		Email: "",
-		Nickname: "",
 		Password: "",
+		Profile: {
+			Nickname: "",
+		},
 	})
 
 	const [confirmPassword, setConfirmPassword] = useState<string>("")
@@ -75,8 +77,8 @@ const Register = () => {
 			return {
 				...oldState,
 				Nickname: {
-					containsSpace: /\s/g.test(user.Nickname),
-					minimumLength: user.Nickname.split(" ").join("").length <= 5,
+					containsSpace: /\s/g.test(user.Profile.Nickname),
+					minimumLength: user.Profile.Nickname.split(" ").join("").length <= 5,
 					isDuplicated: false,
 				},
 			}
@@ -110,8 +112,12 @@ const Register = () => {
 
 	const handlerUser = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const { id, value } = e.target
-		setUser((prevState: IUserRegister) => ({ ...prevState, [id]: value }))
-		console.log(id)
+		if (id === "Nickname") {
+			const _user = user
+			_user.Profile.Nickname = value
+			setUser(_user)
+		}
+		else setUser((prevState: IUserRegister) => ({ ...prevState, [id]: value }))
 		dispatchFormError({ field: id, fromApi: null })
 	}
 

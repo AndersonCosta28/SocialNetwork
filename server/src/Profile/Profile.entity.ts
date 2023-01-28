@@ -1,23 +1,21 @@
-import { AfterLoad, Column, Entity, PrimaryGeneratedColumn } from "typeorm"
+import Files from "Files/Files.entity"
+import { Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn } from "typeorm"
 
 @Entity()
 export default class Profile {
-    @PrimaryGeneratedColumn()
-    	id: number
+	@PrimaryGeneratedColumn()
+		id: number
 
-    @Column({ default: "" })
-    	Description?: string
+	@Column({ nullable: false })
+		Nickname: string
 
-    @Column({ type: "blob" })
-    	Photo?: Buffer | string
+	@Column({ default: "" })
+		Description?: string
 
-    @Column()
-    	Local?: string
+	@OneToOne(() => Files, { cascade: true, eager: true })
+	@JoinColumn()
+		Avatar?: Files
 
-
-    @AfterLoad()
-    afterLoad?() {
-    	this.Photo = this.Photo?.toString("base64")
-    	console.log(this)
-    }
+	@Column({ default: "" })
+		Local?: string
 }

@@ -1,5 +1,4 @@
 import { StatusCode } from "status-code-enum"
-import User from "User/User.entity"
 import { IUserLogin, UserStates } from "common/Types/User"
 import bcrypt from "bcrypt"
 import {IResponseLogin} from "common/Types/Response"
@@ -14,7 +13,7 @@ export default class AuthenticationService implements IAuthenticationService {
 	constructor(private readonly userService: IUserService) {}
 
 	login = async (usuarioLogin: IUserLogin): Promise<IResponseLogin> => {
-		const user = (await this.userService.findOneByName(usuarioLogin.Login, true)) as User
+		const user = (await this.userService.findOneByName(usuarioLogin.Login, true))
 		if (!user) 
 			return { code: StatusCode.ClientErrorNotFound, message: "User doesn't exist", authenticated: false }		
 

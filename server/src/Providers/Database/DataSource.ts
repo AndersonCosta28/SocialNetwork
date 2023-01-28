@@ -6,6 +6,7 @@ import Message from "Message/Message.entity"
 import env from "dotenv"
 import { resolve } from "path"
 import { DataSource } from "typeorm"
+import Files from "Files/Files.entity"
 
 env.config({ path: resolve("../", ".env") })
 
@@ -16,7 +17,7 @@ const AppDataSource = new DataSource({
 	username: process.env.DATABASE_USERNAME,
 	password: process.env.DATABASE_PASSWORD,
 	database: "socialnetwork",
-	entities: [User, Friendship, Email, Profile, Message],
+	entities: [User, Friendship, Email, Profile, Message, Files],
 	// url: "mysql://root:mysqlpw@localhost:55000", //DOCKER
 	synchronize: true,
 	cache: {

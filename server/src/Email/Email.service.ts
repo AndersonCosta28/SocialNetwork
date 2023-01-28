@@ -48,7 +48,7 @@ export default class EmailService implements IEmailService {
 				email: process.env.EMAILSERVICE_EMAILTOSEND_EMAIL
 			},
 			to: {
-				name: user.Nickname,
+				name: user.Login,
 				email: user.Email
 			},
 			text: `This is your activation url => ${url}`,
@@ -72,7 +72,7 @@ export default class EmailService implements IEmailService {
 				email: process.env.EMAILSERVICE_EMAILTOSEND_EMAIL
 			},
 			to: {
-				name: user.Nickname,
+				name: user.Login,
 				email: user.Email
 			},
 			text: `This is your password reset url => ${url}`,

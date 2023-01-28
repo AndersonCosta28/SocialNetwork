@@ -1,41 +1,39 @@
 import { Request, Response, Router } from "express"
 import IController from "Types/IController"
-import ProfileService from "./Profile.service"
-import multer from "multer"
+import { IProfileService } from "./Profile.service"
 import Profile from "./Profile.entity"
+import { StatusCode } from "status-code-enum"
 
 export default class ProfileController implements IController {
 
-	constructor(private readonly service: ProfileService){}
-
-	storage = multer.memoryStorage()
-
-	upload = multer({ storage: this.storage })
+	constructor(private readonly service: IProfileService) { }
 
 	routers = () => {
 		const router: Router = Router()
-		router.put("/", this.edit )
-		router.post("/editPhoto/:id", this.upload.single("avatar"), this.editPhoto)
+		router.get("/", this.findAll)
+		router.get("/findOneById/:id", this.findOneById)
+		router.get("/findOneByNickname/:Nickname", this.findOneByNickname)
+		router.put("/:id", this.edit)
 		return router
 	}
 
+	findAll = async (request: Request, response: Response): Promise<Response> => response.status(StatusCode.SuccessOK).send(await this.service.findAll())
+
+	findOneById = async (request: Request, response: Response): Promise<Response> => response.status(StatusCode.SuccessOK).send(await this.service.findOneById(Number(request.params.id)))
+
+	findOneByNickname = async (request: Request, response: Response): Promise<Response> => response.status(StatusCode.SuccessOK).send(await this.service.findOneByNickname(String(request.params.Nickname)))
+
 	edit = async (request: Request, response: Response): Promise<Response> => {
-		const { Description, Local, id} = request.body
-		const profile: Profile = {
+		const { id } = request.body
+		const { Description, Local, Nickname } = request.body
+		const profile: Partial<Profile> = {
 			id,
-			Description, 
-			Local,			
+			Description,
+			Local,
+			Nickname
 		}
 
 		await this.service.edit(profile)
-		return response.end()
-	}
-
-	editPhoto = async (request: Request, response: Response): Promise<Response> => {
-		console.log(request.file)
-		if (!request.file) return response.status(400).send("Photo is undefined")
-		const Photo = request.file ? request.file.buffer : ""
-		console.log(Photo)
-		return response.end()
+		return response.status(StatusCode.SuccessOK).end()
 	}
 }

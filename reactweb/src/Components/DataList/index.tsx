@@ -2,22 +2,22 @@ import React from "react"
 import { AiOutlineSearch } from "react-icons/ai"
 import styles from "./DataList.module.css"
 import { IoPerson } from "react-icons/io5"
-import { IUserInfo } from "common/Types/User"
+import { IProfileInfo } from "common/Types/User"
 import { useNavigate } from "react-router-dom"
 import { getUserId } from "utils"
 import { useProtected } from "Context/ProtectedContext"
 
 const index = () => {
 	const [textSearch, setTextSearch] = React.useState<string>("")
-	const {allUsers} = useProtected()
+	const { allProfiles } = useProtected()
 	const ListOfItemsElementRef = React.useRef<HTMLUListElement>(null)
 	const navigate = useNavigate()
 	const [searchBarIsFocused, setSearchBarIsFocused] = React.useState<boolean>(false)
-	const ListItems: IUserInfo[] = allUsers.filter((item: IUserInfo) => item.Nickname.toLowerCase().includes(textSearch.toLowerCase())).filter((value) => Number(value.id) !== Number(getUserId()))
+	const ListItems: IProfileInfo[] = allProfiles.filter((item: IProfileInfo) => item.Nickname.toLowerCase().includes(textSearch.toLowerCase())).filter((value) => Number(value.id) !== Number(getUserId()))
 	const LiElementResults = () => (
 		ListItems.length > 0 ? 
 			ListItems
-				.map((item: IUserInfo, index: number, array) => (
+				.map((item: IProfileInfo, index: number, array) => (
 					<li key={`${index + 1}/${array.length}-itemFinded`} onClick={() => navigateToProfile(item)}>
 						<IoPerson size={30} />
 						<span>{item.Nickname}</span>
@@ -33,7 +33,7 @@ const index = () => {
 		setTextSearch(value)
 	}
 
-	const navigateToProfile = (userInfo: IUserInfo) => {
+	const navigateToProfile = (userInfo: IProfileInfo) => {
 		navigate("/profile/" + userInfo.Nickname)
 		setTextSearch("")
 	}

@@ -1,10 +1,9 @@
 import { ICreateBodyRequest, IFindAllByUserBodyRequest, IReactToFriendRequestBodyRequest, TypeOfFriendship } from "common/Types/Friendship"
 import { Request, Response, Router } from "express"
 import { StatusCode } from "status-code-enum"
-
-import { IUserService } from "User/User.service"
 import { IFriendshipService } from "./Friendship.service"
 import IController from "Types/IController"
+import { IProfileService } from "Profile/Profile.service"
 
 export interface IFriendshipController extends IController {
 	create: (request: Request, response: Response) => Promise<Response>
@@ -13,7 +12,7 @@ export interface IFriendshipController extends IController {
 }
 
 export default class FriendshipController implements IFriendshipController {
-	constructor(private readonly service: IFriendshipService, private readonly userService: IUserService) { }
+	constructor(private readonly service: IFriendshipService, private readonly profileService: IProfileService) { }
 
 	routers = (): Router => {
 		const router: Router = Router()
@@ -26,7 +25,7 @@ export default class FriendshipController implements IFriendshipController {
 
 	create = async (request: Request, response: Response): Promise<Response> => {
 		const { TargetName, SourceId } = request.body as ICreateBodyRequest
-		const userTarget = await this.userService.findOneByName(TargetName)
+		const userTarget = await this.profileService.findOneByNickname(TargetName)
 		if (!userTarget) return response.status(StatusCode.ClientErrorNotFound).end()
 		if (userTarget.id === Number(SourceId)) return response.status(StatusCode.ClientErrorBadRequest).json({ message: "You cannot add yourself" })
 

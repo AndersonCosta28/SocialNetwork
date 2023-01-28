@@ -17,13 +17,10 @@ export default class User {
   @Column({ unique: true, nullable: false })
   	Email: string
 
-  @Column({ nullable: false })
-  	Nickname: string
-
   @Column({ type: "enum", enum: UserStates, default: UserStates.WaitingForActivation })
   	State: UserStates
 
-  @OneToOne(() => Profile, { cascade: true, onDelete: "CASCADE", eager: true })
+  @OneToOne(() => Profile, { cascade: true })
   @JoinColumn()
   	Profile: Profile
 
