@@ -41,15 +41,14 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
 				const chat = chats.find((chat: IChat) => chat.targetUserId === target)
 				if (!chat) 
 					openChatByIdFriend(data.FriendshipId)				
-				teste()
 			})
-		return () => {
-			console.log("Desligou")
-			if (socket) socket.off("message")
-		}
-	}, [])
+		// return () => {
+		// 	console.log("Desligou")
+		// 	if (socket) socket.off("message")
+		// }
+	})
 
-	const teste = React.useCallback(() => {
+	React.useEffect(() => {
 		console.log(chats.length + " - " + friendList.length)
 	}, [chats, friendList])
 

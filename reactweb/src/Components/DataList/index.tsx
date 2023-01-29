@@ -1,11 +1,11 @@
 import React from "react"
 import { AiOutlineSearch } from "react-icons/ai"
 import styles from "./DataList.module.css"
-import { IoPerson } from "react-icons/io5"
 import { IProfileInfo } from "common/Types/User"
 import { useNavigate } from "react-router-dom"
 import { getUserId } from "utils"
 import { useProtected } from "Context/ProtectedContext"
+import Avatar from "Components/Avatar"
 
 const index = () => {
 	const navigate = useNavigate()
@@ -13,21 +13,21 @@ const index = () => {
 	const ListOfItemsElementRef = React.useRef<HTMLUListElement>(null)
 	const [textSearch, setTextSearch] = React.useState<string>("")
 	const [searchBarIsFocused, setSearchBarIsFocused] = React.useState<boolean>(false)
-	
+
 	const ListItems: IProfileInfo[] = allProfiles.filter((item: IProfileInfo) => item.Nickname.toLowerCase().includes(textSearch.toLowerCase())).filter((value) => Number(value.id) !== Number(getUserId()))
-	const LiElementResults = () => (
-		ListItems.length > 0 ? 
-			ListItems
-				.map((item: IProfileInfo, index: number, array) => (
-					<li key={`${index + 1}/${array.length}-itemFinded`} onClick={() => navigateToProfile(item)}>
-						<IoPerson size={30} />
-						<span>{item.Nickname}</span>
-					</li>))
-			: 
+	const LiElementResults = () =>
+		ListItems.length > 0 ? (
+			ListItems.map((item: IProfileInfo, index: number, array) => (
+				<li key={`${index + 1}/${array.length}-itemFinded`} onClick={() => navigateToProfile(item)}>					
+					<Avatar base64={item.AvatarBase64} size={30} type={item.AvatarType} key={"avatar-data-lista" + item.id + "-" + index} />
+					<span>{item.Nickname}</span>
+				</li>
+			))
+		) : (
 			<li>
 				<span>Nenhum resultado encontrado</span>
 			</li>
-	)
+		)
 
 	const handlerTextSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const { value } = e.target
@@ -40,9 +40,8 @@ const index = () => {
 		// navigate(0)
 	}
 
-	const ResultSearch = () => { 
-		if (!searchBarIsFocused) 
-			return null
+	const ResultSearch = () => {
+		if (!searchBarIsFocused) return null
 
 		if (textSearch.trim().length > 0)
 			return (
@@ -50,12 +49,11 @@ const index = () => {
 					{LiElementResults()}
 				</ul>
 			)
-		
 		else return null
 	}
 
 	return (
-		<div id={styles.searchBar} >
+		<div id={styles.searchBar}>
 			<AiOutlineSearch id={styles.searchBar__icon} />
 			<input type="search" list="data" className={`shadow_white`} onChange={handlerTextSearch} value={textSearch} onBlur={() => setTimeout(() => setSearchBarIsFocused(false), 100)} onFocus={() => setSearchBarIsFocused(true)} />
 			<ResultSearch />

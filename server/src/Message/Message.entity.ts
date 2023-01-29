@@ -7,7 +7,7 @@ export default class Message {
     @PrimaryGeneratedColumn()
     	id: number
 
-    @ManyToOne(() => Friendship, (friendship: Friendship) => friendship.id)
+    @ManyToOne(() => Friendship, (friendship: Friendship) => friendship.id, { onDelete: "CASCADE" })
     	Friendship: Friendship
 
     @ManyToOne(() => User, (user: User) => user.id, { eager: true })

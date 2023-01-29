@@ -19,7 +19,7 @@ const FriendshipContext = createContext<IFriendshipContext | null>(null)
 export const FriendshipProvider = ({ children }: { children: React.ReactNode }) => {
 	const [friendList, setFriendList] = React.useState<IFriend[]>([])
 	const [disableButton, setDisableButton] = React.useState<boolean>(false)
-
+	
 	const { socket } = useSocketIo()
 
 	const requestAPI = React.useCallback(() => {
@@ -82,7 +82,7 @@ export const FriendshipProvider = ({ children }: { children: React.ReactNode }) 
 		setDisableButton(true)
 		API_AXIOS.post("/friendship/ReactToFriendRequest", {
 			FriendshipId: idFriendship,
-			React: true,
+			React: false,
 			UserId: getUserId(),
 		})
 			.then(console.log)

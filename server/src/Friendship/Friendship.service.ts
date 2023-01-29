@@ -104,8 +104,8 @@ export default class FriendshipService implements IFriendshipService {
 
 	remove = async (id: number): Promise<void> => {
 		const modelFinded: Friendship | null = await this.findOneById(id)
-
-		modelFinded.Type = TypeOfFriendship.Removed
-		await this.repository.save(modelFinded)
+		await this.repository.delete({ id: modelFinded.id })
+		// modelFinded.Type = TypeOfFriendship.Removed
+		// await this.repository.save(modelFinded)
 	}
 }
