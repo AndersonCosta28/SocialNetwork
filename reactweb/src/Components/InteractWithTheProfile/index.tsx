@@ -25,7 +25,7 @@ const InteractWithTheProfile = (props: { FriendId: number; FriendNickname: strin
 		API_AXIOS.post("/friendship", { UserId: getUserId() })
 			.then((res) => {
 				const friendsArray = res.data as IFriend[]
-				setFriend(friendsArray.find((friend: IFriend) => friend.FriendId === props.FriendId))
+				setFriend(friendsArray.find((friend: IFriend) => friend.FriendProfile.id === props.FriendId))
 			})
 			.catch((error) => toast.error(error))
 

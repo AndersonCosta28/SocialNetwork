@@ -24,6 +24,9 @@
 	width: 20vw;
 }
 
+#header__leftSide__title {
+	padding: 10px;
+}
 #header__leftSide__title:hover {
 	cursor: pointer;
 }

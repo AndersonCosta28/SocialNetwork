@@ -8,11 +8,12 @@ import { getUserId } from "utils"
 import { useProtected } from "Context/ProtectedContext"
 
 const index = () => {
-	const [textSearch, setTextSearch] = React.useState<string>("")
+	const navigate = useNavigate()
 	const { allProfiles } = useProtected()
 	const ListOfItemsElementRef = React.useRef<HTMLUListElement>(null)
-	const navigate = useNavigate()
+	const [textSearch, setTextSearch] = React.useState<string>("")
 	const [searchBarIsFocused, setSearchBarIsFocused] = React.useState<boolean>(false)
+	
 	const ListItems: IProfileInfo[] = allProfiles.filter((item: IProfileInfo) => item.Nickname.toLowerCase().includes(textSearch.toLowerCase())).filter((value) => Number(value.id) !== Number(getUserId()))
 	const LiElementResults = () => (
 		ListItems.length > 0 ? 
@@ -36,6 +37,7 @@ const index = () => {
 	const navigateToProfile = (userInfo: IProfileInfo) => {
 		navigate("/profile/" + userInfo.Nickname)
 		setTextSearch("")
+		// navigate(0)
 	}
 
 	const ResultSearch = () => { 

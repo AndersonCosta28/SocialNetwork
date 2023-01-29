@@ -67,12 +67,12 @@
 
 .message_mine span {
 	background-color: rgb(0 128 0 / 50%);
-	width: 80%;
+	max-width: 80%;
 }
 
 .message_other span {
 	background-color: rgb(0 55 255 / 50%);
-	width: 80%;
+	max-width: 80%;
 }
 .message {
 	margin: 10px;

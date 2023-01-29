@@ -1,28 +1,19 @@
 import React from "react"
 import styles from "./MyProfileSideBar.module.css"
-import { getNickname, getUserId } from "utils"
+import { getNickname } from "utils"
 import { useProtected } from "Context/ProtectedContext"
-import { IProfileInfo, UserStates } from "common/Types/User"
+import { UserStates } from "common/Types/User"
 import ResendEmailActivation from "Pages/Email/Activation/ResendEmailActivation"
 import { useNavigate } from "react-router-dom"
 import Avatar from "Components/Avatar"
 
 const MyProfileSideBar = () => {
-	const { allProfiles } = useProtected()
-	const [profile, setProfile] = React.useState<IProfileInfo>()
+	const { myProfile, myUser } = useProtected()
 	const navigate = useNavigate()
 
-	React.useEffect(() => {
-		// setVerifyAccount(true)
-		const profile : IProfileInfo | undefined = allProfiles.find((profile: IProfileInfo) => Number(profile.id) === Number(getUserId()))
-		// if (!profile || profile === undefined) throw new Error("Profile not found")
-		console.log(profile)
-		setProfile(profile)
-	}, [allProfiles])
-
 	const ShowInfoAccountInactive = (): JSX.Element => {
-		if (!profile) return <></>
-		else if (profile.State === UserStates.WaitingForActivation) return <ResendEmailActivation idUser={getUserId()} />
+		if (!myProfile) return <></>
+		else if (myUser.State === UserStates.WaitingForActivation) return <ResendEmailActivation idUser={myUser.id} />
 		else return <></>
 	}
 
@@ -33,13 +24,9 @@ const MyProfileSideBar = () => {
 	return (
 		<div id={styles.content}>
 			<div onClick={goToMyProfile} className={`flex_column_center_center ${styles.content__profile}`}>
-				<div id={styles.content__top}>
-					{
-						profile && <Avatar size={100} base64={profile.AvatarBase64} type={profile.AvatarType} />
-					}					
-				</div>
+				<div id={styles.content__top}>{myProfile && <Avatar size={100} base64={myProfile.AvatarBase64} type={myProfile.AvatarType} />}</div>
 				<div id={styles.content__mid}>
-					<h2>{profile?.Nickname}</h2>
+					<h2>{myProfile.Nickname}</h2>
 					<h3></h3>
 				</div>
 				<div id={styles.content__bottom}></div>

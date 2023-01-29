@@ -20,8 +20,14 @@ export interface IUserService extends ICrud<User> {
 export default class UserService implements IUserService {
 	constructor(private readonly repository: Repository<User>, private readonly emailService: IEmailService) { }
 
-	findOneByName = async (name: string): Promise<User | null> => {
-		const user = await this.repository.findOne({ where: { Login: name.toLowerCase() } })
+	findOneByName = async (name: string, bringPassword = false): Promise<User | null> => {
+		const user = await this.repository.findOne({ where: { Login: name.toLowerCase() }, select: {
+			Email: true,
+			id: true,
+			Login: true,
+			Password: bringPassword,
+			State: true,	
+		} })
 		if (!user) throw new Error("User not found")
 		return user
 	}

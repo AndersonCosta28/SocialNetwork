@@ -1,5 +1,5 @@
 import { Column, Entity, PrimaryGeneratedColumn } from "typeorm"
-import { Blob } from "buffer"
+import { Buffer } from "buffer"
 
 @Entity()
 export default class Files {
@@ -7,7 +7,7 @@ export default class Files {
 		id: number
 
 	@Column({ type: "longblob", nullable: true })
-		buffer?: Blob
+		buffer?: Buffer
 
 	@Column({default: "", nullable: true})
 		type: string

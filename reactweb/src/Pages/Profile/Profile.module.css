@@ -9,6 +9,12 @@
 	border-radius: 50%;
 }
 
+#avatar__pen {
+    position: absolute;
+	right: 0px;
+    bottom: 0px;
+}
+
 #avatar__input {
 	display: none
 }

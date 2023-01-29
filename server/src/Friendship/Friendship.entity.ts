@@ -10,10 +10,10 @@ export default class Friendship {
 		id: number
 
 	@ManyToOne(() => Profile, (profile) => profile.id, { eager: true })
-		UserSource: Profile
+		Source: Profile
 
 	@ManyToOne(() => Profile, (profile) => profile.id, { eager: true })
-		UserTarget: Profile
+		Target: Profile
 
 	@Column({
 		type: "enum",
@@ -24,16 +24,16 @@ export default class Friendship {
 
 
 	@AfterUpdate()
-	afterUpdate() {
+	AfterUpdate?() {
 		if (this.Type === TypeOfFriendship.Friend) {
-			const connectecUserSource = connectedUsers.find((user: IUserSocket) => user.UserId === this.UserSource.id)
+			const connectecUserSource = connectedUsers.find((user: IUserSocket) => user.UserId === this.Source.id)
 			if (connectecUserSource)
 				getIo().to(connectecUserSource.SocketID).emit("update_list_friend", "Teste")
 		}
 
 		if (this.Type === TypeOfFriendship.Removed) {
-			const connectecUserSource = connectedUsers.find((user: IUserSocket) => user.UserId === this.UserSource.id)
-			const connectecUserTarget = connectedUsers.find((user: IUserSocket) => user.UserId === this.UserTarget.id)
+			const connectecUserSource = connectedUsers.find((user: IUserSocket) => user.UserId === this.Source.id)
+			const connectecUserTarget = connectedUsers.find((user: IUserSocket) => user.UserId === this.Target.id)
 			if (connectecUserSource)
 				getIo().to(connectecUserSource.SocketID).emit("update_list_friend", "Teste")
 
@@ -42,7 +42,7 @@ export default class Friendship {
 		}
 
 		if (this.Type === TypeOfFriendship.Requested) { // Só acontece quando a amizade foi excluída e solicitada novamente, quando é a primeira vez tem que fazer essa verificação no after insert
-			const connectecUserTarget = connectedUsers.find((user: IUserSocket) => user.UserId === this.UserTarget.id)
+			const connectecUserTarget = connectedUsers.find((user: IUserSocket) => user.UserId === this.Target.id)
 			if (connectecUserTarget)
 				getIo().to(connectecUserTarget.SocketID).emit("update_list_friend", "Teste")
 		}
@@ -50,7 +50,7 @@ export default class Friendship {
 
 	@AfterInsert()
 	afterInsert() {
-		const connectecUserTarget = connectedUsers.find((user: IUserSocket) => user.UserId === this.UserTarget.id)
+		const connectecUserTarget = connectedUsers.find((user: IUserSocket) => user.UserId === this.Target.id)
 		if (connectecUserTarget)
 			getIo().to(connectecUserTarget.SocketID).emit("update_list_friend", "Teste")
 	}

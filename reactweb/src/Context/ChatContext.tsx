@@ -40,15 +40,18 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
 				const target = data.FromId === getUserId() ? data.ToId : data.FromId
 				const chat = chats.find((chat: IChat) => chat.targetUserId === target)
 				if (!chat) 
-					openChatByIdFriend(data.FriendshipId)
-				
+					openChatByIdFriend(data.FriendshipId)				
+				teste()
 			})
-
 		return () => {
 			console.log("Desligou")
 			if (socket) socket.off("message")
 		}
 	}, [])
+
+	const teste = React.useCallback(() => {
+		console.log(chats.length + " - " + friendList.length)
+	}, [chats, friendList])
 
 	const openChatByIdFriend = (idFriendship: number) => {
 		const friend = friendList.find((friend: IFriend) => friend.FriendshipId === idFriendship)
@@ -56,11 +59,11 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
 	}
 
 	const openChatByFriend = (friend: IFriend) => {
-		if (chats.find((chat: IChat) => chat.targetUserId === friend.FriendId)) return
+		if (chats.find((chat: IChat) => chat.targetUserId === friend.FriendProfile.id)) return
 		const newChat: IChat = {
 			friendshipId: friend.FriendshipId,
-			targetNickname: friend.FriendNickname,
-			targetUserId: friend.FriendId,
+			targetNickname: friend.FriendProfile.Nickname,
+			targetUserId: friend.FriendProfile.id,
 			chatId: uuid4(),
 			isMinimized: false,
 		}

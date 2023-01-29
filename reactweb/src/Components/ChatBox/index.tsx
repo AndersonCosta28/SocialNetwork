@@ -31,7 +31,6 @@ const ChatBox = (props: IChat) => {
 		const chatContainer = chatBodyRef.current!
 		API_AXIOS.get("/message/findByFriendship/" + props.friendshipId)
 			.then(res => {
-				console.log(res.data)
 				setMessages(res.data)
 				setTimeout(() => {
 					chatContainer.scrollTop = chatContainer.scrollHeight

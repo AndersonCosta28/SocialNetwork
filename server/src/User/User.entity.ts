@@ -11,7 +11,7 @@ export default class User {
   @Column({ unique: true })
   	Login: string
 
-  @Column()
+  @Column({ select: false })
   	Password: string
 
   @Column({ unique: true, nullable: false })

@@ -1,5 +1,5 @@
 import React from "react"
-import { LoaderFunctionArgs, RouteObject, useLoaderData } from "react-router-dom"
+import { RouteObject, useParams } from "react-router-dom"
 import { BiMessageDetail } from "react-icons/bi"
 import { RiMapPin2Line, RiPencilLine } from "react-icons/ri"
 import { IProfileInfo } from "common/Types/User"
@@ -13,25 +13,58 @@ import { getAxiosErrorMessage, getErrorMessage, IFriend, TypeOfFriendship } from
 import { toast } from "react-hot-toast"
 import { Buffer } from "buffer"
 import Avatar from "Components/Avatar"
+import { useProtected } from "Context/ProtectedContext"
 
 const Profile = () => {
+	const { nickname } = useParams()
+
 	//#region Internal Hooks
+	const [profile, setProfile] = React.useState<IProfileInfo>({
+		Avatar: null,
+		AvatarBase64: "",
+		AvatarId: 0,
+		AvatarType: "",
+		Description: "",
+		id: 0,
+		Local: "",
+		Nickname: "",
+	})
 	const [isEdit, setIsEdit] = React.useState<boolean>(false)
-	const { profile: _profile, friends } = useLoaderData() as { profile: IProfileInfo; friends: IFriend[] }
-	const [profile, setProfile] = React.useState(_profile)
 	const [isPreview, setIsPreview] = React.useState<boolean>(false)
 	const [avatarFile, setAvatarFile] = React.useState<File | null>(null)
+	const [friends, setFriends] = React.useState<IFriend[]>([])
+
+	React.useEffect(() => {
+		const requestApi = async () => {
+			try {
+				const requestUser = await API_AXIOS.get("/profile/findOneByNickname/" + nickname)
+				const profile = requestUser.data
+
+				profile.AvatarId = profile.Avatar.id
+				profile.AvatarBase64 = profile.Avatar.buffer ? Buffer.from(profile.Avatar.buffer).toString("base64") : ""
+				const requestFriends = await API_AXIOS.post("/friendship", { UserId: profile.id })
+				const friends = requestFriends.data
+				setProfile(profile)
+				setFriends(friends)
+			}
+			catch (error) {
+				throw new Error(getErrorMessage(error))
+			}
+		}
+
+		requestApi()
+	}, [nickname])
 
 	//#endregion
 	//#region External Hooks
-	const { friendList, disableButton } = useFriendship()
+	const { disableButton } = useFriendship()
+	const { myProfile } = useProtected()
 	const { openChatByFriend: openChat } = useChat()
 	//#endregion
-
 	//#region Functions
 	let friendShip: IFriend
 	const getFriendShip = (): IFriend | undefined => {
-		const friendShipTemp: IFriend | undefined = friendList.find((friend) => friend.FriendId === profile?.id && friend.Type === TypeOfFriendship.Friend)
+		const friendShipTemp: IFriend | undefined = friends.find((friend) => friend.FriendProfile.id === profile?.id && friend.Type === TypeOfFriendship.Friend)
 		if (friendShipTemp) friendShip = friendShipTemp
 		return friendShipTemp
 	}
@@ -58,11 +91,6 @@ const Profile = () => {
 		}
 		setAvatarFile(files[0])
 		setIsPreview(true)
-
-		// const _user = user
-		// const file: File | null = files[0]
-		// _user.Profile.Avatar= file
-		// setUser(user)
 	}
 
 	const sendAvatar = async () => {
@@ -74,9 +102,9 @@ const Profile = () => {
 		formData.append("avatar", avatarFile)
 		try {
 			await API_AXIOS({ url: "/files/changeAvatar/" + profile.AvatarId, method: "post", headers: { "Content-Type": "multipart/form-data" }, data: formData })
-			const _user = profile
-			_user.Avatar = Buffer.from(await avatarFile.arrayBuffer()).toString("base64")
-			setProfile(_user)
+			const __profile = profile
+			__profile.AvatarBase64 = Buffer.from(await avatarFile.arrayBuffer()).toString("base64")
+			setProfile(__profile)
 			setIsPreview(false)
 		}
 		catch (error) {
@@ -145,31 +173,29 @@ const Profile = () => {
 		)
 	}
 
-	const _Avatar = () => (
-		<div id={styles.avatar}>
-			<label htmlFor={styles.avatar__input} id={styles.avatar__pen}>
-				<RiPencilLine />
-			</label>
-			<input type="file" name="avatar__input" id={styles.avatar__input} onChange={handlerAvatar} />
-			{/* {isEdit ? (
+	const _Avatar = React.useCallback(
+		() => (
+			<div id={styles.avatar}>
+				{profile.id === myProfile.id ? (
 					<>
 						<label htmlFor={styles.avatar__input} id={styles.avatar__pen}>
 							<RiPencilLine />
 						</label>
-						<input type="file" name="avatar__input" id={styles.avatar__input} onChange={handlerPhoto} />
+						<input type="file" name="avatar__input" id={styles.avatar__input} onChange={handlerAvatar} />
 					</>
-				) : null} */}
-			<Avatar size={150} base64={profile.AvatarBase64} type={profile.AvatarType} />
-		</div>
+				) : null}
+				<Avatar size={150} base64={profile.AvatarBase64} type={profile.AvatarType} />
+			</div>
+		), [profile]
 	)
 
-	const PreviewAvatar = React.useMemo(
+	const PreviewAvatar = React.useCallback(
 		() =>
 			isPreview ? (
-				<div className="shadow_white" id={styles.previewImage}>
+				<div className="shadow_white" id={styles.previewImage} key={"PreviewAvatar" + Math.random()}>
 					<img id={styles.previewImage__img} src={URL.createObjectURL(avatarFile as File)} alt="Profile_Photo_Preview" />
 					<div id={styles.previewImage__buttons}>
-						<input type="button" value="Confirm" className="blueButtonActive" onClick={sendAvatar} />
+						<input type="button" value="Confirm" className="blueButtonActive" onClick={() => sendAvatar()} />
 						<input type="button" value="Cancel" className="blueButtonActive" onClick={() => setIsPreview(false)} />
 					</div>
 				</div>
@@ -180,10 +206,10 @@ const Profile = () => {
 
 	return (
 		<div id={styles.page} className="flex_column_center_center">
-			{PreviewAvatar}
+			<PreviewAvatar />
 			<EditSaveButtons />
 			<div id={styles.container} className="flex_column_center_center shadow_white">
-				<_Avatar />
+				<_Avatar key={"Avatar" + Math.random()} />
 				<div id={styles.container__top}>
 					<Nickname />
 					<div className="flex_row_center_center">
@@ -211,21 +237,4 @@ export default Profile
 export const ProfileRoute: RouteObject = {
 	element: <Profile />,
 	path: "/profile/:nickname",
-	loader: async (args: LoaderFunctionArgs) => {
-		try {
-			const { nickname } = args.params
-			const requestUser = await API_AXIOS.get("/profile/findOneByNickname/" + nickname)
-			const profile = requestUser.data
-
-			profile.AvatarId = profile.Avatar.id
-			profile.AvatarBase64 = profile.Avatar.buffer ? Buffer.from(profile.Avatar.buffer).toString("base64") : ""
-			console.log(profile)
-			const requestFriends = await API_AXIOS.post("/friendship", { UserId: profile.id })
-			const friends = requestFriends.data
-			return { profile: profile, friends: friends }
-		}
-		catch (error) {
-			throw new Error(getErrorMessage(error))
-		}
-	},
 }

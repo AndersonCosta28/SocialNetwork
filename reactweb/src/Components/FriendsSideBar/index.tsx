@@ -1,11 +1,12 @@
 import React from "react"
 import styles from "./FriendsSideBar.module.css"
-import { BsPersonCircle, BsFillCircleFill } from "react-icons/bs"
+import { BsFillCircleFill } from "react-icons/bs"
 import { useChat } from "Context/ChatContext"
 import { IUserSocket } from "common/Types/User"
 import { useSocketIo } from "Context/SocketIoContext"
 import { useFriendship } from "Context/FriendshipContext"
 import { IFriend, TypeOfFriendship, TypesOfApplicants } from "common"
+import Avatar from "Components/Avatar"
 
 const OnlineFriendsSideBar = () => {
 	enum Tab {
@@ -40,12 +41,12 @@ const OnlineFriendsSideBar = () => {
 				{tab === Tab.FriendList &&
 					friendList
 						.filter((item: IFriend) => item.Type === TypeOfFriendship.Friend)
-						.map((item: IFriend) => ({ ...item, online: onlineUsersId.includes(item.FriendId) }))
+						.map((item: IFriend) => ({ ...item, online: onlineUsersId.includes(item.FriendProfile.id) }))
 						.sort((_, item2:  IFriend & {online: boolean}) => item2.online ? 1 : -1)
 						.map((item:  IFriend & {online: boolean}, index: number) => (
 							<li className={styles.list__item__online} key={index + "-friendOnline"} onClick={() => openChat(item)}>
-								<BsPersonCircle size={30} />
-								<span>{item.FriendNickname}</span>
+								<Avatar size={30} base64={item.FriendProfile.AvatarBase64} type={item.FriendProfile.AvatarType} key={item.FriendProfile.AvatarId + "-" + item.FriendProfile.Nickname + "-Avatar" }/>								
+								<span>{item.FriendProfile.Nickname}</span>
 								{ item.online && <BsFillCircleFill size={7} color={"green"} /> }
 							</li>
 						))}
@@ -55,8 +56,8 @@ const OnlineFriendsSideBar = () => {
 						.map((item: IFriend, index: number) => (
 							<li className={styles.list__item__request} key={index + "-friendRequest"}>
 								<div className="flex_column_center_center">
-									<BsPersonCircle size={50} />
-									<span>{item.FriendNickname}</span>
+									<Avatar size={50} base64={item.FriendProfile.AvatarBase64} type={item.FriendProfile.AvatarType} key={item.FriendProfile.AvatarId + "-" + item.FriendProfile.Nickname + "-Avatar" }/>								
+									<span>{item.FriendProfile.Nickname}</span>
 								</div>
 								{item.WhoRequested === TypesOfApplicants.Other && (
 									<div className="flex_row_center_center">

@@ -20,72 +20,84 @@ export default class FriendshipService implements IFriendshipService {
 		const friendList: IFriend[] = []
 		const friendships: Friendship[] = await this.repository.find({
 			relations: {
-				UserSource: true,
-				UserTarget: true,
+				Source: true,
+				Target: true,
 			},
 			select: {
-				UserSource: {
+				Source: {
 					id: true,
 					Nickname: true,
 					// Level: true,          
 				},
-				UserTarget: {
+				Target: {
 					id: true,
 					Nickname: true,
 					// Level: true,
 				},
 			},
-			where: [{ UserSource: { id: idUser } }, { UserTarget: { id: idUser } }],
+			where: [{ Source: { id: idUser } }, { Target: { id: idUser } }],
 		})
 
-		for (const friendship of friendships)
+		for (const friendship of friendships) {
+			const friendProfile = friendship.Source.id === idUser ? friendship.Target : friendship.Source
+			const buffer: Buffer | undefined = friendProfile.Avatar?.buffer
+			const AvatarBase64 = buffer ? Buffer.from(buffer).toString("base64") : ""
 			friendList.push({
 				FriendshipId: friendship.id,
 				Type: friendship.Type,
-				FriendId: friendship.UserSource.id === idUser ? friendship.UserTarget.id : friendship.UserSource.id,
-				FriendNickname: friendship.UserSource.id === idUser ? friendship.UserTarget.Nickname : friendship.UserSource.Nickname,
-				WhoRequested: friendship.UserSource.id === idUser ? TypesOfApplicants.Me : TypesOfApplicants.Other
+				WhoRequested: friendship.Source.id === idUser ? TypesOfApplicants.Me : TypesOfApplicants.Other,
+				FriendProfile: {					
+					...friendProfile,
+					AvatarType: friendProfile.Avatar?.type ?? "",
+					AvatarBase64,
+					AvatarId: friendProfile.Avatar?.id ?? 0,
+					Avatar: buffer?.toString() ?? "",
+					Description: friendProfile.Description ?? "",					
+					Local: friendProfile.Local ?? "",
+				}
 			})
+		}
 
 		return friendList
 	}
 
 	createFriendshipRequest = async (userSource: number, userTarget: number): Promise<void> => {
 		const friendShip: Friendship = this.repository.create({
-			UserSource: { id: userSource },
-			UserTarget: { id: userTarget },
+			Source: { id: userSource },
+			Target: { id: userTarget },
 			Type: TypeOfFriendship.Requested,
 		})
 		await this.repository.save(friendShip)
 	}
 
-	updateTypeFriendship = async (friendship: Friendship, type: TypeOfFriendship): Promise<void> =>  {
+	updateTypeFriendship = async (friendship: Friendship, type: TypeOfFriendship): Promise<void> => {
 		friendship.Type = type
 		const friendshipCreated = this.repository.create(friendship)
-		await this.repository.update(friendship.id, friendshipCreated)
+		await this.repository.save(friendshipCreated)
 	}
 
 	reactToFriendRequest = async (react: boolean, userId: number, friendShipId: number): Promise<void> => {
-		const friendShip = await this.findOneById(friendShipId)
-		
-		if (friendShip.UserTarget.id !== userId) throw new CustomErrorAPI("Only the recipient can react to the request")
-		if (react) await this.updateTypeFriendship(friendShip, TypeOfFriendship.Friend )
+		const friendship = await this.findOneById(friendShipId)
+		if (friendship.Target.id !== userId) throw new CustomErrorAPI("Only the recipient can react to the request")
+		if (react) await this.updateTypeFriendship(friendship, TypeOfFriendship.Friend)
 		else await this.repository.delete(friendShipId)
 	}
 
 	findOneById = async (id: number): Promise<Friendship> => {
-		const result : Friendship | null = await this.repository.findOne({ where: { id }, relations: {
-			UserSource: true,
-			UserTarget: true
-		} })
+		const result: Friendship | null = await this.repository.findOne({
+			where: { id }, relations: {
+				Source: true,
+				Target: true
+			}
+		})
 		if (result === null) throw new CustomErrorAPI("Friendship not found")
 		return result
 	}
 
 	findOneByUsersId = async (idSource: number, idTarget: number): Promise<Friendship | null> => {
 		const friendship: Friendship | null = await this.repository.findOneBy([
-			{ UserSource: { id: idSource }, UserTarget: { id: idTarget } },
-			{ UserSource: { id: idTarget }, UserTarget: { id: idSource } },
+			{ Source: { id: idSource }, Target: { id: idTarget } },
+			{ Source: { id: idTarget }, Target: { id: idSource } },
 		])
 		return friendship
 	}
@@ -94,6 +106,6 @@ export default class FriendshipService implements IFriendshipService {
 		const modelFinded: Friendship | null = await this.findOneById(id)
 
 		modelFinded.Type = TypeOfFriendship.Removed
-		await this.repository.update(id, modelFinded)
+		await this.repository.save(modelFinded)
 	}
 }

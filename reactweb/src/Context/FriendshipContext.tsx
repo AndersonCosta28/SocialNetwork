@@ -25,7 +25,7 @@ export const FriendshipProvider = ({ children }: { children: React.ReactNode }) 
 	const requestAPI = React.useCallback(() => {
 		API_AXIOS.post("/friendship", { UserId: getUserId() })
 			.then((res) => setFriendList(res.data))
-			.catch(console.log)
+			.catch(error => toast.error(getAxiosErrorMessage(error)))
 	}, [])
 
 	React.useEffect(() => {
