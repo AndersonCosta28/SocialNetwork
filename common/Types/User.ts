@@ -12,8 +12,6 @@ export interface IUserSocket {
 export interface IProfileInfo {
   id: number,
   Nickname: string,
-  Email: string,
-  State: string,
   Avatar: string | File | null,
   AvatarBase64: string,
   AvatarType: string,
