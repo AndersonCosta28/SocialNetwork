@@ -12,18 +12,18 @@ export interface IAuthContext {
 	logout: (callback: VoidFunction) => void
 	isAuthenticated: boolean
 	setIsAuthenticated: React.Dispatch<React.SetStateAction<boolean>>
-	disableButton: boolean
+	disableButtonOnRequest: boolean
 }
 
 const AuthContext = createContext<IAuthContext | null>(null)
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
 	const [isAuthenticated, setIsAuthenticated] = useState<boolean>(getIsAuthenticated())
-	const [disableButton, setDisableButton] = useState(false)
+	const [disableButtonOnRequest, setDisableButtonOnRequest] = useState(false)
 
 	const login = (e: React.FormEvent<HTMLFormElement>, credential: IUserLogin, callbackSucess: (data: string) => void = () => null, callbackError: (errorMessage: string) => void = () => null): void => {
 		e.preventDefault()
-		setDisableButton(true)
+		setDisableButtonOnRequest(true)
 		API_AXIOS
 			.post("authentication", credential)
 			.then((res) => {
@@ -41,12 +41,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 				callbackError(getAxiosErrorMessage(error))
 				toast.error(getAxiosErrorMessage(error))
 			})
-			.finally(() => setDisableButton(false))
+			.finally(() => setDisableButtonOnRequest(false))
 	}
 
 	const createAccount = (e: React.FormEvent<HTMLFormElement>, userRegister: IUserRegister, callbackSucess: (data: string) => void = () => null, callbackError: (errorMessage: string) => void = () => null): void => {
 		e.preventDefault()
-		setDisableButton(true)
+		setDisableButtonOnRequest(true)
 		userRegister.Login = userRegister.Profile.Nickname.toLowerCase()
 		API_AXIOS
 			.post<null>("user", userRegister)
@@ -58,7 +58,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 				toast.error(getAxiosErrorMessage(e))
 				callbackError(getAxiosErrorMessage(e))
 			})
-			.finally(() => setDisableButton(false))
+			.finally(() => setDisableButtonOnRequest(false))
 	}
 
 	const logout = (callback: VoidFunction): void => {
@@ -67,7 +67,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 		callback()
 	}
 
-	const values: IAuthContext = { login, logout, isAuthenticated, createAccount, disableButton, setIsAuthenticated }
+	const values: IAuthContext = { login, logout, isAuthenticated, createAccount, disableButtonOnRequest, setIsAuthenticated }
 	return <AuthContext.Provider value={values}>{children}</AuthContext.Provider>
 }
 

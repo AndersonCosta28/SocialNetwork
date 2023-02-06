@@ -6,9 +6,12 @@ import { UserStates } from "common/Types/User"
 import ResendEmailActivation from "Pages/Email/Activation/ResendEmailActivation"
 import { useNavigate } from "react-router-dom"
 import Avatar from "Components/Avatar"
+import { useFriendship } from "Context/FriendshipContext"
+import TagInfo from "Components/TagInfo"
 
 const MyProfileSideBar = () => {
 	const { myProfile, myUser } = useProtected()
+	const { friendList } = useFriendship()
 	const navigate = useNavigate()
 
 	const ShowInfoAccountInactive = (): JSX.Element => {
@@ -27,9 +30,16 @@ const MyProfileSideBar = () => {
 				<div id={styles.content__top}>{myProfile && <Avatar size={100} base64={myProfile.AvatarBase64} type={myProfile.AvatarType} />}</div>
 				<div id={styles.content__mid}>
 					<h2>{myProfile.Nickname}</h2>
-					<h3></h3>
+					<span id={styles.content__profile__description}>{myProfile.Description}</span>
 				</div>
 				<div id={styles.content__bottom}></div>
+			</div>
+			<br />
+			<hr style={{ width: "90%" }} />
+			{/* <br /> */}
+			<div id="container__tag__info" style={{display: "flex", alignItems: "center", justifyContent: "center", width: "100%"}}>
+				<TagInfo number={friendList.length} title="Friends" key={"FRIENDS-" + myProfile.Nickname + "-" + friendList.length} />
+				<TagInfo number={0} title="Posts" key={"POSTS-" + myProfile.Nickname + "-" + 0} />
 			</div>
 			<ShowInfoAccountInactive />
 		</div>

@@ -24,16 +24,15 @@ export default class ProfileController implements IController {
 	findOneByNickname = async (request: Request, response: Response): Promise<Response> => response.status(StatusCode.SuccessOK).send(await this.service.findOneByNickname(String(request.params.Nickname)))
 
 	edit = async (request: Request, response: Response): Promise<Response> => {
-		const { id } = request.body
+		const { id } = request.params
 		const { Description, Local, Nickname } = request.body
 		const profile: Partial<Profile> = {
-			id,
 			Description,
 			Local,
 			Nickname
 		}
 
-		await this.service.edit(profile)
+		await this.service.edit(Number(id), profile)
 		return response.status(StatusCode.SuccessOK).end()
 	}
 }

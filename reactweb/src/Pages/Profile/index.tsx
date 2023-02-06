@@ -14,6 +14,7 @@ import { toast } from "react-hot-toast"
 import { Buffer } from "buffer"
 import Avatar from "Components/Avatar"
 import { useProtected } from "Context/ProtectedContext"
+import TagInfo from "Components/TagInfo"
 
 const Profile = () => {
 	const { nickname } = useParams()
@@ -80,7 +81,10 @@ const Profile = () => {
 				console.log(res)
 				handlerIsEdit()
 			})
-			.catch(console.log)
+			.catch((error) => {
+				console.log(error)
+				toast.error(getAxiosErrorMessage(error))
+			})
 	}
 
 	const handlerAvatar = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -141,19 +145,21 @@ const Profile = () => {
 		) : null
 
 	const Nickname = () => {
-		const handlerNickname = (e: React.ChangeEvent<HTMLInputElement>) => {
-			const _user = profile
-			_user.Nickname = e.target.value
-			setProfile(_user)
-		}
-		return isEdit ? (
-			<div className={`flex_row_center_center ${styles.fieldEdit}`}>
-				<input type={"text"} id={styles.container__top__name} defaultValue={profile.Nickname} onChange={handlerNickname} />
-				<RiPencilLine />
-			</div>
-		) : (
-			<span id={styles.container__top__name}>{profile.Nickname}</span>
-		)
+		console.log("")
+		return <span id={styles.container__top__name}>{profile.Nickname}</span>
+		// const handlerNickname = (e: React.ChangeEvent<HTMLInputElement>) => {
+		// 	const _user = profile
+		// 	_user.Nickname = e.target.value
+		// 	setProfile(_user)
+		// }
+		// return isEdit ? (
+		// 	<div className={`flex_row_center_center ${styles.fieldEdit}`}>
+		// 		<input type={"text"} id={styles.container__top__name} defaultValue={profile.Nickname} onChange={handlerNickname} />
+		// 		<RiPencilLine />
+		// 	</div>
+		// ) : (
+		// 	<span id={styles.container__top__name}>{profile.Nickname}</span>
+		// )
 	}
 
 	const Description = () => {
@@ -219,11 +225,8 @@ const Profile = () => {
 				</div>
 				<div id={styles.container__mid}>
 					<Description />
-					<div id={styles.container__mid__info} className="flex_row_center_center">
-						<div className={styles.container__mid__info__div}>
-							<span className={styles.container__mid__info__div__number}>{friends.length}</span>
-							<span className={styles.container__mid__info__div__tag}>Friends</span>
-						</div>
+					<div id="container__tag__info" className="flex_row_center_center">
+						<TagInfo number={friends.length} title={"Friends"} key={friends.length + "-friends of -" + myProfile.Nickname}/>
 					</div>
 				</div>
 				<SocialButtons />

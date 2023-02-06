@@ -10,7 +10,7 @@ const Login = () => {
 	const navigate = useNavigate()
 	const defaultValue: IUserLogin = { Login: "", Password: "" }
 	const [credential, setCredential] = useState<IUserLogin>(defaultValue)
-	const { login, disableButton } = useAuth()
+	const { login, disableButtonOnRequest } = useAuth()
 	const rigthSideRef = useRef(null)
 	const typed = useRef<Typed | null>(null)
 
@@ -59,7 +59,7 @@ const Login = () => {
 						<FormField onChange={handlerCredential} id="Login" label="Login" autoComplete="username" type="text" invalidMessages={[]} />
 						<FormField onChange={handlerCredential} id="Password" label="Password" autoComplete="current-password" type="password" invalidMessages={[]} />
 						<div className="form__options">
-							<input type="submit" value="Sign in" className="form__options__buttonSubmit" disabled={disableButton} />
+							<input type="submit" value="Sign in" className="form__options__buttonSubmit" disabled={disableButtonOnRequest} />
 							<NavLink to={"/forgetpassword"}>Forgot password?</NavLink>
 						</div>
 					</form>

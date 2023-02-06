@@ -5,7 +5,7 @@ export interface IProfileService {
 	findOneById: (id: number) => Promise<Profile>
 	findOneByNickname: (Nickname: string) => Promise<Profile>
 	findAll: () => Promise<Profile[]>
-	edit: (profile: Partial<Profile>) => void
+	edit: (id: number, profile: Partial<Profile>) => Promise<void>
 }
 
 export default class ProfileService implements IProfileService {
@@ -29,7 +29,8 @@ export default class ProfileService implements IProfileService {
 		return profile
 	}
 
-	edit = async (profile: Partial<Profile>) => {
-		console.log(profile)
+	edit = async (id: number, profile: Partial<Profile>) => {
+		console.log(id)
+		await this.repository.update(id, profile)
 	}
 }

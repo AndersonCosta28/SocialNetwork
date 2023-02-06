@@ -1,10 +1,19 @@
-import React, { useReducer, useState } from "react"
+import React from "react"
 import { RouteObject, useNavigate } from "react-router-dom"
 import { regexPassword } from "common"
 import { IUserRegister } from "common/Types/User"
 import { useAuth } from "Context/AuthContext"
 import styles from "./register.module.css"
 import FormField from "Components/FormField"
+
+const userProfileEmpty = {
+	Login: "",
+	Email: "",
+	Password: "",
+	Profile: {
+		Nickname: "",
+	},
+}
 
 type FormError = {
 	Nickname: {
@@ -59,49 +68,47 @@ const Register = () => {
 
 	//#region Hooks
 	const navigate = useNavigate()
-	const [user, setUser] = useState<IUserRegister>({
-		Login: "",
-		Email: "",
-		Password: "",
-		Profile: {
-			Nickname: "",
-		},
-	})
+	const [user, setUser] = React.useState<IUserRegister>(userProfileEmpty)
+	const [confirmPassword, setConfirmPassword] = React.useState<string>("")
+	const [disableButtonOnFormError, setDisableButtonOnFormError] = React.useState<boolean>(false)
 
-	const [confirmPassword, setConfirmPassword] = useState<string>("")
-	const { createAccount, disableButton } = useAuth()
+	const { createAccount, disableButtonOnRequest } = useAuth()
 
-	const reducer = (oldState: FormError, action: ActionFormError): FormError => {
+	const reducer = (state: FormError, action: ActionFormError): FormError => {
 		const { field, fromApi } = action
 		if (field === FIELDS.NICKNAME)
 			return {
-				...oldState,
+				...state,
 				Nickname: {
 					containsSpace: /\s/g.test(user.Profile.Nickname),
 					minimumLength: user.Profile.Nickname.split(" ").join("").length <= 5,
 					isDuplicated: false,
 				},
 			}
-		else if (field === FIELDS.PASSWORD) return { ...oldState, Password: { regex: !regexPassword.test(user.Password) } }
-		else if (field === FIELDS.CONFIRM_PASSWORD) return { ...oldState, ConfirmPassword: { matchPassword: user.Password !== confirmPassword } }
+		else if (field === FIELDS.PASSWORD) return { ...state, Password: { regex: !regexPassword.test(user.Password) } }
+		else if (field === FIELDS.CONFIRM_PASSWORD) return { ...state, ConfirmPassword: { matchPassword: user.Password !== confirmPassword } }
 		else if (fromApi)
 			return {
-				...oldState,
+				...state,
 				Nickname: {
-					...oldState.Nickname,
+					...state.Nickname,
 					isDuplicated: verifyDuplicateField(fromApi.message, FIELDS.NICKNAME),
 				},
 				Email: {
-					...oldState.Email,
+					...state.Email,
 					isDuplicated: verifyDuplicateField(fromApi.message, "Email"),
 				},
 			}
-
-		return oldState
+		
+		
+		return state
 	}
 
-	const [formError, dispatchFormError] = useReducer(reducer, formErrorInitialValue)
+	const [formError, dispatchFormError] = React.useReducer(reducer, formErrorInitialValue)
 
+	React.useEffect(() => {
+		setDisableButtonOnFormError(Object.values(formError).map((i) => Object.values(i)).reduce((acc, curValue) => acc.concat(curValue), []).some((value) => value === true))
+	}, [formError])
 	//#endregion
 
 	//#region Callbacks
@@ -172,7 +179,7 @@ const Register = () => {
 					/>
 					<FormField label={FIELDS.EMAIL} id={FIELDS.EMAIL} type="email" onChange={handlerUser} invalidMessages={[{ isInvalid: formError.Email.isDuplicated, message: "A user with that email already exists" }]} />
 					<div className="form__options">
-						<input type="submit" value="Create account" className="form__options__buttonSubmit" disabled={disableButton} />
+						<input type="submit" value="Create account" className="form__options__buttonSubmit" disabled={disableButtonOnRequest || disableButtonOnFormError} />
 					</div>
 				</form>
 			</div>

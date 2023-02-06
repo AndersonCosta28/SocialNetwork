@@ -18,7 +18,7 @@ const index = () => {
 	const LiElementResults = () =>
 		ListItems.length > 0 ? (
 			ListItems.map((item: IProfileInfo, index: number, array) => (
-				<li key={`${index + 1}/${array.length}-itemFinded`} onClick={() => navigateToProfile(item)}>					
+				<li key={`${index + 1}/${array.length}-itemFinded`} onClick={() => navigateToProfile(item)} style={{ padding: 10, display: "flex", flexDirection: "row", justifyContent: "space-around", borderRadius: 5 }}>
 					<Avatar base64={item.AvatarBase64} size={30} type={item.AvatarType} key={"avatar-data-lista" + item.id + "-" + index} />
 					<span>{item.Nickname}</span>
 				</li>

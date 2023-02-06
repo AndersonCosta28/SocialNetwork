@@ -1,0 +1,32 @@
+
+#info__div {
+	display: flex;
+	flex-direction: column;
+	background-color: white;
+	border-radius: 10px;
+	width: fit-content;
+	transition: background-color 0.5s;
+}
+
+#info__div > span {
+	margin: 5px 5px;
+	text-align: center;	
+	transition: color 0.5s;
+}
+
+#info__div__tag {
+	color: #808080;
+}
+
+#info__div__number {
+	font-weight: bolder;
+	color: black
+}
+
+#info__div:hover {
+	background-color: #027ad6;	
+}
+
+#info__div:hover span {
+	color: white
+}

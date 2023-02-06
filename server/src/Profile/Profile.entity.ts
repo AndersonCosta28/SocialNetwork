@@ -6,7 +6,7 @@ export default class Profile {
 	@PrimaryGeneratedColumn()
 		id: number
 
-	@Column({ nullable: false })
+	@Column({ nullable: false, unique: true })
 		Nickname: string
 
 	@Column({ default: "" })

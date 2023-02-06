@@ -1,5 +1,4 @@
 import React from "react"
-import { BsPersonCircle } from "react-icons/bs"
 
 interface IProps {
     size: number,
@@ -7,10 +6,9 @@ interface IProps {
     type: string
 }
 
-const Avatar = (props: IProps) => 
-	props.base64 ? 
-		<img style={{width: props.size, height: props.size, borderRadius: "50%"}} src={`data:${props.type};base64, ${props.base64}`} alt="avatar_profile" /> 
-		: 
-		<BsPersonCircle size={props.size} />
+const Avatar = (props: IProps) => {
+	const source = props.base64 ? `data:${props.type};base64, ${props.base64}` : require("../../Assets/avatar.png")
+	return <img style={{width: props.size, height: props.size, borderRadius: "50%"}} src={source} alt="avatar_profile" /> 		
+}
 
 export default Avatar
