@@ -9,6 +9,7 @@ import { PublicRoutes } from "./Routes/public"
 
 const App = () => {
 	React.useEffect(() => {
+
 		WebFont.load({
 			google: {
 				families: ["Roboto"],

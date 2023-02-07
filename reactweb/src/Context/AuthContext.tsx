@@ -28,9 +28,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 			.post("authentication", credential)
 			.then((res) => {
 				if (res.status === 202) {
-					const { idUser, nickname, authenticated } = res.data as IResponseLogin
+					const { idUser, nickname, token } = res.data as IResponseLogin
 					localStorage.clear()
-					localStorage.setItem("authenticated", String(authenticated))
+					localStorage.setItem("token", token)
 					localStorage.setItem("nickname", String(nickname))
 					localStorage.setItem("iduser", String(idUser))
 					setIsAuthenticated(true)

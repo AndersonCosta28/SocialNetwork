@@ -3,12 +3,8 @@ import Friendship from "Friendship/Friendship.entity"
 import User from "User/User.entity"
 import Profile from "Profile/Profile.entity"
 import Message from "Message/Message.entity"
-import env from "dotenv"
-import { resolve } from "path"
 import { DataSource } from "typeorm"
 import Files from "Files/Files.entity"
-
-env.config({ path: resolve("../", ".env") })
 
 const AppDataSource = new DataSource({
 	type: "mysql",

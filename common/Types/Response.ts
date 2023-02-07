@@ -11,7 +11,7 @@ export interface IResponseLogin extends IResponse {
   idUser?: number
   idPlayer?: number
   nickname?: string
-  authenticated: boolean
+  token: string
   exp?: number
   level?: number,
 }

@@ -17,7 +17,7 @@ export const getErrorMessage = (error: unknown): string => {
 
 export const getAxiosErrorMessage = (error: unknown | any): string => {
     if ((error as Object).hasOwnProperty("response"))
-        return error.response.data
+        return error.response.data.message
     else
         return error instanceof Error ? error.message : error
 }

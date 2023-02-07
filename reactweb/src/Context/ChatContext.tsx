@@ -2,7 +2,6 @@ import { IFriend, IMessage } from "common"
 import React, { ReactNode, useContext } from "react"
 import { createContext, useState } from "react"
 import { v4 as uuid4 } from "uuid"
-import { getUserId } from "utils"
 import { useFriendship } from "./FriendshipContext"
 import { useSocketIo } from "./SocketIoContext"
 
@@ -37,19 +36,16 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
 	React.useEffect(() => {
 		if (socket)
 			socket.on("message", (data: IMessage) => {
-				const target = data.FromId === getUserId() ? data.ToId : data.FromId
-				const chat = chats.find((chat: IChat) => chat.targetUserId === target)
-				if (!chat) 
-					openChatByIdFriend(data.FriendshipId)				
+				// const target = data.FromId === getUserId() ? data.ToId : data.FromId
+				// const chat = chats.find((chat: IChat) => chat.targetUserId === target)
+				// // console.log(!!chat)
+				// // if (!chat) 
+				openChatByIdFriend(data.FriendshipId)				
 			})
-		// return () => {
-		// 	console.log("Desligou")
-		// 	if (socket) socket.off("message")
-		// }
-	})
-
-	React.useEffect(() => {
-		console.log(chats.length + " - " + friendList.length)
+		return () => {
+			console.log("Desligou")
+			if (socket) socket.off("message")
+		}
 	}, [chats, friendList])
 
 	const openChatByIdFriend = (idFriendship: number) => {
