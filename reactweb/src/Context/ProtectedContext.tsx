@@ -10,7 +10,8 @@ import { useSocketIo } from "./SocketIoContext"
 export interface IProtectedContext {
 	allProfiles: IProfileInfo[]
 	myProfile: IProfileInfo
-	myUser: IUser
+	myUser: IUser,
+	requestToUpdateMyProfile: () => void
 }
 
 interface IUser {
@@ -35,36 +36,38 @@ export const ProtectedProvider = ({ children }: { children: React.ReactNode }) =
 		Nickname: "",
 	})
 	const [myUser, setMyUser] = React.useState<IUser>({ id: 0, Login: "", Email: "", State: "" })
-
 	const { socket, socketId } = useSocketIo()
 
-	React.useEffect(() => {
-		if (socket !== null && socketId !== null) {
-			API_AXIOS.get("/Profile")
-				.then((res) => {
-					let profiles: IProfileInfo[] = res.data
-					profiles = profiles.map((profile: IProfileInfo) => {
-						// eslint-disable-next-line @typescript-eslint/no-explicit-any
-						const avatar = profile.Avatar as any
-						const avatarBuffer = avatar.buffer
-						profile.AvatarBase64 = avatarBuffer ? Buffer.from(avatarBuffer).toString("base64") : ""
-						if (profile.id === getUserId()) setMyProfile(profile)
-						return profile
-					})
-					setAllProfiles(profiles)
+	const requestToUpdateMyProfile = () => {
+		API_AXIOS.get("/Profile")
+			.then((res) => {
+				let profiles: IProfileInfo[] = res.data
+				profiles = profiles.map((profile: IProfileInfo) => {
+					// eslint-disable-next-line @typescript-eslint/no-explicit-any
+					const avatar = profile.Avatar as any
+					const avatarBuffer = avatar.buffer
+					profile.AvatarBase64 = avatarBuffer ? Buffer.from(avatarBuffer).toString("base64") : ""
+					if (profile.id === getUserId()) setMyProfile(profile)
+					return profile
 				})
-				.catch((error) => {
-					console.log(error)
-					toast.error(getAxiosErrorMessage(error))
-				})
+				setAllProfiles(profiles)
+			})
+			.catch((error) => {
+				console.log(error)
+				toast.error(getAxiosErrorMessage(error))
+			})
 
-			API_AXIOS.get("/user/" + getUserId())
-				.then((res) => setMyUser(res.data))
-				.catch((error) => toast.error(getAxiosErrorMessage(error)))
-		}
+		API_AXIOS.get("/user/" + getUserId())
+			.then((res) => setMyUser(res.data))
+			.catch((error) => toast.error(getAxiosErrorMessage(error)))
+	}
+
+	React.useEffect(() => {
+		if (socket !== null && socketId !== null) 
+			requestToUpdateMyProfile()		
 	}, [socket, socketId])
 
-	const values = { allProfiles, myProfile, myUser }
+	const values = { allProfiles, myProfile, myUser, requestToUpdateMyProfile }
 	return <ProtectedContext.Provider value={values}>{children}</ProtectedContext.Provider>
 }
 

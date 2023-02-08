@@ -20,7 +20,7 @@ export default class User {
   @Column({ type: "enum", enum: UserStates, default: UserStates.WaitingForActivation })
   	State: UserStates
 
-  @OneToOne(() => Profile, { cascade: true })
+  @OneToOne(() => Profile, { cascade: true, eager: true })
   @JoinColumn()
   	Profile: Profile
 

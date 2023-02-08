@@ -17,7 +17,9 @@ export default function JwtMiddleware(request: Request, response: Response, next
 	const user = connectedUsers.find((_user) => _user.SocketID === idWebSocket)
 
 	if (!user) throw new CustomErrorAPI("IdWebSocket is invalid", StatusCode.ClientErrorUnauthorized)
-	if (user.UserId !== decodedToken["id"]) throw new CustomErrorAPI("IdWebSocket is invalid", StatusCode.ClientErrorUnauthorized)
+	if (user.UserId !== decodedToken["id"]) throw new CustomErrorAPI("IdWebSocket/IdUser is invalid", StatusCode.ClientErrorUnauthorized)
+
+	response.locals.id = user.UserId
 
 	next()
 }

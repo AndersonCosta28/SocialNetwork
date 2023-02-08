@@ -5,6 +5,7 @@ import { IControllerCrud } from "Types/IController"
 import { CustomErrorAPI, EmailTypes } from "common"
 import { IEmailService } from "Email/Email.service"
 import Email from "Email/Email.entity"
+import JwtMiddleware from "Middleware/Jwt"
 
 export interface IUserController extends IControllerCrud {
 	activation: (request: Request, response: Response) => Promise<Response>
@@ -15,24 +16,29 @@ export default class UserController implements IUserController {
 
 	routers = (): Router => {
 		const router: Router = Router()
+		// Essa parte não precisa de autenticação por Jwt pois o usuário não está logado para fazê-lo
+		router.post("/resendActivationEmail", this.resendActivationEmail)
+		router.post("/sendRedefinePasswordEmail", this.sendRedefinePasswordEmail)
+		router.post("/checkRedefinePasswordEmail", this.checkRedefinePasswordEmail)
+		router.post("/", this.create)
+		router.post("/redefinePassword", this.redefinePassword)
+		router.post("/activation", this.activation)
+
+		router.use(JwtMiddleware)
+
 		router.get("/", this.findAll)
 		router.get("/:id", this.findOneById)
 		router.get("/findOneByName/:nickname", this.findOneByName)
 		router.put("/:id", this.update)
 		router.delete("/:id", this.delete)
-		router.post("/", this.create)
-		router.post("/activation", this.activation)
-		router.post("/resendActivationEmail", this.resendActivationEmail)
-		router.post("/sendRedefinePasswordEmail", this.sendRedefinePasswordEmail)
-		router.post("/checkRedefinePasswordEmail", this.checkRedefinePasswordEmail)
-		router.post("/redefinePassword", this.redefinePassword)
 		return router
 	}
 
 	findAll = async (request: Request, response: Response): Promise<Response> => response.status(StatusCode.SuccessOK).send(await this.service.findAll())
 
 	findOneById = async (request: Request, response: Response): Promise<Response> => {
-		const { id } = request.params
+		const { id } = response.locals
+		if (id !== Number(request.params.id)) throw new CustomErrorAPI("Ids User doens't match")
 		return response.status(StatusCode.SuccessOK).send(await this.service.findOneById(Number(id)))
 	}
 
@@ -48,14 +54,16 @@ export default class UserController implements IUserController {
 	}
 
 	update = async (request: Request, response: Response): Promise<Response> => {
-		const { id } = request.params
+		const { id } = response.locals
+		if (id !== Number(request.params.id)) throw new CustomErrorAPI("Ids User doens't match")
 		const model = request.body
 		await this.service.update(Number(id), model)
 		return response.status(StatusCode.SuccessNoContent).send()
 	}
 
 	delete = async (request: Request, response: Response): Promise<Response> => {
-		const { id } = request.params
+		const { id } = response.locals
+		if (id !== Number(request.params.id)) throw new CustomErrorAPI("Ids User doens't match")
 		await this.service.delete(Number(id))
 		return response.status(StatusCode.SuccessNoContent).send()
 	}

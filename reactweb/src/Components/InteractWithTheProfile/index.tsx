@@ -5,9 +5,11 @@ import { useFriendship } from "Context/FriendshipContext"
 import { getUserId } from "utils"
 import { API_AXIOS } from "Providers/axios"
 import { toast } from "react-hot-toast"
+import { useSocketIo } from "Context/SocketIoContext"
 
 const InteractWithTheProfile = (props: { FriendId: number; FriendNickname: string }) => {
 	const { addFriend, removeFriend, disableButton } = useFriendship()
+	const { socketId } = useSocketIo()
 	const [friend, setFriend] = React.useState<IFriend | undefined>()
 
 	const onClick = (callback: VoidFunction) => {
@@ -18,8 +20,9 @@ const InteractWithTheProfile = (props: { FriendId: number; FriendNickname: strin
 	}
 
 	React.useEffect(() => {
-		fetchFriend()
-	}, [])
+		if (socketId !== null)
+			fetchFriend()
+	}, [socketId])
 
 	const fetchFriend = () =>
 		API_AXIOS.post("/friendship", { UserId: getUserId() })

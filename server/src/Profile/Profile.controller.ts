@@ -3,6 +3,7 @@ import IController from "Types/IController"
 import { IProfileService } from "./Profile.service"
 import Profile from "./Profile.entity"
 import { StatusCode } from "status-code-enum"
+import { CustomErrorAPI } from "common"
 
 export default class ProfileController implements IController {
 
@@ -24,7 +25,8 @@ export default class ProfileController implements IController {
 	findOneByNickname = async (request: Request, response: Response): Promise<Response> => response.status(StatusCode.SuccessOK).send(await this.service.findOneByNickname(String(request.params.Nickname)))
 
 	edit = async (request: Request, response: Response): Promise<Response> => {
-		const { id } = request.params
+		const { id } = response.locals
+		if (id !== Number(request.params.id)) throw new CustomErrorAPI("Ids User doens't match")
 		const { Description, Local, Nickname } = request.body
 		const profile: Partial<Profile> = {
 			Description,

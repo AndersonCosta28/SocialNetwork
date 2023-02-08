@@ -23,6 +23,8 @@ export const sleep = (milliseconds: number) => {
 	
 	while (currentDate - date < milliseconds)
 }
+
+export const getBase64FromBuffer = (buffer: Buffer) => buffer ? Buffer.from(buffer).toString("base64") : ""
 // Função antiga para usar no SocketIO
 // // eslint-disable-next-line @typescript-eslint/no-explicit-any
 // export const withTimeout = (onSuccess: { apply: (arg0: undefined, arg1: any[]) => void }, onTimeout: () => void, timeout: number | undefined) => {

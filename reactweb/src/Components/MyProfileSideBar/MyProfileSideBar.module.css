@@ -16,10 +16,13 @@
 	background-color: rgb(220, 220, 220);
 }
 
-#content__profile__description {
-	font-size: 12px;
-	color: rgb(0, 0, 0, 0.7);
+#content__profile__nickname, #content__profile__description{
 	text-align: center;
 	display: block;
+}
+
+#content__profile__description {
+	font-size: 14px;
+	color: rgb(0, 0, 0, 0.7);
 }
 

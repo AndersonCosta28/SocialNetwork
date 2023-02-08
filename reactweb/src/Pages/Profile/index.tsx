@@ -9,16 +9,25 @@ import { useChat } from "Context/ChatContext"
 import { useFriendship } from "Context/FriendshipContext"
 import InteractWithTheProfile from "Components/InteractWithTheProfile"
 import { API_AXIOS } from "Providers/axios"
-import { getAxiosErrorMessage, getErrorMessage, IFriend, TypeOfFriendship } from "common"
+import { getAxiosErrorMessage, IFriend, TypeOfFriendship } from "common"
 import { toast } from "react-hot-toast"
 import { Buffer } from "buffer"
 import Avatar from "Components/Avatar"
 import { useProtected } from "Context/ProtectedContext"
 import TagInfo from "Components/TagInfo"
+import { useSocketIo } from "Context/SocketIoContext"
+import Skeleton from "react-loading-skeleton"
+import "react-loading-skeleton/dist/skeleton.css"
+
 
 const Profile = () => {
+	//#region External Hooks
 	const { nickname } = useParams()
-
+	const { disableButton } = useFriendship()
+	const { myProfile, requestToUpdateMyProfile } = useProtected()
+	const { openChatByFriend: openChat } = useChat()
+	const { socketId } = useSocketIo()
+	//#endregion
 	//#region Internal Hooks
 	const [profile, setProfile] = React.useState<IProfileInfo>({
 		Avatar: null,
@@ -49,19 +58,16 @@ const Profile = () => {
 				setFriends(friends)
 			}
 			catch (error) {
-				throw new Error(getErrorMessage(error))
+				console.log("LANÇANDO ERRO")
+				console.log(error)
+				toast.error(getAxiosErrorMessage(error))
 			}
 		}
-
-		requestApi()
-	}, [nickname])
+		if (socketId !== null) requestApi()
+	}, [nickname, socketId])
 
 	//#endregion
-	//#region External Hooks
-	const { disableButton } = useFriendship()
-	const { myProfile } = useProtected()
-	const { openChatByFriend: openChat } = useChat()
-	//#endregion
+
 	//#region Functions
 	let friendShip: IFriend
 	const getFriendShip = (): IFriend | undefined => {
@@ -80,6 +86,7 @@ const Profile = () => {
 			.then((res) => {
 				console.log(res)
 				handlerIsEdit()
+				requestToUpdateMyProfile()
 			})
 			.catch((error) => {
 				console.log(error)
@@ -110,6 +117,7 @@ const Profile = () => {
 			__profile.AvatarBase64 = Buffer.from(await avatarFile.arrayBuffer()).toString("base64")
 			setProfile(__profile)
 			setIsPreview(false)
+			requestToUpdateMyProfile()
 		}
 		catch (error) {
 			toast.error(getAxiosErrorMessage(error))
@@ -182,15 +190,15 @@ const Profile = () => {
 	const _Avatar = React.useCallback(
 		() => (
 			<div id={styles.avatar}>
-				{profile.id === myProfile.id ? (
+				{profile.id === myProfile.id && !isEdit ? (
 					<>
 						<label htmlFor={styles.avatar__input} id={styles.avatar__pen}>
 							<RiPencilLine />
 						</label>
 						<input type="file" name="avatar__input" id={styles.avatar__input} onChange={handlerAvatar} />
 					</>
-				) : null}
-				<Avatar size={150} base64={profile.AvatarBase64} type={profile.AvatarType} />
+				) : null}				
+				{profile.Avatar === null ? <Skeleton circle={true} count={1} style={{height: 150, width: 150, zIndex: 4 }} /> : <Avatar size={150} base64={profile.AvatarBase64} type={profile.AvatarType} />}
 			</div>
 		), [profile]
 	)
@@ -226,7 +234,7 @@ const Profile = () => {
 				<div id={styles.container__mid}>
 					<Description />
 					<div id="container__tag__info" className="flex_row_center_center">
-						<TagInfo number={friends.length} title={"Friends"} key={friends.length + "-friends of -" + myProfile.Nickname}/>
+						<TagInfo number={friends.length} title={"Friends"} key={friends.length + "-friends of -" + profile.Nickname} />
 					</div>
 				</div>
 				<SocialButtons />

@@ -25,7 +25,6 @@ export const SocketIoProvider = ({ children }: { children: ReactNode }) => {
 
 	useEffect(() => {
 		if (socket !== null) {
-			console.log(socket.id)
 			socket.on("connect", () => {
 				setSocketId(socket.id)
 				sessionStorage.setItem("iws", socket.id)

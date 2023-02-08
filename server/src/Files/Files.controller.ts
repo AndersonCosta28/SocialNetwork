@@ -1,3 +1,4 @@
+import { CustomErrorAPI } from "common"
 import { Request, Response, Router } from "express"
 import multer from "multer"
 import { StatusCode } from "status-code-enum"
@@ -18,7 +19,8 @@ export default class FilesController implements IController {
 	upload = multer({ storage: this.storage })
 
 	changeAvatar = async (request: Request, response: Response): Promise<Response> => {
-		const { id } = request.params
+		const { id } = response.locals
+		if (id !== Number(request.params.id)) throw new CustomErrorAPI("Ids User doens't match")
 
 		if (!request.file) return response.status(400).send("Photo is undefined")
 		const buffer = request.file.buffer

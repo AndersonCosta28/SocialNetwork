@@ -12,7 +12,7 @@ export interface IUserSocket {
 export interface IProfileInfo {
   id: number,
   Nickname: string,
-  Avatar: string | File | null,
+  Avatar: string | File |null,
   AvatarBase64: string,
   AvatarType: string,
   AvatarId: number,
