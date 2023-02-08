@@ -15,7 +15,7 @@ export default class ProfileController implements IController {
 		router.get("/findOneByNickname/:Nickname", this.findOneByNickname)
 		router.put("/:id", this.edit)
 		return router
-	}
+	}	
 
 	findAll = async (request: Request, response: Response): Promise<Response> => response.status(StatusCode.SuccessOK).send(await this.service.findAll())
 

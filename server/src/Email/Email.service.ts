@@ -64,7 +64,7 @@ export default class EmailService implements IEmailService {
 			throw new CustomErrorAPI("Email or username sender information is missing", 500)
 
 		const uuid = uuid4()
-		const url = `http://localhost:3000/user/redefinepassword/${uuid}`
+		const url = `http://localhost:${Number(process.env.PORT_CLIENT)}/user/redefinepassword/${uuid}`
 
 		const emailMessage: IEmailMessage = {
 			from: {

@@ -5,9 +5,9 @@ import { useAuth } from "./AuthContext"
 import { IUserSocket } from "common"
 
 export interface ISocketIoContext {
-  socket: Socket | null;
-  isConnected: boolean;
-  onlineUsers: IUserSocket[];
+	socket: Socket | null
+	isConnected: boolean
+	onlineUsers: IUserSocket[]
 }
 
 const SocketIoContext = createContext<ISocketIoContext | null>(null)
@@ -24,10 +24,12 @@ export const SocketIoProvider = ({ children }: { children: ReactNode }) => {
 	useEffect(() => {
 		if (socket) {
 			socket.on("connect", () => {
+				sessionStorage.setItem("iws", socket.id)
 				setIsConnected(true)
 			})
 
 			socket.on("disconnect", () => {
+				sessionStorage.removeItem("iws")
 				setIsConnected(false)
 			})
 
@@ -36,7 +38,8 @@ export const SocketIoProvider = ({ children }: { children: ReactNode }) => {
 			})
 		}
 		return () => {
-			if (socket){
+			if (socket) {
+				sessionStorage.removeItem("iws")
 				socket.off("connect")
 				socket.off("disconnect")
 			}

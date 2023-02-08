@@ -1,7 +1,7 @@
 import { IProfileInfo } from "common/Types/User"
 import React from "react"
 import { API_AXIOS } from "Providers/axios"
-import { getErrorMessage } from "common"
+import { getAxiosErrorMessage } from "common"
 import { toast } from "react-hot-toast"
 import { Buffer } from "buffer"
 import { getUserId } from "utils"
@@ -45,11 +45,14 @@ export const ProtectedProvider = ({ children }: { children: React.ReactNode }) =
 				})
 				setAllProfiles(profiles)
 			})
-			.catch((error) => toast.error(getErrorMessage(error)))
+			.catch((error) => {
+				console.log(error)
+				toast.error(getAxiosErrorMessage(error))
+			})
 
 		API_AXIOS.get("/user/" + getUserId())
 			.then((res) => setMyUser(res.data))
-			.catch((error) => toast.error(getErrorMessage(error)))
+			.catch((error) => toast.error(getAxiosErrorMessage(error)))
 	}, [])
 
 	const values = { allProfiles, myProfile, myUser }
