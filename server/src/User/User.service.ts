@@ -11,7 +11,7 @@ import Files from "Files/Files.entity"
 export interface IUserService extends ICrud<User> {
 	findOneByName: (name: string, bringPassword?: boolean) => Promise<User | null>
 	findOneById: (id: number) => Promise<User>
-	activation: (uuid: string) => Promise<boolean>
+	activation: (uuid: string) => void
 	resendActivationEmail: (uuid: string) => Promise<void>
 	sendRedefinePasswordEmail: (emailUser: string) => Promise<void>
 	redefinePassword: (email: Email, newPassword: string) => Promise<void>
@@ -91,7 +91,7 @@ export default class UserService implements IUserService {
 		return (resultDelete.affected ?? 0) > 0
 	}
 
-	activation = async (uuid: string): Promise<boolean> => {
+	activation = async (uuid: string) => {
 		const email: Email | null = await this.emailService.findOneByUUIDAndType(uuid, EmailTypes.Activation)
 		if (!email) throw new CustomErrorAPI("Email not found", 404)
 
@@ -103,8 +103,7 @@ export default class UserService implements IUserService {
 
 		const modelCreated = this.repository.create(user)
 		modelCreated.State = UserStates.Active
-		const resultUpdate: UpdateResult = await this.repository.update(modelCreated.id, modelCreated)
-		return (resultUpdate.affected ?? 0) > 0
+		await this.repository.save(modelCreated)
 	}
 
 	resendActivationEmail = async (uuid: string): Promise<void> => {

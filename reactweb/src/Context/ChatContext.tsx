@@ -34,7 +34,7 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
 	}, [chats])
 
 	React.useEffect(() => {
-		if (socket)
+		if (socket !== null)
 			socket.on("message", (data: IMessage) => {
 				// const target = data.FromId === getUserId() ? data.ToId : data.FromId
 				// const chat = chats.find((chat: IChat) => chat.targetUserId === target)

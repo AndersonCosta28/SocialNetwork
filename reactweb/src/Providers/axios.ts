@@ -17,7 +17,6 @@ export const API_AXIOS = axios.create({
 })
 
 API_AXIOS.interceptors.request.use((config) => {
-	console.log("iws -> " + getIWS())
 	config.headers.Authorization = getToken()
 	config.headers["iws"] = getIWS()
 	return config

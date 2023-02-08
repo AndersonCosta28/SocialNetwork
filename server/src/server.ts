@@ -20,7 +20,7 @@ app.use(cors())
 
 app.get(prefix + "ping", (request: Request, response: Response) => response.send("<b>pong</b>"))
 app.use(prefix + "authentication", authenticationController.routers())
-// app.use(JwtMiddleware)
+app.use(JwtMiddleware)
 app.use(prefix + "user", userController.routers())
 app.use(prefix + "friendship", friendshipController.routers())
 app.use(prefix + "message", messageController.routers())

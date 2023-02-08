@@ -5,6 +5,7 @@ import { getAxiosErrorMessage } from "common"
 import { toast } from "react-hot-toast"
 import { Buffer } from "buffer"
 import { getUserId } from "utils"
+import { useSocketIo } from "./SocketIoContext"
 
 export interface IProtectedContext {
 	allProfiles: IProfileInfo[]
@@ -12,7 +13,12 @@ export interface IProtectedContext {
 	myUser: IUser
 }
 
-interface IUser { id: number; Login: string; Email: string; State: string }
+interface IUser {
+	id: number
+	Login: string
+	Email: string
+	State: string
+}
 
 const ProtectedContext = React.createContext<IProtectedContext | null>(null)
 
@@ -28,32 +34,35 @@ export const ProtectedProvider = ({ children }: { children: React.ReactNode }) =
 		Local: "",
 		Nickname: "",
 	})
-
 	const [myUser, setMyUser] = React.useState<IUser>({ id: 0, Login: "", Email: "", State: "" })
 
-	React.useEffect(() => {
-		API_AXIOS.get("/Profile")
-			.then((res) => {
-				let profiles: IProfileInfo[] = res.data
-				profiles = profiles.map((profile: IProfileInfo) => {
-					// eslint-disable-next-line @typescript-eslint/no-explicit-any
-					const avatar = profile.Avatar as any
-					const avatarBuffer = avatar.buffer
-					profile.AvatarBase64 = avatarBuffer ? Buffer.from(avatarBuffer).toString("base64") : ""
-					if (profile.id === getUserId()) setMyProfile(profile)
-					return profile
-				})
-				setAllProfiles(profiles)
-			})
-			.catch((error) => {
-				console.log(error)
-				toast.error(getAxiosErrorMessage(error))
-			})
+	const { socket, socketId } = useSocketIo()
 
-		API_AXIOS.get("/user/" + getUserId())
-			.then((res) => setMyUser(res.data))
-			.catch((error) => toast.error(getAxiosErrorMessage(error)))
-	}, [])
+	React.useEffect(() => {
+		if (socket !== null && socketId !== null) {
+			API_AXIOS.get("/Profile")
+				.then((res) => {
+					let profiles: IProfileInfo[] = res.data
+					profiles = profiles.map((profile: IProfileInfo) => {
+						// eslint-disable-next-line @typescript-eslint/no-explicit-any
+						const avatar = profile.Avatar as any
+						const avatarBuffer = avatar.buffer
+						profile.AvatarBase64 = avatarBuffer ? Buffer.from(avatarBuffer).toString("base64") : ""
+						if (profile.id === getUserId()) setMyProfile(profile)
+						return profile
+					})
+					setAllProfiles(profiles)
+				})
+				.catch((error) => {
+					console.log(error)
+					toast.error(getAxiosErrorMessage(error))
+				})
+
+			API_AXIOS.get("/user/" + getUserId())
+				.then((res) => setMyUser(res.data))
+				.catch((error) => toast.error(getAxiosErrorMessage(error)))
+		}
+	}, [socket, socketId])
 
 	const values = { allProfiles, myProfile, myUser }
 	return <ProtectedContext.Provider value={values}>{children}</ProtectedContext.Provider>

@@ -19,23 +19,25 @@ const FriendshipContext = createContext<IFriendshipContext | null>(null)
 export const FriendshipProvider = ({ children }: { children: React.ReactNode }) => {
 	const [friendList, setFriendList] = React.useState<IFriend[]>([])
 	const [disableButton, setDisableButton] = React.useState<boolean>(false)
-	
-	const { socket } = useSocketIo()
+
+	const { socket, socketId } = useSocketIo()
 
 	const requestAPI = React.useCallback(() => {
 		API_AXIOS.post("/friendship", { UserId: getUserId() })
 			.then((res) => setFriendList(res.data))
-			.catch(error => toast.error(getAxiosErrorMessage(error)))
+			.catch((error) => toast.error(getAxiosErrorMessage(error)))
 	}, [])
 
 	React.useEffect(() => {
-		requestAPI()
-		if (socket !== null)
-		 socket.on("update_list_friend", () => {
+		if (socket !== null && socketId !== null) {
+			requestAPI()
+
+			socket.on("update_list_friend", () => {
 				console.log("Atualizando a lista de amigos a pedido do servidor")
 				requestAPI()
-		 })
-	}, [])
+			})
+		}
+	}, [socket, socketId])
 
 	const addFriend = (sourceId: number, targetName: string) => {
 		setDisableButton(true)
@@ -52,7 +54,6 @@ export const FriendshipProvider = ({ children }: { children: React.ReactNode }) 
 	}
 
 	const removeFriend = (idFriendship: number) => {
-		
 		setDisableButton(true)
 		API_AXIOS.post("/friendship/RemoveFriend", { idFriendship })
 			.then(console.log)
