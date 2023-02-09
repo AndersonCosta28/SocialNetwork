@@ -23,14 +23,13 @@ export default class ProfileService implements IProfileService {
 		const profile = await this.repository
 			.createQueryBuilder("profile")
 			.innerJoinAndSelect("profile.Avatar", "a")
-			.where("LOWER(Nickname) = :nickname", { nickname: Nickname })
+			.where("LOWER(Nickname) = :nickname", { nickname: Nickname.toLowerCase() })
 			.getOne()
 		if (!profile) throw new Error("Profile not found")
 		return profile
 	}
 
 	edit = async (id: number, profile: Partial<Profile>) => {
-		console.log(id)
 		await this.repository.update(id, profile)
 	}
 }

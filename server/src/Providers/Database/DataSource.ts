@@ -5,6 +5,8 @@ import Profile from "Profile/Profile.entity"
 import Message from "Message/Message.entity"
 import { DataSource } from "typeorm"
 import Files from "Files/Files.entity"
+import Post from "Post/Post.entity"
+import { getErrorMessage } from "common"
 
 const AppDataSource = new DataSource({
 	type: "mysql",
@@ -13,7 +15,7 @@ const AppDataSource = new DataSource({
 	username: process.env.DATABASE_USERNAME,
 	password: process.env.DATABASE_PASSWORD,
 	database: "socialnetwork",
-	entities: [User, Friendship, Email, Profile, Message, Files],
+	entities: [User, Friendship, Email, Profile, Message, Files, Post],
 	// url: "mysql://root:mysqlpw@localhost:55000", //DOCKER
 	synchronize: true,
 	cache: {
@@ -30,6 +32,6 @@ AppDataSource.initialize()
 		console.log("Data Source has been initialized!")
 	})
 	.catch((err) => {
-		console.error("Error during Data Source initialization", err)
+		console.error("Error during Data Source initialization", getErrorMessage(err))
 	})
 export default AppDataSource

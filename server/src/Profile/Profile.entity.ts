@@ -18,4 +18,5 @@ export default class Profile {
 
 	@Column({ default: "" })
 		Local?: string
+
 }

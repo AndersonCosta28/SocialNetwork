@@ -5,8 +5,11 @@ import styles from "./feed.module.css"
 import TextareaAutosize from "react-textarea-autosize"
 import OnlineFriendsSideBar from "Components/FriendsSideBar"
 import MyProfileSideBar from "Components/MyProfileSideBar"
+import Avatar from "Components/Avatar"
+import { useProtected } from "Context/ProtectedContext"
 
 const Feed = () => {
+	const { myProfile } = useProtected()
 	//#region Arrow options
 
 	const textAreaWritePost = React.useRef<HTMLTextAreaElement>(null)
@@ -45,6 +48,20 @@ const Feed = () => {
 					<div id={styles.WritePost__Options}>
 						<input type="button" value="send" className="blueButtonActive" />
 					</div>
+				</div>
+				<div className={`${styles.post}`}>
+					<div className={`${styles.post__header}`}>
+						<Avatar base64={myProfile.AvatarBase64} size={30} type={myProfile.AvatarType} />
+						<div>
+							<span className={styles.post__header__nickname}>{myProfile.Nickname}</span>
+							{" - "}
+							<span className={styles.post__header__time}>Há uma hora</span>
+						</div>
+					</div>
+					<div className={`${styles.post__body} flex_column_center_center`} style={{backgroundColor: "black", borderRadius: 10}}>
+						<img style={{ width: "auto", maxHeight: "700px" }} src={require("../../Assets/bonfire.jfif")} alt="" />
+					</div>
+					<div className={styles.post__footer}></div>
 				</div>
 			</div>
 

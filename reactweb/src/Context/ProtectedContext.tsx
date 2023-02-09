@@ -10,7 +10,7 @@ import { useSocketIo } from "./SocketIoContext"
 export interface IProtectedContext {
 	allProfiles: IProfileInfo[]
 	myProfile: IProfileInfo
-	myUser: IUser,
+	myUser: IUser
 	requestToUpdateMyProfile: () => void
 }
 
@@ -42,12 +42,15 @@ export const ProtectedProvider = ({ children }: { children: React.ReactNode }) =
 		API_AXIOS.get("/Profile")
 			.then((res) => {
 				let profiles: IProfileInfo[] = res.data
+				console.log(res.data)
 				profiles = profiles.map((profile: IProfileInfo) => {
 					// eslint-disable-next-line @typescript-eslint/no-explicit-any
 					const avatar = profile.Avatar as any
 					const avatarBuffer = avatar.buffer
 					profile.AvatarBase64 = avatarBuffer ? Buffer.from(avatarBuffer).toString("base64") : ""
-					if (profile.id === getUserId()) setMyProfile(profile)
+					if (profile.id === getUserId()) 
+						setMyProfile(profile)
+					
 					return profile
 				})
 				setAllProfiles(profiles)
@@ -63,8 +66,7 @@ export const ProtectedProvider = ({ children }: { children: React.ReactNode }) =
 	}
 
 	React.useEffect(() => {
-		if (socket !== null && socketId !== null) 
-			requestToUpdateMyProfile()		
+		if (socket !== null && socketId !== null) requestToUpdateMyProfile()
 	}, [socket, socketId])
 
 	const values = { allProfiles, myProfile, myUser, requestToUpdateMyProfile }

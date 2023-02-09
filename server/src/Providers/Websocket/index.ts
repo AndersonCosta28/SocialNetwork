@@ -29,7 +29,7 @@ export const setIo = (server: http.Server) => {
 	})
 
 	io.on("connection", (socket: Socket) => {
-		console.log("Conectou")
+		console.log(socket.id + " Connected")
 		const socketsIdArray = Array.from(io.sockets.sockets, ([name, value]) => ({ name, value })).map(value => value.value.id)
 		const { Nickname, UserId } = socket.handshake.query
 		if (socketsIdArray.some((value) => value.includes(socket.id)))
@@ -79,7 +79,7 @@ export const setIo = (server: http.Server) => {
 		})
 
 		socket.on("disconnect", () => {
-			console.log("Desconectou")
+			console.log(socket.id + " Disconnected")
 			connectedUsers = connectedUsers.filter((user) => user.SocketID !== socket.id)
 			io.emit("onlineUsers", connectedUsers)
 		})
