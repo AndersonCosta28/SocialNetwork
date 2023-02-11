@@ -23,6 +23,8 @@ export default class Friendship {
 		Type: TypeOfFriendship | string
 
 
+	friendProfile?: Profile
+
 	@AfterUpdate()
 	AfterUpdate?() {
 		if (this.Type === TypeOfFriendship.Friend) {

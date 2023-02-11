@@ -23,7 +23,7 @@
     "mysql2": "^2.3.3",
     "redis": "^4.5.1",
     "socket.io": "^4.5.4",
-    "typeorm": "^0.3.11"
+    "typeorm": "^0.3.12"
   },
   "devDependencies": {
     "@types/bcrypt": "^5.0.0",

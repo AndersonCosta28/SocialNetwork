@@ -25,6 +25,7 @@ const ProtectedContext = React.createContext<IProtectedContext | null>(null)
 
 export const ProtectedProvider = ({ children }: { children: React.ReactNode }) => {
 	const [allProfiles, setAllProfiles] = React.useState<IProfileInfo[]>([])
+	
 	const [myProfile, setMyProfile] = React.useState<IProfileInfo>({
 		Avatar: null,
 		AvatarBase64: "",
@@ -42,7 +43,6 @@ export const ProtectedProvider = ({ children }: { children: React.ReactNode }) =
 		API_AXIOS.get("/Profile")
 			.then((res) => {
 				let profiles: IProfileInfo[] = res.data
-				console.log(res.data)
 				profiles = profiles.map((profile: IProfileInfo) => {
 					// eslint-disable-next-line @typescript-eslint/no-explicit-any
 					const avatar = profile.Avatar as any
@@ -63,6 +63,13 @@ export const ProtectedProvider = ({ children }: { children: React.ReactNode }) =
 		API_AXIOS.get("/user/" + getUserId())
 			.then((res) => setMyUser(res.data))
 			.catch((error) => toast.error(getAxiosErrorMessage(error)))
+
+		API_AXIOS.get("/post/findAllFromFriends/" + getUserId())
+			.then((res) => console.log(res.data))
+			.catch((error) => {
+				console.log(error)
+				toast.error(getAxiosErrorMessage(error))
+			})
 	}
 
 	React.useEffect(() => {

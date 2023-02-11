@@ -54,6 +54,8 @@ export default class FriendshipService implements IFriendshipService {
 					Avatar: buffer?.toString() ?? "",
 					Description: friendProfile.Description ?? "",					
 					Local: friendProfile.Local ?? "",
+					// Post: [],
+					// Friends: []
 				}
 			})
 		}

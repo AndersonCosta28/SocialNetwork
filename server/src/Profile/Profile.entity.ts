@@ -1,5 +1,6 @@
 import Files from "Files/Files.entity"
-import { Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn } from "typeorm"
+import Post from "Post/Post.entity"
+import { Column, Entity, JoinColumn, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm"
 
 @Entity()
 export default class Profile {
@@ -18,5 +19,8 @@ export default class Profile {
 
 	@Column({ default: "" })
 		Local?: string
+
+	// @OneToMany(() => Post, post => post.Profile)
+	// 	Posts: Post[]
 
 }

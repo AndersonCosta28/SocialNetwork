@@ -1,3 +1,5 @@
+import { IFriend } from "./Friendship"
+
 export interface IUserLogin {
   Login: string
   Password: string

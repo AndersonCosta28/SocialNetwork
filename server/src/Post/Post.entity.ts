@@ -1,6 +1,7 @@
 import Files from "Files/Files.entity"
+import Friendship from "Friendship/Friendship.entity"
 import Profile from "Profile/Profile.entity"
-import { Column, Entity, JoinColumn, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm"
+import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm"
 
 @Entity()
 export default class Post {
@@ -10,11 +11,11 @@ export default class Post {
     @Column()
     	Content: string
 
-    @OneToMany(() => Files, files => files.id, { eager: true })
-    	attachments: Files
+    @OneToMany(() => Files, files => files.Post, { eager: true })
+    	Attachments: Files
 
-    @OneToOne(() => Profile, profile => profile.id, { eager: true })
-    @JoinColumn()
+    @ManyToOne(() => Profile, profile => profile.id, { eager: true })
     	Profile: Profile
 
+    Friends: Friendship
 }
