@@ -195,7 +195,7 @@ const Profile = () => {
 						<label htmlFor={styles.avatar__input} id={styles.avatar__pen}>
 							<RiPencilLine />
 						</label>
-						<input type="file" name="avatar__input" id={styles.avatar__input} onChange={handlerAvatar} />
+						<input type="file" name="avatar__input" id={styles.avatar__input} onChange={handlerAvatar} accept="image/*"/>
 					</>
 				) : null}				
 				{profile.Avatar === null ? <Skeleton circle={true} count={1} style={{height: 150, width: 150, zIndex: 4 }} /> : <Avatar size={150} base64={profile.AvatarBase64} type={profile.AvatarType} />}

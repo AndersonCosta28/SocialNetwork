@@ -6,6 +6,7 @@ import { CustomErrorAPI, EmailTypes } from "common"
 import { IEmailService } from "Email/Email.service"
 import Email from "Email/Email.entity"
 import JwtMiddleware from "Middleware/Jwt"
+import { MiddlewareVerifyIds } from "Middleware/Error"
 
 export interface IUserController extends IControllerCrud {
 	activation: (request: Request, response: Response) => Promise<Response>
@@ -27,10 +28,10 @@ export default class UserController implements IUserController {
 		router.use(JwtMiddleware)
 
 		router.get("/", this.findAll)
-		router.get("/:id", this.findOneById)
+		router.get("/:id", MiddlewareVerifyIds, this.findOneById)
 		router.get("/findOneByName/:nickname", this.findOneByName)
-		router.put("/:id", this.update)
-		router.delete("/:id", this.delete)
+		router.put("/:id", MiddlewareVerifyIds, this.update)
+		router.delete("/:id", MiddlewareVerifyIds, this.delete)
 		return router
 	}
 
@@ -38,7 +39,6 @@ export default class UserController implements IUserController {
 
 	findOneById = async (request: Request, response: Response): Promise<Response> => {
 		const { id } = response.locals
-		if (id !== Number(request.params.id)) throw new CustomErrorAPI("Ids User doens't match")
 		return response.status(StatusCode.SuccessOK).send(await this.service.findOneById(Number(id)))
 	}
 
@@ -55,7 +55,6 @@ export default class UserController implements IUserController {
 
 	update = async (request: Request, response: Response): Promise<Response> => {
 		const { id } = response.locals
-		if (id !== Number(request.params.id)) throw new CustomErrorAPI("Ids User doens't match")
 		const model = request.body
 		await this.service.update(Number(id), model)
 		return response.status(StatusCode.SuccessNoContent).send()
@@ -63,7 +62,6 @@ export default class UserController implements IUserController {
 
 	delete = async (request: Request, response: Response): Promise<Response> => {
 		const { id } = response.locals
-		if (id !== Number(request.params.id)) throw new CustomErrorAPI("Ids User doens't match")
 		await this.service.delete(Number(id))
 		return response.status(StatusCode.SuccessNoContent).send()
 	}

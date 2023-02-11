@@ -1,7 +1,7 @@
 import { IProfileInfo } from "common/Types/User"
 import React from "react"
 import { API_AXIOS } from "Providers/axios"
-import { getAxiosErrorMessage } from "common"
+import { getAxiosErrorMessage, IPost } from "common"
 import { toast } from "react-hot-toast"
 import { Buffer } from "buffer"
 import { getUserId } from "utils"
@@ -12,6 +12,7 @@ export interface IProtectedContext {
 	myProfile: IProfileInfo
 	myUser: IUser
 	requestToUpdateMyProfile: () => void
+	allPosts: IPost[]
 }
 
 interface IUser {
@@ -37,6 +38,7 @@ export const ProtectedProvider = ({ children }: { children: React.ReactNode }) =
 		Nickname: "",
 	})
 	const [myUser, setMyUser] = React.useState<IUser>({ id: 0, Login: "", Email: "", State: "" })
+	const [allPosts, setAllPosts] = React.useState<IPost[]>([])
 	const { socket, socketId } = useSocketIo()
 
 	const requestToUpdateMyProfile = () => {
@@ -45,9 +47,8 @@ export const ProtectedProvider = ({ children }: { children: React.ReactNode }) =
 				let profiles: IProfileInfo[] = res.data
 				profiles = profiles.map((profile: IProfileInfo) => {
 					// eslint-disable-next-line @typescript-eslint/no-explicit-any
-					const avatar = profile.Avatar as any
-					const avatarBuffer = avatar.buffer
-					profile.AvatarBase64 = avatarBuffer ? Buffer.from(avatarBuffer).toString("base64") : ""
+					const avatar = profile.Avatar as { buffer: Buffer }
+					profile.AvatarBase64 = avatar.buffer ? Buffer.from(avatar.buffer).toString("base64") : ""
 					if (profile.id === getUserId()) 
 						setMyProfile(profile)
 					
@@ -64,8 +65,8 @@ export const ProtectedProvider = ({ children }: { children: React.ReactNode }) =
 			.then((res) => setMyUser(res.data))
 			.catch((error) => toast.error(getAxiosErrorMessage(error)))
 
-		API_AXIOS.get("/post/findAllFromFriends/" + getUserId())
-			.then((res) => console.log(res.data))
+		API_AXIOS.get("/post/findAllByIdProfile/" + getUserId())
+			.then((res) => setAllPosts(res.data))
 			.catch((error) => {
 				console.log(error)
 				toast.error(getAxiosErrorMessage(error))
@@ -76,7 +77,7 @@ export const ProtectedProvider = ({ children }: { children: React.ReactNode }) =
 		if (socket !== null && socketId !== null) requestToUpdateMyProfile()
 	}, [socket, socketId])
 
-	const values = { allProfiles, myProfile, myUser, requestToUpdateMyProfile }
+	const values = { allProfiles, myProfile, myUser, requestToUpdateMyProfile, allPosts }
 	return <ProtectedContext.Provider value={values}>{children}</ProtectedContext.Provider>
 }
 

@@ -2,29 +2,15 @@ import React from "react"
 import ErrorPage from "Pages/ErrorPage"
 import { RouteObject } from "react-router-dom"
 import styles from "./feed.module.css"
-import TextareaAutosize from "react-textarea-autosize"
 import OnlineFriendsSideBar from "Components/FriendsSideBar"
 import MyProfileSideBar from "Components/MyProfileSideBar"
 import { useProtected } from "Context/ProtectedContext"
 import Post from "Components/Post"
+import WriteAnPost from "Components/WriteAnPost"
+import { IPost } from "common"
 
 const Feed = () => {
-	const { myProfile } = useProtected()
-	//#region Arrow options
-
-	const textAreaWritePost = React.useRef<HTMLTextAreaElement>(null)
-	const [, setTextPost] = React.useState<string>("")
-
-	const handlerTextPost = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-		const { value } = e.target
-		setTextPost(value)
-
-		const textPost = textAreaWritePost.current as HTMLTextAreaElement
-		const scrollHeigth = textPost.scrollHeight
-		textPost.scrollTop = scrollHeigth
-	}
-
-	//#endregion
+	const { myProfile, allPosts } = useProtected()
 	return (
 		<div id={styles.body}>
 			<div id={styles.body__leftSide}>
@@ -43,13 +29,10 @@ const Feed = () => {
 			</div>
 
 			<div id={styles.body__midSide}>
-				<div id={styles.WritePost}>
-					<TextareaAutosize maxRows={10} id={styles.WritePost__TextArea} ref={textAreaWritePost} placeholder="Share your thoughts" onChange={handlerTextPost} />
-					<div id={styles.WritePost__Options}>
-						<input type="button" value="send" className="blueButtonActive" />
-					</div>
-				</div>
-				<Post profile={myProfile} />
+				<WriteAnPost />
+				{allPosts.map((post: IPost, index: number) => <Post post={post} key={"Post -> " + index} />)
+
+				}
 			</div>
 
 			<div id={styles.body__rigthSide}>

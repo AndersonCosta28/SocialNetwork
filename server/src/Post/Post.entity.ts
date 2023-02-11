@@ -9,13 +9,13 @@ export default class Post {
     	id: number
 
     @Column()
-    	Content: string
+    	Text: string
 
-    @OneToMany(() => Files, files => files.Post, { eager: true })
-    	Attachments: Files
+    @OneToMany(() => Files, files => files.Post, { eager: true, cascade: true, nullable: true })
+    	Attachments?: Files[]
 
     @ManyToOne(() => Profile, profile => profile.id, { eager: true })
     	Profile: Profile
 
-    Friends: Friendship
+    Friends?: Friendship
 }

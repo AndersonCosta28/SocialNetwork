@@ -3,7 +3,7 @@ export * from "./Types/Response"
 export * from "./Types/User"
 export * from "./Types/Email"
 export * from './Types/CustomErrors'
-
+export * from "./Types/Post"
 
 export const addHours = (date: Date, hours: number) => {
     var copiedDate = new Date(date.getTime());

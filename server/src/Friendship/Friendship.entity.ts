@@ -15,11 +15,7 @@ export default class Friendship {
 	@ManyToOne(() => Profile, (profile) => profile.id, { eager: true })
 		Target: Profile
 
-	@Column({
-		type: "enum",
-		enum: TypeOfFriendship,
-		default: TypeOfFriendship.Requested,
-	})
+	@Column({ type: "enum", enum: TypeOfFriendship, default: TypeOfFriendship.Requested })
 		Type: TypeOfFriendship | string
 
 

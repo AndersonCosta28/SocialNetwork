@@ -35,7 +35,7 @@ const HomePage = ({ children }: { children: ReactNode }) => {
 
 	return (
         
-		<div onClick={onClickPage} style={{height: "100%"}}>
+		<div onClick={onClickPage} style={{height: "100%", userSelect: "none"}}>
 			<div id={styles.header} className={`shadow_white`}>
 				<div id={styles.header__leftSide}>
 					<h1 onClick={goToHomePage} id={styles.header__leftSide__title}>Social Network</h1>

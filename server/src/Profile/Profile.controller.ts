@@ -3,7 +3,7 @@ import IController from "Types/IController"
 import { IProfileService } from "./Profile.service"
 import Profile from "./Profile.entity"
 import { StatusCode } from "status-code-enum"
-import { CustomErrorAPI } from "common"
+import { MiddlewareVerifyIds } from "Middleware/Error"
 
 export default class ProfileController implements IController {
 
@@ -14,7 +14,7 @@ export default class ProfileController implements IController {
 		router.get("/", this.findAll)
 		router.get("/findOneById/:id", this.findOneById)
 		router.get("/findOneByNickname/:Nickname", this.findOneByNickname)
-		router.put("/:id", this.edit)
+		router.put("/:id", MiddlewareVerifyIds, this.edit)
 		return router
 	}	
 
@@ -26,7 +26,6 @@ export default class ProfileController implements IController {
 
 	edit = async (request: Request, response: Response): Promise<Response> => {
 		const { id } = response.locals
-		if (id !== Number(request.params.id)) throw new CustomErrorAPI("Ids User doens't match")
 		const { Description, Local, Nickname } = request.body
 		const profile: Partial<Profile> = {
 			Description,

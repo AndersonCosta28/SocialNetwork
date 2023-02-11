@@ -63,35 +63,7 @@
 	margin: 5px 10px;
 }
 
-#WritePost {
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	justify-content: space-around;
-}
 
-#WritePost__TextArea {
-	resize: none;
-	width: 100%;
-	padding: 5px;
-	min-height: 44px;
-	max-height: 250px;
-	/* overflow-y: hidden; */
-	border-style: none;
-}
-
-#WritePost__Options {
-	margin: 10px 10px 0px 10px;
-}
-
-#WritePost__Options__ButtonSend {
-	border-radius: 3px;
-	border-style: none;
-	background-color: #027ad6;
-	padding: 5px;
-	color: #fff;
-	/* font-size: 1rem; */
-}
 
 /*#endregion */
 
