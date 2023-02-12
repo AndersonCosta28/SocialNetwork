@@ -14,6 +14,11 @@
 	color: rgb(0, 0, 0, 0.7);
 }
 
+.post__body__image {
+	max-width: 643px;
+	max-height: 500px;
+}
+
 .post__footer__buttons,
 .post__footer__numbers, .post__footer__buttons div,
 .post__footer__numbers div {
@@ -32,3 +37,4 @@
 .post__footer__buttons {
 	justify-content: space-around;
 }
+

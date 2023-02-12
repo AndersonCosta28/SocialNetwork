@@ -2,6 +2,7 @@ import { Repository } from "typeorm"
 import Friendship from "./Friendship.entity"
 import { IFriend, TypesOfApplicants, TypeOfFriendship } from "common/Types/Friendship"
 import { CustomErrorAPI } from "common"
+import { Buffer } from "buffer"
 
 export interface IFriendshipService {
 	findAllByUser: (idUser: number) => Promise<IFriend[]>

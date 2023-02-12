@@ -5,7 +5,8 @@ export interface IPost {
     Attachments: {
         buffer: Buffer
         id: number,
-        type: string
-    }
+        type: string,        
+    }[]
+    Text: string
     Profile: IProfileInfo
 }

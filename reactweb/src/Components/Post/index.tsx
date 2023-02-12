@@ -10,12 +10,11 @@ import { Buffer } from "buffer"
 
 
 const Post = (props: { post: IPost }) => {
-	const avatarBuffer = props.post.Profile.Avatar as { buffer: Buffer; type: string }
-	console.log(avatarBuffer)
+	const { buffer: avatarBuffer, type: avatarType } = props.post.Profile.Avatar as { buffer: Buffer, type: string }
 	return (
 		<div className={`${styles.post}`}>
 			<div className={`${styles.post__header}`}>
-				<Avatar base64={getBase64FromBuffer(avatarBuffer.buffer)} size={30} type={avatarBuffer.type} />
+				<Avatar base64={getBase64FromBuffer(avatarBuffer)} size={30} type={avatarType} />
 				<div>
 					<span className={styles.post__header__nickname}>{props.post.Profile.Nickname}</span>
 					{" - "}
@@ -23,9 +22,12 @@ const Post = (props: { post: IPost }) => {
 				</div>
 			</div>
 			<div className={styles.post__body}>
-				<span>Textão</span>
+				<span>{props.post.Text}</span>
 				<div className="flex_column_center_center" style={{ backgroundColor: "black", borderRadius: 10, width: "100%" }}>
-					<img style={{ width: "auto", maxHeight: "400px" }} src={require("../../Assets/bonfire.jfif")} alt="" />
+					{
+						props.post.Attachments.length > 0 &&
+						<img className={styles.post__body__image} src={`data:${props.post.Attachments[0].type};base64, ${getBase64FromBuffer(props.post.Attachments[0].buffer)}`} alt="" />
+					}
 				</div>
 			</div>
 			<div className={styles.post__footer}>

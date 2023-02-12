@@ -1,4 +1,5 @@
 import { IFriend } from "./Friendship"
+import { Buffer } from "buffer"
 
 export interface IUserLogin {
   Login: string
@@ -14,7 +15,7 @@ export interface IUserSocket {
 export interface IProfileInfo {
   id: number,
   Nickname: string,
-  Avatar: string | File | { buffer: Buffer } | null,
+  Avatar: string | File | { buffer: Buffer, type: string } | null,
   AvatarBase64: string,
   AvatarType: string,
   AvatarId: number,

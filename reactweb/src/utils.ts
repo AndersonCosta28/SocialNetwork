@@ -1,3 +1,5 @@
+import { Buffer } from "buffer"
+
 export const getIsAuthenticated = () => {
 	const token = localStorage.getItem("token")
 	return !!token
