@@ -1,6 +1,5 @@
 import Files from "Files/Files.entity"
 import Friendship from "Friendship/Friendship.entity"
-import Profile from "Profile/Profile.entity"
 import AppDataSource from "Providers/Database/DataSource"
 import { DeepPartial, In, Repository } from "typeorm"
 import Post from "./Post.entity"
@@ -14,7 +13,9 @@ export interface IPostService {
 export default class PostService implements IPostService {
 	constructor(private readonly repository: Repository<Post>) { }
 	findAllByIdsProfile = async (idsProfile: number[]): Promise<Post[]> => await this.repository.find({
-		where: { Profile: { id: In([...idsProfile]) } }, order: { CreateAt: "DESC" }, cache: {
+		where: { Profile: { id: In([...idsProfile]) } },
+		order: { CreateAt: "DESC" },
+		cache: {
 			id: `findAllByIdsProfile_${[...idsProfile]}`,
 			milliseconds: 30000
 		}
@@ -23,29 +24,15 @@ export default class PostService implements IPostService {
 	findAllFromFriends = async (idProfile: number): Promise<Post[]> => {
 		const posts: Post[] = []
 		const friends: Friendship[] = await AppDataSource.getRepository(Friendship).createQueryBuilder()
-			.leftJoinAndMapMany("Friendship.friendProfile", "profile", "target", "(target.id = Friendship.targetId AND Friendship.targetId <> :idProfile) OR (target.id = Friendship.sourceId AND Friendship.sourceId <> :idProfile)", { idProfile })
+			.leftJoinAndMapOne("Friendship.friendProfile", "profile", "target", "(target.id = Friendship.targetId AND Friendship.targetId <> :idProfile) OR (target.id = Friendship.sourceId AND Friendship.sourceId <> :idProfile)", { idProfile })
 			.where("Friendship.targetId = :idProfile", { idProfile })
 			.orWhere("Friendship.sourceId = :idProfile", { idProfile })
 			.where("Friendship.Type = '1'")
-			// .cache(`findAllFromFriends_${idProfile}`, 30000)
+			.cache(`findAllFromFriends_${idProfile}`, 30000)
 			.getMany()
 
-		const ids: number[] = []
-		
-		// for (const friend of friends) 
-		// 	if (!friend.friendProfile) continue
-		// 	else console.log({...friend.friendProfile})
-
-		// const ids = friends.map((friend: Friendship) => {
-		// 	console.log(friend.friendProfile!.id)
-		// 	return friend.friendProfile !== undefined
-		//  ? friend.friendProfile.id : 0
-		// }).filter((num: number) => {
-		// 	console.log(num)
-		// 	return num !== 0
-		// })
+		const ids = friends.map((friend: Friendship) => friend.friendProfile !== undefined ? friend.friendProfile.id : 0).filter((num: number) => num !== 0)
 		ids.push(idProfile)
-
 		posts.push(... await this.findAllByIdsProfile(ids))
 
 		return posts
@@ -54,9 +41,7 @@ export default class PostService implements IPostService {
 	create = async (idProfile: number, files: DeepPartial<Files[]>, Text: string): Promise<Post> => {
 		const postCreated = this.repository.create({
 			Attachments: files,
-			Profile: {
-				id: idProfile
-			},
+			Profile: { id: idProfile },
 			Text
 		})
 		const newPost = await this.repository.save(postCreated)
