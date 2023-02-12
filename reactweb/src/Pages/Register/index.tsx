@@ -144,7 +144,7 @@ const Register = () => {
 	//#endregion
 
 	return (
-		<div className="page">
+		<div className="page" style={{backgroundColor: "white"}}>
 			<div className="page__header"></div>
 			<div className="page__body">
 				<form className="form" autoComplete="off" onSubmit={onSubmitForm}>

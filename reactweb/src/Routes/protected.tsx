@@ -13,22 +13,20 @@ const Protected = () => {
 	const { isAuthenticated, setIsAuthenticated } = useAuth()
 	const navigate = useNavigate()
 	setIsAuthenticated(getIsAuthenticated())
-	
+
 	React.useEffect(() => {
-		if (!isAuthenticated || !getUserId() || !getNickname()) navigate("/login", { replace: true })		
+		if (!isAuthenticated || !getUserId() || !getNickname()) navigate("/login", { replace: true })
 	}, [])
-	
+
 	if (!isAuthenticated || !getUserId() || !getNickname()) return <Navigate to={"/login"} replace />
 	else
 		return (
 			<ProtectedProvider>
 				<FriendshipProvider>
 					<ChatProvider>
-						<div className="BackgroundGreyFullSize">
-							<HomePage>
-								<Outlet />
-							</HomePage>
-						</div>
+						<HomePage>
+							<Outlet />
+						</HomePage>
 					</ChatProvider>
 				</FriendshipProvider>
 			</ProtectedProvider>

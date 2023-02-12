@@ -2,6 +2,12 @@
 	margin: 10px;
 }
 
+.post {
+	height: 0px;
+	opacity: 0;
+	transition: height 1s, opacity 2s;
+}
+
 .post__header {
 	display: flex;
 	align-items: center;
@@ -20,7 +26,8 @@
 }
 
 .post__footer__buttons,
-.post__footer__numbers, .post__footer__buttons div,
+.post__footer__numbers,
+.post__footer__buttons div,
 .post__footer__numbers div {
 	display: flex;
 	flex-direction: row;
@@ -34,7 +41,20 @@
 	font-size: 12px;
 }
 
+.post__footer__numbers svg {
+	width: 12px;
+	height: 12px;
+}
+
 .post__footer__buttons {
 	justify-content: space-around;
 }
 
+.post__footer__buttons svg {
+	width: 16px;
+	height: 16px;
+}
+
+.post__body__text {
+	white-space: pre-line;
+}

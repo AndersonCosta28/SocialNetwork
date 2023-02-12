@@ -9,7 +9,7 @@ import { useChat } from "Context/ChatContext"
 import { useFriendship } from "Context/FriendshipContext"
 import InteractWithTheProfile from "Components/InteractWithTheProfile"
 import { API_AXIOS } from "Providers/axios"
-import { getAxiosErrorMessage, IFriend, TypeOfFriendship } from "common"
+import { getAxiosErrorMessage, IFriend, IPost, TypeOfFriendship } from "common"
 import { toast } from "react-hot-toast"
 import { Buffer } from "buffer"
 import Avatar from "Components/Avatar"
@@ -18,7 +18,6 @@ import TagInfo from "Components/TagInfo"
 import { useSocketIo } from "Context/SocketIoContext"
 import Skeleton from "react-loading-skeleton"
 import "react-loading-skeleton/dist/skeleton.css"
-
 
 const Profile = () => {
 	//#region External Hooks
@@ -43,6 +42,7 @@ const Profile = () => {
 	const [isPreview, setIsPreview] = React.useState<boolean>(false)
 	const [avatarFile, setAvatarFile] = React.useState<File | null>(null)
 	const [friends, setFriends] = React.useState<IFriend[]>([])
+	const [posts, setPosts] = React.useState<IPost[]>([])
 
 	React.useEffect(() => {
 		const requestApi = async () => {
@@ -54,8 +54,12 @@ const Profile = () => {
 				profile.AvatarBase64 = profile.Avatar.buffer ? Buffer.from(profile.Avatar.buffer).toString("base64") : ""
 				const requestFriends = await API_AXIOS.post("/friendship", { UserId: profile.id })
 				const friends = requestFriends.data
+
+				const requestPosts = await API_AXIOS.get("/post/findAllByIdProfile/" + getUserId())
+				const posts = requestPosts.data
 				setProfile(profile)
 				setFriends(friends)
+				setPosts(posts)
 			}
 			catch (error) {
 				console.log("LANÇANDO ERRO")
@@ -100,8 +104,14 @@ const Profile = () => {
 			toast.error("Nothing file selected")
 			return
 		}
-		setAvatarFile(files[0])
-		setIsPreview(true)
+		if (files[0].size > 1000000) {
+			toast.error("The maximum file size is 1MB")
+			setIsPreview(false)
+		}
+		else {
+			setAvatarFile(files[0])
+			setIsPreview(true)
+		}
 	}
 
 	const sendAvatar = async () => {
@@ -134,14 +144,14 @@ const Profile = () => {
 		) : null
 
 	const SocialButtons = () =>
-		profile.id === getUserId() || !profile ? null : (
+		profile.id !== getUserId() && profile.id !== 0 ? (
 			<div id={styles.container__bottom} className="flex_row_center_center">
 				<Message />
 				<div className={`${disableButton ? "blueButtonDisable" : "blueButtonActive"}`}>
 					<InteractWithTheProfile FriendId={profile.id} FriendNickname={profile.Nickname} />
 				</div>
 			</div>
-		)
+		): null
 
 	const EditSaveButtons = () =>
 		profile.id === getUserId() ? (
@@ -152,8 +162,8 @@ const Profile = () => {
 			)
 		) : null
 
+	// eslint-disable-next-line arrow-body-style
 	const Nickname = () => {
-		console.log("")
 		return <span id={styles.container__top__name}>{profile.Nickname}</span>
 		// const handlerNickname = (e: React.ChangeEvent<HTMLInputElement>) => {
 		// 	const _user = profile
@@ -195,10 +205,10 @@ const Profile = () => {
 						<label htmlFor={styles.avatar__input} id={styles.avatar__pen}>
 							<RiPencilLine />
 						</label>
-						<input type="file" name="avatar__input" id={styles.avatar__input} onChange={handlerAvatar} accept="image/*"/>
+						<input type="file" name="avatar__input" id={styles.avatar__input} onChange={handlerAvatar} accept="image/*" />
 					</>
-				) : null}				
-				{profile.Avatar === null ? <Skeleton circle={true} count={1} style={{height: 150, width: 150, zIndex: 4 }} /> : <Avatar size={150} base64={profile.AvatarBase64} type={profile.AvatarType} />}
+				) : null}
+				{profile.Avatar === null ? <Skeleton circle={true} count={1} style={{ height: 150, width: 150, zIndex: 4 }} /> : <Avatar size={150} base64={profile.AvatarBase64} type={profile.AvatarType} />}
 			</div>
 		), [profile]
 	)
@@ -235,6 +245,7 @@ const Profile = () => {
 					<Description />
 					<div id="container__tag__info" className="flex_row_center_center">
 						<TagInfo number={friends.length} title={"Friends"} key={friends.length + "-friends of -" + profile.Nickname} />
+						<TagInfo number={posts.length} title="Posts" key={"POSTS-" + myProfile.Nickname + "-" + 0} /> 
 					</div>
 				</div>
 				<SocialButtons />

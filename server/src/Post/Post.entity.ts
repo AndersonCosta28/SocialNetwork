@@ -1,7 +1,7 @@
 import Files from "Files/Files.entity"
 import Friendship from "Friendship/Friendship.entity"
 import Profile from "Profile/Profile.entity"
-import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm"
+import { Column, CreateDateColumn, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm"
 
 @Entity()
 export default class Post {
@@ -16,6 +16,12 @@ export default class Post {
 
     @ManyToOne(() => Profile, profile => profile.id, { eager: true })
     	Profile: Profile
+
+    @CreateDateColumn()
+    	CreateAt: Date
+
+    @UpdateDateColumn()
+    	UpdateAt: Date
 
     Friends?: Friendship
 }

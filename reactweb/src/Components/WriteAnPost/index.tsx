@@ -7,8 +7,10 @@ import TextareaAutosize from "react-textarea-autosize"
 import { API_AXIOS } from "Providers/axios"
 import { getUserId } from "utils"
 import { getAxiosErrorMessage } from "common"
+import { useProtected } from "Context/ProtectedContext"
 
 const WriteAnPost = () => {
+	const { setAllPosts, allPosts } = useProtected()
 	const textAreaWritePost = React.useRef<HTMLTextAreaElement>(null)
 	const [textPost, setTextPost] = React.useState<string>("")
 	const [attachments, setAttachments] = React.useState<File[]>([])
@@ -28,8 +30,10 @@ const WriteAnPost = () => {
 			toast.error("Nothing file selected")
 			return
 		}
+
 		const newFiles = [].slice.call(files)
-		setAttachments([...attachments, ...newFiles])
+		if (newFiles.some((file: File) => file.size > 1000000)) toast.error("The maximum file size is 1MB")
+		else setAttachments([...attachments, ...newFiles])
 	}
 
 	const removeAttachment = (index: number) => {
@@ -51,13 +55,14 @@ const WriteAnPost = () => {
 			headers: { "Content-Type": "multipart/form-data" },
 			data: formData,
 		})
-			.then(console.log)
-			.catch((error) => {
-				console.log(error)
-				toast.error(getAxiosErrorMessage(error))
+			.then((res) => {
+				const _allPosts = allPosts
+				_allPosts.unshift(res.data)				
+				setAllPosts([..._allPosts])
 			})
-		// setAttachments([])
-		// setTextPost("")
+			.catch((error) => toast.error(getAxiosErrorMessage(error)))
+		setAttachments([])
+		setTextPost("")
 	}
 
 	const ListOfAttachments = React.useMemo(

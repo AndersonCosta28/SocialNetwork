@@ -8,9 +8,29 @@ import { useProtected } from "Context/ProtectedContext"
 import Post from "Components/Post"
 import WriteAnPost from "Components/WriteAnPost"
 import { IPost } from "common"
+import Skeleton from "react-loading-skeleton"
+import "react-loading-skeleton/dist/skeleton.css"
 
 const Feed = () => {
-	const { myProfile, allPosts } = useProtected()
+	const { allPosts } = useProtected()
+	const [Posts, setPosts] = React.useState<IPost[]>([])
+	const [jsxPosts, jsxSetPosts] = React.useState<JSX.Element[]>([])
+
+	React.useEffect(() => {
+		if (allPosts.length > 0) updatePosts([...allPosts], [...Posts], [...jsxPosts])
+	}, [allPosts])
+
+	const updatePosts = (_allPosts: IPost[], _oldPosts: IPost[], _oldJsxPosts: JSX.Element[]) => {
+		const newPosts = _allPosts.splice(0, _allPosts.length - _oldPosts.length)
+		newPosts.forEach((post: IPost, index: number) => {
+			const element = <Post post={post} key={"Post -> " + index + " - " + Math.random()} />
+			if (_oldPosts.length === 0) _oldJsxPosts.push(element)
+			else _oldJsxPosts.unshift(element)
+		})
+		setPosts([..._oldPosts, ...newPosts])
+		jsxSetPosts(_oldJsxPosts)
+	}
+
 	return (
 		<div id={styles.body}>
 			<div id={styles.body__leftSide}>
@@ -30,9 +50,7 @@ const Feed = () => {
 
 			<div id={styles.body__midSide}>
 				<WriteAnPost />
-				{allPosts.map((post: IPost, index: number) => <Post post={post} key={"Post -> " + index} />)
-
-				}
+				{jsxPosts.length > 0 ? jsxPosts : <Skeleton count={20} />}
 			</div>
 
 			<div id={styles.body__rigthSide}>

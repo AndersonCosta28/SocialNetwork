@@ -13,6 +13,7 @@ export interface IProtectedContext {
 	myUser: IUser
 	requestToUpdateMyProfile: () => void
 	allPosts: IPost[]
+	setAllPosts: React.Dispatch<React.SetStateAction<IPost[]>>
 }
 
 interface IUser {
@@ -65,7 +66,7 @@ export const ProtectedProvider = ({ children }: { children: React.ReactNode }) =
 			.then((res) => setMyUser(res.data))
 			.catch((error) => toast.error(getAxiosErrorMessage(error)))
 
-		API_AXIOS.get("/post/findAllByIdProfile/" + getUserId())
+		API_AXIOS.get("/post/findAllFromFriends/" + getUserId())
 			.then((res) => setAllPosts(res.data))
 			.catch((error) => {
 				console.log(error)
@@ -77,7 +78,7 @@ export const ProtectedProvider = ({ children }: { children: React.ReactNode }) =
 		if (socket !== null && socketId !== null) requestToUpdateMyProfile()
 	}, [socket, socketId])
 
-	const values = { allProfiles, myProfile, myUser, requestToUpdateMyProfile, allPosts }
+	const values = { allProfiles, myProfile, myUser, requestToUpdateMyProfile, allPosts, setAllPosts }
 	return <ProtectedContext.Provider value={values}>{children}</ProtectedContext.Provider>
 }
 

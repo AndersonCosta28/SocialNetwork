@@ -7,8 +7,8 @@ import ResendEmailActivation from "Pages/Email/Activation/ResendEmailActivation"
 import { useNavigate } from "react-router-dom"
 import Avatar from "Components/Avatar"
 import { useFriendship } from "Context/FriendshipContext"
-import TagInfo from "Components/TagInfo"
-import { TypeOfFriendship } from "common"
+// import TagInfo from "Components/TagInfo"
+// import { TypeOfFriendship } from "common"
 
 const MyProfileSideBar = () => {
 	const { myProfile, myUser } = useProtected()
@@ -39,8 +39,8 @@ const MyProfileSideBar = () => {
 			<hr style={{ width: "90%" }} />
 			{/* <br /> */}
 			<div id="container__tag__info" style={{ display: "flex", alignItems: "center", justifyContent: "center", width: "100%" }}>
-				<TagInfo number={friendList.filter(friend => friend.Type === TypeOfFriendship.Friend).length} title="Friends" key={"FRIENDS-" + myProfile.Nickname + "-" + friendList.length} />
-				<TagInfo number={0} title="Posts" key={"POSTS-" + myProfile.Nickname + "-" + 0} />
+				{/* <TagInfo number={friendList.filter(friend => friend.Type === TypeOfFriendship.Friend).length} title="Friends" key={"FRIENDS-" + myProfile.Nickname + "-" + friendList.length} />
+				<TagInfo number={0} title="Posts" key={"POSTS-" + myProfile.Nickname + "-" + 0} /> */}
 			</div>
 			<ShowInfoAccountInactive />
 		</div>

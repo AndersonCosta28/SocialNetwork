@@ -20,13 +20,42 @@ export const onClickOutSideComponent = (element: HTMLElement | null, target: Nod
 export const sleep = (milliseconds: number) => {
 	const date = Date.now()
 	let currentDate = null
-	do 
+	do
 		currentDate = Date.now()
-	
+
 	while (currentDate - date < milliseconds)
 }
 
 export const getBase64FromBuffer = (buffer: Buffer) => buffer ? Buffer.from(buffer).toString("base64") : ""
+
+export const timeSince = (date: Date) => {
+
+	const seconds = Math.floor((new Date().getTime() - date.getTime()) / 1000)
+
+	let interval = seconds / 31536000
+
+	if (interval > 1)
+		return Math.floor(interval) + " years ago"
+
+	interval = seconds / 2592000
+	if (interval > 1)
+		return Math.floor(interval) + " months ago"
+
+	interval = seconds / 86400
+	if (interval > 1)
+		return Math.floor(interval) + " days ago"
+
+	interval = seconds / 3600
+	if (interval > 1)
+		return Math.floor(interval) + " hours ago"
+
+	interval = seconds / 60
+	if (interval > 1)
+		return Math.floor(interval) + " minutes ago"
+
+	return Math.floor(seconds) + " seconds ago"
+}
+
 // Função antiga para usar no SocketIO
 // // eslint-disable-next-line @typescript-eslint/no-explicit-any
 // export const withTimeout = (onSuccess: { apply: (arg0: undefined, arg1: any[]) => void }, onTimeout: () => void, timeout: number | undefined) => {
