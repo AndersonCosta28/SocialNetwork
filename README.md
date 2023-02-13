@@ -2,18 +2,42 @@
 This is the social network project under construction, try it, have fun and contribute. \
 **Despite being an Open Source project, in its current maturity it does not have moderate measures for data protection, so the project executed locally or connecting to the cloud bank (perhaps in the future) is the sole responsibility of the user, we hope that this will encourage the contribution to strengthen and make you more secure.**
 
-# Used Components
+# Technologies used
 * NodeJS
-* TypeScript
 * Mysql
 * SocketIO (websocket)
 * Redis (cache)
-* ReactJS
+* ReactJS (TSX)
 * Docker (optional)
+* JWT
+
+# Used libraries
+## Both
+* TypeScript
+* SocketIO
+* dotenv
+* Status-code-enum
+
+## Server side
+* TypeORM
+* Express
+* Multer
+* NodeMailer
+
+## Client side
+* React Router Dom
+* React Hot Toaster
+* React loading skeleton
+* React textarea autosize
+* React Icons
+* Axios
+* TypedJs
+* UUID
+
 
 # Prerequisites
 * Have NodeJS in its LTS version
-* A table called "socialnetwork" in Mysql
+* A database called "socialnetwork" in Mysql
 * Redis running on default port
 * [Environment variables file in the root of the project](#envs)
 
@@ -33,4 +57,8 @@ DATABASE_USERNAME=
 DATABASE_PASSWORD=
 DATABASE_HOST=
 DATABASE_PORT=
+NODE_ENV=
+PORT_SERVER=
+PORT_CLIENT=
+TZ=
 ```

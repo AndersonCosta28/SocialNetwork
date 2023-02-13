@@ -19,7 +19,7 @@ export default class PostController implements IController {
 
 	findAllByIdProfile = async (request: Request, response: Response): Promise<Response> => {
 		const { id } = response.locals
-		return response.send(await this.service.findAllByIdsProfile([Number(id)]))
+		return response.send(await this.service.findAllByIdProfile(Number(id)))
 	}
 
 	findAllFromFriends = async (request: Request, response: Response): Promise<Response> => {

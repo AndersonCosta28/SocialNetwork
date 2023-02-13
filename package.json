@@ -1,42 +1,42 @@
 {
-  "name": "socialnetwork",
-  "version": "1.0.0",
-  "main": "index.js",
-  "license": "MIT",
-  "type": "module",
-  "private": true,
-  "dependencies": {
-    "concurrently": "^7.6.0",
-    "cross-env": "5.0.5",
-    "dotenv": "^16.0.3",
-    "esm": "^3.2.25",
-    "jsonwebtoken": "^9.0.0",
-    "nodemailer": "^6.8.0",
-    "nodemon": "^2.0.20",
-    "status-code-enum": "^1.0.0",
-    "tsconfig-paths": "^4.1.2",
-    "uuid": "^9.0.0"
-  },
-  "scripts": {
-    "start": "yarn start:prebuild && yarn start:run",
-    "start:run": "cross-env concurrently \"yarn workspace server start\" \"yarn workspace reactweb start \" \"yarn workspace common start\"",
-    "start:prebuild": "yarn lint:fixAll && yarn build",
-    "dev": "concurrently \"dotenv yarn workspace server dev\" \"dotenv yarn workspace reactweb start \" \"dotenv yarn workspace common start\"",
-    "build": "cross-env yarn workspace common build && concurrently \"yarn workspace server build\" \"yarn workspace reactweb build \" ",
-    "lint:fixAll": "yarn workspace server eslint --fix && yarn workspace reactweb eslint --fix",
-    "server:dev": "cross-env NODE_ENV=development concurrently \"yarn workspace server dev\" \"yarn workspace common start\""
-  },
-  "workspaces": [
-    "reactweb",
-    "server",
-    "common"
-  ],
-  "devDependencies": {
-    "@types/jsonwebtoken": "^9.0.1",
-    "@types/nodemailer": "^6.4.7",
-    "@types/uuid": "^9.0.0",
-    "dotenv-cli": "^7.0.0",
-    "eslint": "^8.30.0",
-    "prettier": "^2.8.1"
-  }
+	"name": "socialnetwork",
+	"version": "1.0.0",
+	"main": "index.js",
+	"license": "MIT",
+	"type": "module",
+	"private": true,
+	"dependencies": {
+		"concurrently": "^7.6.0",
+		"cross-env": "5.0.5",
+		"dotenv": "^16.0.3",
+		"esm": "^3.2.25",
+		"jsonwebtoken": "^9.0.0",
+		"nodemailer": "^6.8.0",
+		"nodemon": "^2.0.20",
+		"status-code-enum": "^1.0.0",
+		"tsconfig-paths": "^4.1.2",
+		"uuid": "^9.0.0"
+	},
+	"scripts": {
+		"start": "yarn start:prebuild && yarn start:run",
+		"start:run": "cross-env concurrently \"yarn workspace server start\" \"yarn workspace reactweb start \" \"yarn workspace common start\"",
+		"start:prebuild": "yarn lint:fixAll && yarn build",
+		"dev": "concurrently \"dotenv yarn workspace server dev\" \"dotenv yarn workspace reactweb start \" \"dotenv yarn workspace common start\"",
+		"build": "cross-env yarn workspace common build && concurrently \"yarn workspace server build\" \"yarn workspace reactweb build \" ",
+		"lint:fixAll": "yarn workspace server eslint --fix && yarn workspace reactweb eslint --fix",
+		"server:dev": "cross-env NODE_ENV=development concurrently \"yarn workspace server dev\" \"yarn workspace common start\""
+	},
+	"workspaces": [
+		"reactweb",
+		"server",
+		"common"
+	],
+	"devDependencies": {
+		"@types/jsonwebtoken": "^9.0.1",
+		"@types/nodemailer": "^6.4.7",
+		"@types/uuid": "^9.0.0",
+		"dotenv-cli": "^7.0.0",
+		"eslint": "^8.30.0",
+		"prettier": "^2.8.1"
+	}
 }
