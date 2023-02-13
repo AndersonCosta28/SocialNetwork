@@ -6,13 +6,11 @@ import { UserStates } from "common/Types/User"
 import ResendEmailActivation from "Pages/Email/Activation/ResendEmailActivation"
 import { useNavigate } from "react-router-dom"
 import Avatar from "Components/Avatar"
-import { useFriendship } from "Context/FriendshipContext"
 // import TagInfo from "Components/TagInfo"
 // import { TypeOfFriendship } from "common"
 
 const MyProfileSideBar = () => {
 	const { myProfile, myUser } = useProtected()
-	const { friendList } = useFriendship()
 	const navigate = useNavigate()
 
 	const ShowInfoAccountInactive = (): JSX.Element => {

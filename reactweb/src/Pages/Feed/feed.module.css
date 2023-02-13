@@ -14,8 +14,7 @@
 	height: 100%;
 }
 
-#body > div > div {
-	/* height: max-content; */
+#body > div > div:not(div:has(.body__midSide__infiniteScroll)) {
 	padding: 10px;
 	border-radius: 10px;
 	box-shadow: 0px 0px 5px 2px rgb(182, 182, 182);
@@ -58,12 +57,14 @@
 /*#endregion */
 
 /*#region body__midSide*/
-#body__midSide {
+#body__midSide  {
 	width: 50vw;
 	margin: 5px 10px;
 }
 
-
+.body__midSide__infiniteScroll{
+	padding: 0px 10px;
+}
 
 /*#endregion */
 

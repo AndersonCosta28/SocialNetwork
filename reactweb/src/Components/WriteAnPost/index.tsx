@@ -6,11 +6,10 @@ import styles from "./WriteAnPost.module.css"
 import TextareaAutosize from "react-textarea-autosize"
 import { API_AXIOS } from "Providers/axios"
 import { getUserId } from "utils"
-import { getAxiosErrorMessage } from "common"
-import { useProtected } from "Context/ProtectedContext"
+import { getAxiosErrorMessage, IPost } from "common"
 
-const WriteAnPost = () => {
-	const { setAllPosts, allPosts } = useProtected()
+const WriteAnPost = (props: { setAllPosts: React.Dispatch<React.SetStateAction<IPost[]>>; allPosts: IPost[] }) => {
+	const { setAllPosts, allPosts } = props
 	const textAreaWritePost = React.useRef<HTMLTextAreaElement>(null)
 	const [textPost, setTextPost] = React.useState<string>("")
 	const [attachments, setAttachments] = React.useState<File[]>([])
@@ -57,7 +56,7 @@ const WriteAnPost = () => {
 		})
 			.then((res) => {
 				const _allPosts = allPosts
-				_allPosts.unshift(res.data)				
+				_allPosts.unshift(res.data)
 				setAllPosts([..._allPosts])
 			})
 			.catch((error) => toast.error(getAxiosErrorMessage(error)))
@@ -77,7 +76,7 @@ const WriteAnPost = () => {
 
 	return (
 		<>
-			<div id={styles.WritePost}>
+			<div id={styles.WritePost} style={{ margin: "20px 5px 0px 5px" }}>
 				<TextareaAutosize maxRows={10} id={styles.WritePost__TextArea} ref={textAreaWritePost} placeholder="Share your thoughts" value={textPost} onChange={handlerTextPost} />
 				<div id={styles.WritePost_Attachments}>{ListOfAttachments}</div>
 				<div id={styles.WritePost__Options}>

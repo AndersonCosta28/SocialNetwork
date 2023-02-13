@@ -2,7 +2,7 @@ import { IFriend, IMessage } from "common"
 import React, { ReactNode, useContext } from "react"
 import { createContext, useState } from "react"
 import { v4 as uuid4 } from "uuid"
-import { useFriendship } from "./FriendshipContext"
+import { useProtected } from "./ProtectedContext"
 import { useSocketIo } from "./SocketIoContext"
 
 interface IChatContext {
@@ -10,7 +10,7 @@ interface IChatContext {
 	openChatByIdFriend: (idFriendship: number) => void
 	closeChat: (chatId: string) => void
 	chats: IChat[]
-	toggleMinimizeChat: (chatId: string, value: boolean) => void	
+	toggleMinimizeChat: (chatId: string, value: boolean) => void
 }
 
 const ChatContext = createContext<IChatContext | null>(null)
@@ -26,7 +26,7 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
 	const chatInicialize = JSON.parse(localStorage.getItem("chats") ?? "[]")
 	const [chats, setChats] = useState<IChat[]>(chatInicialize)
 	const { socket } = useSocketIo()
-	const { friendList } = useFriendship()
+	const { friendList } = useProtected()
 
 	React.useEffect(() => {
 		localStorage.removeItem("chats")
@@ -39,8 +39,8 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
 				// const target = data.FromId === getUserId() ? data.ToId : data.FromId
 				// const chat = chats.find((chat: IChat) => chat.targetUserId === target)
 				// // console.log(!!chat)
-				// // if (!chat) 
-				openChatByIdFriend(data.FriendshipId)				
+				// // if (!chat)
+				openChatByIdFriend(data.FriendshipId)
 			})
 		return () => {
 			console.log("Desligou")

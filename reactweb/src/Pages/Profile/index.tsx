@@ -18,6 +18,7 @@ import TagInfo from "Components/TagInfo"
 import { useSocketIo } from "Context/SocketIoContext"
 import Skeleton from "react-loading-skeleton"
 import "react-loading-skeleton/dist/skeleton.css"
+import { useQueries } from "@tanstack/react-query"
 
 const Profile = () => {
 	//#region External Hooks
@@ -28,6 +29,12 @@ const Profile = () => {
 	const { socketId } = useSocketIo()
 	//#endregion
 	//#region Internal Hooks
+
+	const [isEdit, setIsEdit] = React.useState<boolean>(false)
+	const [isPreview, setIsPreview] = React.useState<boolean>(false)
+	const [avatarFile, setAvatarFile] = React.useState<File | null>(null)
+	const [friends, setFriends] = React.useState<IFriend[]>([])
+	const [posts, setPosts] = React.useState<IPost[]>([])
 	const [profile, setProfile] = React.useState<IProfileInfo>({
 		Avatar: null,
 		AvatarBase64: "",
@@ -38,37 +45,44 @@ const Profile = () => {
 		Local: "",
 		Nickname: "",
 	})
-	const [isEdit, setIsEdit] = React.useState<boolean>(false)
-	const [isPreview, setIsPreview] = React.useState<boolean>(false)
-	const [avatarFile, setAvatarFile] = React.useState<File | null>(null)
-	const [friends, setFriends] = React.useState<IFriend[]>([])
-	const [posts, setPosts] = React.useState<IPost[]>([])
 
-	React.useEffect(() => {
-		const requestApi = async () => {
-			try {
-				const requestUser = await API_AXIOS.get("/profile/findOneByNickname/" + nickname)
-				const profile = requestUser.data
-
-				profile.AvatarId = profile.Avatar.id
-				profile.AvatarBase64 = profile.Avatar.buffer ? Buffer.from(profile.Avatar.buffer).toString("base64") : ""
-				const requestFriends = await API_AXIOS.post("/friendship", { UserId: profile.id })
-				const friends = requestFriends.data
-
-				const requestPosts = await API_AXIOS.get("/post/findAllByIdProfile/" + getUserId())
-				const posts = requestPosts.data
-				setProfile(profile)
-				setFriends(friends)
-				setPosts(posts)
-			}
-			catch (error) {
-				console.log("LANÇANDO ERRO")
-				console.log(error)
-				toast.error(getAxiosErrorMessage(error))
-			}
-		}
-		if (socketId !== null) requestApi()
-	}, [nickname, socketId])
+	useQueries({
+		queries: [
+			{
+				queryKey: ["profile", nickname, socketId],
+				queryFn: () => API_AXIOS.get("/profile/findOneByNickname/" + nickname).then((res) => res.data),
+				enabled: !!nickname && !!socketId,
+				onSuccess: (data: IProfileInfo) => {
+					if (data.Avatar) {
+						const avatar = data.Avatar as { buffer: Buffer; type: string; id: number }
+						data.AvatarId = avatar.id
+						data.AvatarBase64 = avatar.buffer ? Buffer.from(avatar.buffer).toString("base64") : ""
+						data.AvatarType = avatar.type
+					}
+					setProfile(data)
+				},
+				onError: (error: unknown) => toast.error(getAxiosErrorMessage(error))
+			},
+			{
+				queryKey: ["friends", nickname, socketId, profile.id],
+				queryFn: () => API_AXIOS.post("/friendship", { UserId: profile.id }).then((res) => res.data),
+				enabled: !!nickname && !!socketId,
+				onSuccess: (data: IFriend[]) => {
+					setFriends(data)
+				},
+				onError: (error: unknown) => toast.error(getAxiosErrorMessage(error))
+			},
+			{
+				queryKey: ["posts", nickname, socketId, profile.id],
+				queryFn: () => API_AXIOS.get("/post/findAllByIdProfile/" + profile.id).then((res) => res.data),
+				enabled: !!nickname && !!socketId,
+				onSuccess: (data: IPost[]) => {
+					setPosts(data)
+				},
+				onError: (error: unknown) => toast.error(getAxiosErrorMessage(error))
+			},
+		],
+	})
 
 	//#endregion
 
@@ -99,6 +113,7 @@ const Profile = () => {
 	}
 
 	const handlerAvatar = (e: React.ChangeEvent<HTMLInputElement>) => {
+		console.log(e)
 		const { files } = e.target
 		if (files === null) {
 			toast.error("Nothing file selected")
@@ -151,7 +166,7 @@ const Profile = () => {
 					<InteractWithTheProfile FriendId={profile.id} FriendNickname={profile.Nickname} />
 				</div>
 			</div>
-		): null
+		) : null
 
 	const EditSaveButtons = () =>
 		profile.id === getUserId() ? (
@@ -201,12 +216,12 @@ const Profile = () => {
 		() => (
 			<div id={styles.avatar}>
 				{profile.id === myProfile.id && !isEdit ? (
-					<>
+					<div>
 						<label htmlFor={styles.avatar__input} id={styles.avatar__pen}>
 							<RiPencilLine />
 						</label>
-						<input type="file" name="avatar__input" id={styles.avatar__input} onChange={handlerAvatar} accept="image/*" />
-					</>
+						<input type="file" id={styles.avatar__input} onChange={handlerAvatar} accept="image/*" />
+					</div>
 				) : null}
 				{profile.Avatar === null ? <Skeleton circle={true} count={1} style={{ height: 150, width: 150, zIndex: 4 }} /> : <Avatar size={150} base64={profile.AvatarBase64} type={profile.AvatarType} />}
 			</div>
@@ -233,7 +248,7 @@ const Profile = () => {
 			<PreviewAvatar />
 			<EditSaveButtons />
 			<div id={styles.container} className="flex_column_center_center shadow_white">
-				<_Avatar key={"Avatar" + Math.random()} />
+				<_Avatar />
 				<div id={styles.container__top}>
 					<Nickname />
 					<div className="flex_row_center_center">
@@ -244,8 +259,8 @@ const Profile = () => {
 				<div id={styles.container__mid}>
 					<Description />
 					<div id="container__tag__info" className="flex_row_center_center">
-						<TagInfo number={friends.length} title={"Friends"} key={friends.length + "-friends of -" + profile.Nickname} />
-						<TagInfo number={posts.length} title="Posts" key={"POSTS-" + myProfile.Nickname + "-" + 0} /> 
+						<TagInfo number={friends.length} title="Friends" key={friends.length + "-friends of -" + profile.Nickname} />
+						<TagInfo number={posts.length} title="Posts" key={"POSTS-" + myProfile.Nickname + "-" + 0} />
 					</div>
 				</div>
 				<SocialButtons />

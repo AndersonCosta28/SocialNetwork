@@ -6,6 +6,8 @@ import { SocketIoProvider } from "./Context/SocketIoContext"
 import WebFont from "webfontloader"
 import { ProtectedRoutes } from "./Routes/protected"
 import { PublicRoutes } from "./Routes/public"
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
+
 
 const App = () => {
 	React.useEffect(() => {
@@ -29,13 +31,15 @@ const App = () => {
 
 	const routes = createBrowserRouter([ProtectedRoutes, PublicRoutes])
 	return (
-		<div className="App">
+		<QueryClientProvider client={new QueryClient()}>
+			
 			<AuthProvider>
 				<SocketIoProvider>
 					<RouterProvider router={routes} />
 				</SocketIoProvider>
 			</AuthProvider>
-		</div>
+			
+		</QueryClientProvider>
 	)
 }
 

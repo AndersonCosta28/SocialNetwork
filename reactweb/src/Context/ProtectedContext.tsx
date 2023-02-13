@@ -1,7 +1,7 @@
 import { IProfileInfo } from "common/Types/User"
 import React from "react"
 import { API_AXIOS } from "Providers/axios"
-import { getAxiosErrorMessage, IPost } from "common"
+import { getAxiosErrorMessage, IFriend } from "common"
 import { toast } from "react-hot-toast"
 import { Buffer } from "buffer"
 import { getBase64FromBuffer, getUserId } from "utils"
@@ -12,8 +12,8 @@ export interface IProtectedContext {
 	myProfile: IProfileInfo
 	myUser: IUser
 	requestToUpdateMyProfile: () => void
-	allPosts: IPost[]
-	setAllPosts: React.Dispatch<React.SetStateAction<IPost[]>>
+	requestToUpdateFriendList: () => void
+	friendList: IFriend[]
 }
 
 interface IUser {
@@ -27,7 +27,8 @@ const ProtectedContext = React.createContext<IProtectedContext | null>(null)
 
 export const ProtectedProvider = ({ children }: { children: React.ReactNode }) => {
 	const [allProfiles, setAllProfiles] = React.useState<IProfileInfo[]>([])
-	
+	const [myUser, setMyUser] = React.useState<IUser>({ id: 0, Login: "", Email: "", State: "" })
+	const [friendList, setFriendList] = React.useState<IFriend[]>([])
 	const [myProfile, setMyProfile] = React.useState<IProfileInfo>({
 		Avatar: null,
 		AvatarBase64: "",
@@ -38,8 +39,6 @@ export const ProtectedProvider = ({ children }: { children: React.ReactNode }) =
 		Local: "",
 		Nickname: "",
 	})
-	const [myUser, setMyUser] = React.useState<IUser>({ id: 0, Login: "", Email: "", State: "" })
-	const [allPosts, setAllPosts] = React.useState<IPost[]>([])
 	const { socket, socketId } = useSocketIo()
 
 	const requestToUpdateMyProfile = () => {
@@ -47,12 +46,11 @@ export const ProtectedProvider = ({ children }: { children: React.ReactNode }) =
 			.then((res) => {
 				let profiles: IProfileInfo[] = res.data
 				profiles = profiles.map((profile: IProfileInfo) => {
-					const { buffer: avatarBuffer, type: avatarType } = profile.Avatar as { buffer: Buffer, type: string }
+					const { buffer: avatarBuffer, type: avatarType } = profile.Avatar as { buffer: Buffer; type: string }
 					profile.AvatarType = avatarType
 					profile.AvatarBase64 = getBase64FromBuffer(avatarBuffer)
-					if (profile.id === getUserId()) 
-						setMyProfile(profile)
-					
+					if (profile.id === getUserId()) setMyProfile(profile)
+
 					return profile
 				})
 				setAllProfiles(profiles)
@@ -65,20 +63,27 @@ export const ProtectedProvider = ({ children }: { children: React.ReactNode }) =
 		API_AXIOS.get("/user/" + getUserId())
 			.then((res) => setMyUser(res.data))
 			.catch((error) => toast.error(getAxiosErrorMessage(error)))
-
-		API_AXIOS.get("/post/findAllFromFriends/" + getUserId())
-			.then((res) => setAllPosts(res.data))
-			.catch((error) => {
-				console.log(error)
-				toast.error(getAxiosErrorMessage(error))
-			})
 	}
 
+	const requestToUpdateFriendList = React.useCallback(() => {
+		API_AXIOS.post("/friendship", { UserId: getUserId() })
+			.then((res) => setFriendList(res.data))
+			.catch((error) => toast.error(getAxiosErrorMessage(error)))
+	}, [])
+
 	React.useEffect(() => {
-		if (socket !== null && socketId !== null) requestToUpdateMyProfile()
+		if (socket !== null && socketId !== null) {
+			requestToUpdateMyProfile()
+
+			socket.on("update_list_friend", () => {
+				console.log("Atualizando a lista de amigos a pedido do servidor")
+				requestToUpdateFriendList()
+			})
+
+		}
 	}, [socket, socketId])
 
-	const values = { allProfiles, myProfile, myUser, requestToUpdateMyProfile, allPosts, setAllPosts }
+	const values = { allProfiles, myProfile, myUser, requestToUpdateMyProfile, friendList, requestToUpdateFriendList }
 	return <ProtectedContext.Provider value={values}>{children}</ProtectedContext.Provider>
 }
 

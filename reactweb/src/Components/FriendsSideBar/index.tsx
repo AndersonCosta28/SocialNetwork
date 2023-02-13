@@ -7,6 +7,7 @@ import { useSocketIo } from "Context/SocketIoContext"
 import { useFriendship } from "Context/FriendshipContext"
 import { IFriend, TypeOfFriendship, TypesOfApplicants } from "common"
 import Avatar from "Components/Avatar"
+import { useProtected } from "Context/ProtectedContext"
 
 const OnlineFriendsSideBar = () => {
 	enum Tab {
@@ -17,7 +18,8 @@ const OnlineFriendsSideBar = () => {
 
 	const { onlineUsers } = useSocketIo()
 	const { openChatByFriend: openChat } = useChat()
-	const { friendList, acceptFriendshipRequest, rejectFriendshipRequest, removeFriend, disableButton } = useFriendship()
+	const { acceptFriendshipRequest, rejectFriendshipRequest, removeFriend, disableButton } = useFriendship()
+	const { friendList } = useProtected()
 
 	//#endregion
 

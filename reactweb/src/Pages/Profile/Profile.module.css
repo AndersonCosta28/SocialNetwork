@@ -15,6 +15,10 @@
     bottom: 0px;
 }
 
+#avatar__pen:hover {
+	cursor: pointer;
+}
+
 #avatar__input {
 	display: none
 }
