@@ -74,7 +74,7 @@ export const ProtectedProvider = ({ children }: { children: React.ReactNode }) =
 	React.useEffect(() => {
 		if (socket !== null && socketId !== null) {
 			requestToUpdateMyProfile()
-
+			requestToUpdateFriendList()
 			socket.on("update_list_friend", () => {
 				console.log("Atualizando a lista de amigos a pedido do servidor")
 				requestToUpdateFriendList()

@@ -109,7 +109,7 @@ const ChatBox = (props: IChat) => {
 			<div className={styles.content__header} onClick={onClickOnHeaderElement} ref={headerElementRef}>
 				<span>{props.targetNickname}</span>
 				<div ref={closeElementRef}>
-					<GrClose />
+					<GrClose className={styles.content__header__closeChat}/>
 				</div>
 			</div>
 			{isMinimized ? null : (

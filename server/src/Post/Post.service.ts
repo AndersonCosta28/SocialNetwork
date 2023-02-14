@@ -34,12 +34,13 @@ export default class PostService implements IPostService {
 			.where("Friendship.Type = '1'")
 			.cache(`findAllFromFriends_${idProfile}`, 60000)
 			.getMany()
-		friends.forEach(async (friend) => {
+
+		for (const friend of friends) 
 			if (friend.friendProfile)
-				posts.push(... await this.findAllByIdProfile(friend.friendProfile.id))
-		})
-		posts.push(... await this.findAllByIdProfile(idProfile))
-		// console.log(posts)
+				posts.push(...await this.findAllByIdProfile(friend.friendProfile.id))
+		
+		posts.push(...await this.findAllByIdProfile(idProfile))
+		posts.sort((postA, postB) => postA.id - postB.id)
 		return posts
 	}
 

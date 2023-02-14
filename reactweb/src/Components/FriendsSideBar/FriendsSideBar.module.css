@@ -26,6 +26,11 @@
 	transition: background-color 0.3s;
 }
 
+.list__item__online:hover{
+	cursor: pointer;
+	background-color: rgb(182, 182, 182);
+}
+
 .list__item__online span {
 	width: 100%;
 	padding-left: 10px;

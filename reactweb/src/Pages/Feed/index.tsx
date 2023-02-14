@@ -24,10 +24,7 @@ const Feed = () => {
 	const { isLoading } = useQuery({
 		queryKey: ["posts_feed", socketId],
 		queryFn: () => API_AXIOS.get("/post/findAllFromFriends/" + getUserId()).then((res) => res.data),
-		onError: (error: unknown) => {
-			console.log(error)
-			toast.error(getAxiosErrorMessage(error))
-		},
+		onError: (error: unknown) => toast.error(getAxiosErrorMessage(error)),
 		onSuccess: (data: IPost[]) => setAllPosts(data),
 		enabled: !!socketId,
 	})
@@ -36,14 +33,17 @@ const Feed = () => {
 		if (allPosts.length > 0) updatePosts([...allPosts], [...Posts])
 	}, [allPosts])
 
-	const updatePosts = (_allPosts: IPost[], _oldPosts: IPost[]) => {
-		const newPosts = _allPosts.splice(_oldPosts.length, _allPosts.length - _oldPosts.length)
-		if (Posts.length === 0) {
+	const updatePosts = (_allPosts: IPost[], _oldPosts: IPost[]) => {		
+		if (Posts.length === 0 && jsxPosts.length === 0) {
+			const newPosts = _allPosts.splice(_oldPosts.length, _allPosts.length - _oldPosts.length)
 			setPosts([..._oldPosts, ...newPosts])
 			getMorePosts(newPosts)
 		}
-		// else
-		// 	setJsxPosts(jsxPosts.unshift(NewPost()))
+		else {
+			jsxPosts.unshift(NewPost(_allPosts[0]))
+			setJsxPosts([...jsxPosts])
+		}
+		console.log(jsxPosts.length)
 	}
 	//#region function to infinitescroll
 	const [jsxPosts, setJsxPosts] = React.useState<JSX.Element[]>([])
@@ -51,18 +51,17 @@ const Feed = () => {
 	const NewPost = (post: IPost) => <Post post={post} key={"Post -> - " + Math.random()} />
 
 	const next = () => {
-		if (jsxPosts.length >= Posts.length) {
-			setHasMore(false)
-			return
-		}
-		getMorePosts(Posts)
+		if (Posts.length === 0) setHasMore(false)
+		else getMorePosts(Posts)
 	}
 
-	const getMorePosts = (posts: IPost[]) => {
-		const numberOfPostsLeft = posts.length - jsxPosts.length
-		const numberOfPostsToGet = numberOfPostsLeft < 5 ? numberOfPostsLeft : 5
-		const newPosts = posts.reverse().splice(jsxPosts.length, numberOfPostsToGet).map(NewPost)
-		setJsxPosts([...jsxPosts, ...newPosts])
+	const getMorePosts = (posts: IPost[]) => {		
+		setTimeout(() => {
+			const numberOfPostsToGet = posts.length >= 10 ? 10 : posts.length
+			const newPosts = posts.splice(posts.length - numberOfPostsToGet, numberOfPostsToGet)
+			setPosts([...posts])
+			setJsxPosts([...jsxPosts.concat(newPosts.map(NewPost).reverse())])
+		}, 1000)
 	}
 
 	//#endregion
@@ -85,15 +84,20 @@ const Feed = () => {
 
 			<div id={styles.body__midSide}>
 				<WriteAnPost allPosts={allPosts} setAllPosts={setAllPosts} />
-				{isLoading ? (<Skeleton count={20} />) : Posts.length === 0 ? (<h1>Nothing to show</h1>) : (
+				{isLoading ? (
+					<div style={{ padding: 20 }} className={styles.body__midSide__Skeleton}>
+						<Skeleton count={20} />
+					</div>
+				) : Posts.length === 0 && jsxPosts.length === 0 ? (
+					<h1 style={{ textAlign: "center" }}>Nothing to show</h1>
+				) : (
 					<InfiniteScroll
 						className={styles.body__midSide__infiniteScroll}
-						style={{padding: "0px 5px"}}
+						style={{ padding: "0px 5px", overflow: "hidden auto" }}
 						dataLength={Posts.length}
 						hasMore={hasMore}
 						next={next}
 						loader={<h4>Loading...</h4>}
-						refreshFunction={() => <h1>Carregando</h1>}
 						endMessage={
 							<p style={{ textAlign: "center" }}>
 								<b>Yay! You have seen it all</b>
