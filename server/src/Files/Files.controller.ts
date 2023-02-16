@@ -1,5 +1,4 @@
 import { Request, Response, Router } from "express"
-import { MiddlewareVerifyIds } from "Middleware/Error"
 import { upload } from "Providers/Multer"
 import { StatusCode } from "status-code-enum"
 import IController from "Types/IController"
@@ -10,13 +9,12 @@ export default class FilesController implements IController {
 
 	routers = () => {
 		const router: Router = Router()
-		router.post("/changeAvatar/:id", MiddlewareVerifyIds, upload.single("avatar"), this.changeAvatar)
+		router.post("/changeAvatar/:id", upload.single("avatar"), this.changeAvatar)
 		return router
 	}
 
 	changeAvatar = async (request: Request, response: Response): Promise<Response> => {
-		const { id } = response.locals
-
+		const { id } = request.params
 		if (!request.file) return response.status(400).send("Photo is undefined")
 		const buffer = request.file.buffer
 		const type = request.file.mimetype

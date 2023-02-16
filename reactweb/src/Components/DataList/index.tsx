@@ -1,4 +1,4 @@
-import React from "react"
+import React, { startTransition } from "react"
 import { AiOutlineSearch } from "react-icons/ai"
 import styles from "./DataList.module.css"
 import { IProfileInfo } from "common/Types/User"
@@ -15,7 +15,7 @@ const index = () => {
 	const [searchBarIsFocused, setSearchBarIsFocused] = React.useState<boolean>(false)
 
 	const ListItems: IProfileInfo[] = allProfiles.filter((item: IProfileInfo) => item.Nickname.toLowerCase().includes(textSearch.toLowerCase())).filter((value) => Number(value.id) !== Number(getUserId()))
-	const LiElementResults = () =>
+	const LiElementResults =
 		ListItems.length > 0 ? (
 			ListItems.map((item: IProfileInfo, index: number, array) => (
 				<li key={`${index + 1}/${array.length}-itemFinded`} onClick={() => navigateToProfile(item)} style={{ padding: 10, display: "flex", flexDirection: "row", justifyContent: "space-around", borderRadius: 5 }}>
@@ -30,8 +30,10 @@ const index = () => {
 		)
 
 	const handlerTextSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-		const { value } = e.target
-		setTextSearch(value)
+		startTransition(() => {
+			const { value } = e.target
+			setTextSearch(value)
+		})
 	}
 
 	const navigateToProfile = (userInfo: IProfileInfo) => {
@@ -40,23 +42,26 @@ const index = () => {
 		// navigate(0)
 	}
 
-	const ResultSearch = () => {
-		if (!searchBarIsFocused) return null
-
-		if (textSearch.trim().length > 0)
-			return (
-				<ul id={styles.searchBar__list} ref={ListOfItemsElementRef} className="shadow_white">
-					{LiElementResults()}
-				</ul>
-			)
-		else return null
-	}
+	const ResultSearch =
+		!searchBarIsFocused || textSearch.trim().length === 0 ? (
+			<></>
+		) : (
+			<ul id={styles.searchBar__list} ref={ListOfItemsElementRef} className="shadow_white">
+				{LiElementResults}
+			</ul>
+		)
+	// (
+	// 	{!searchBarIsFocused || textSearch.trim().length === 0 ? <></> :
+	// 	<ul id={styles.searchBar__list} ref={ListOfItemsElementRef} className="shadow_white">
+	// 	{LiElementResults}
+	// 	</ul>
+	// })
 
 	return (
 		<div id={styles.searchBar}>
 			<AiOutlineSearch id={styles.searchBar__icon} />
 			<input type="search" list="data" className={`shadow_white`} onChange={handlerTextSearch} value={textSearch} onBlur={() => setTimeout(() => setSearchBarIsFocused(false), 100)} onFocus={() => setSearchBarIsFocused(true)} />
-			<ResultSearch />
+			{ResultSearch}
 		</div>
 	)
 }

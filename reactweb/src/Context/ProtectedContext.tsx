@@ -6,6 +6,7 @@ import { toast } from "react-hot-toast"
 import { Buffer } from "buffer"
 import { getBase64FromBuffer, getUserId } from "utils"
 import { useSocketIo } from "./SocketIoContext"
+import { profileDefault } from "consts"
 
 export interface IProtectedContext {
 	allProfiles: IProfileInfo[]
@@ -29,16 +30,7 @@ export const ProtectedProvider = ({ children }: { children: React.ReactNode }) =
 	const [allProfiles, setAllProfiles] = React.useState<IProfileInfo[]>([])
 	const [myUser, setMyUser] = React.useState<IUser>({ id: 0, Login: "", Email: "", State: "" })
 	const [friendList, setFriendList] = React.useState<IFriend[]>([])
-	const [myProfile, setMyProfile] = React.useState<IProfileInfo>({
-		Avatar: null,
-		AvatarBase64: "",
-		AvatarId: 0,
-		AvatarType: "",
-		Description: "",
-		id: 0,
-		Local: "",
-		Nickname: "",
-	})
+	const [myProfile, setMyProfile] = React.useState<IProfileInfo>(profileDefault)
 	const { socket, socketId } = useSocketIo()
 
 	const requestToUpdateMyProfile = () => {

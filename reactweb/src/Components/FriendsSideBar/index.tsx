@@ -29,6 +29,48 @@ const OnlineFriendsSideBar = () => {
 
 	const onlineUsersId = onlineUsers.map((onlineUser: IUserSocket) => onlineUser.UserId)
 
+	const OnlineFriends = (): JSX.Element => (
+		<>
+			{friendList
+				.filter((item: IFriend) => item.Type === TypeOfFriendship.Friend)
+				.map((item: IFriend) => ({ ...item, online: onlineUsersId.includes(item.FriendProfile.id) }))
+				.sort((_, item2: IFriend & { online: boolean }) => (item2.online ? 1 : -1))
+				.map((item: IFriend & { online: boolean }, index: number) => (
+					<li style={{ display: tab === Tab.FriendList ? "flex" : "none" }} className={styles.list__item__online} key={index + "-friendOnline"} onClick={() => openChat(item)}>
+						<Avatar size={30} base64={item.FriendProfile.AvatarBase64} type={item.FriendProfile.AvatarType} key={item.FriendProfile.AvatarId + "-" + item.FriendProfile.Nickname + "-Avatar"} />
+						<span>{item.FriendProfile.Nickname}</span>
+						{item.online && <BsFillCircleFill size={7} color={"green"} />}
+					</li>
+				))}
+		</>
+	)
+
+	const RequestFriendship = (): JSX.Element => (
+		<>
+			{friendList
+				.filter((item: IFriend) => item.Type === TypeOfFriendship.Requested)
+				.map((item: IFriend, index: number) => (
+					<li style={{ display: tab === Tab.RequestList ? "flex" : "none" }} className={styles.list__item__request} key={index + "-friendRequest"}>
+						<div className="flex_column_center_center">
+							<Avatar size={50} base64={item.FriendProfile.AvatarBase64} type={item.FriendProfile.AvatarType} key={item.FriendProfile.AvatarId + "-" + item.FriendProfile.Nickname + "-Avatar"} />
+							<span>{item.FriendProfile.Nickname}</span>
+						</div>
+						{item.WhoRequested === TypesOfApplicants.Other && (
+							<div className="flex_row_center_center">
+								<input type="button" value="Accepts" className={`${disableButton ? "blueButtonDisable" : "blueButtonActive"}`} onClick={() => acceptFriendshipRequest(item.FriendshipId)} />
+								<input type="button" value="Delete" className={`${disableButton ? "blueButtonDisable" : "blueButtonActive"}`} onClick={() => rejectFriendshipRequest(item.FriendshipId)} />
+							</div>
+						)}
+						{item.WhoRequested === TypesOfApplicants.Me && (
+							<div className="flex_row_center_center">
+								<input type="button" value="Cancel" className={`${disableButton ? "blueButtonDisable" : "blueButtonActive"}`} onClick={() => removeFriend(item.FriendshipId)} />
+							</div>
+						)}
+					</li>
+				))}
+		</>
+	)
+
 	return (
 		<div id={styles.list}>
 			<div className={styles.list__header}>
@@ -40,40 +82,8 @@ const OnlineFriendsSideBar = () => {
 				</h3>
 			</div>
 			<ul>
-				{tab === Tab.FriendList &&
-					friendList
-						.filter((item: IFriend) => item.Type === TypeOfFriendship.Friend)
-						.map((item: IFriend) => ({ ...item, online: onlineUsersId.includes(item.FriendProfile.id) }))
-						.sort((_, item2:  IFriend & {online: boolean}) => item2.online ? 1 : -1)
-						.map((item:  IFriend & {online: boolean}, index: number) => (
-							<li className={styles.list__item__online} key={index + "-friendOnline"} onClick={() => openChat(item)}>
-								<Avatar size={30} base64={item.FriendProfile.AvatarBase64} type={item.FriendProfile.AvatarType} key={item.FriendProfile.AvatarId + "-" + item.FriendProfile.Nickname + "-Avatar" }/>								
-								<span>{item.FriendProfile.Nickname}</span>
-								{ item.online && <BsFillCircleFill size={7} color={"green"} /> }
-							</li>
-						))}
-				{tab === Tab.RequestList &&
-					friendList
-						.filter((item: IFriend) => item.Type === TypeOfFriendship.Requested)
-						.map((item: IFriend, index: number) => (
-							<li className={styles.list__item__request} key={index + "-friendRequest"}>
-								<div className="flex_column_center_center">
-									<Avatar size={50} base64={item.FriendProfile.AvatarBase64} type={item.FriendProfile.AvatarType} key={item.FriendProfile.AvatarId + "-" + item.FriendProfile.Nickname + "-Avatar" }/>								
-									<span>{item.FriendProfile.Nickname}</span>
-								</div>
-								{item.WhoRequested === TypesOfApplicants.Other && (
-									<div className="flex_row_center_center">
-										<input type="button" value="Accepts" className={`${disableButton ? "blueButtonDisable" : "blueButtonActive"}`} onClick={() => acceptFriendshipRequest(item.FriendshipId)} />
-										<input type="button" value="Delete" className={`${disableButton ? "blueButtonDisable" : "blueButtonActive"}`} onClick={() => rejectFriendshipRequest(item.FriendshipId)} />
-									</div>
-								)}
-								{item.WhoRequested === TypesOfApplicants.Me && (
-									<div className="flex_row_center_center">
-										<input type="button" value="Cancel" className={`${disableButton ? "blueButtonDisable" : "blueButtonActive"}`} onClick={() => removeFriend(item.FriendshipId)} />
-									</div>
-								)}
-							</li>
-						))}
+				<OnlineFriends />
+				<RequestFriendship />
 			</ul>
 		</div>
 	)

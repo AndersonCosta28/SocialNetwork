@@ -28,17 +28,17 @@ export default class PostService implements IPostService {
 	findAllFromFriends = async (idProfile: number): Promise<Post[]> => {
 		const posts: Post[] = []
 		const friends: Friendship[] = await AppDataSource.getRepository(Friendship).createQueryBuilder()
-			.leftJoinAndMapOne("Friendship.friendProfile", "profile", "target", "(target.id = Friendship.targetId AND Friendship.targetId <> :idProfile) OR (target.id = Friendship.sourceId AND Friendship.sourceId <> :idProfile)", { idProfile })
+			.innerJoinAndMapOne("Friendship.friendProfile", "profile", "target", "(target.id = Friendship.targetId AND Friendship.sourceId = :idProfile) OR (target.id = Friendship.sourceId AND Friendship.targetId = :idProfile)", { idProfile })
 			.where("Friendship.targetId = :idProfile", { idProfile })
 			.orWhere("Friendship.sourceId = :idProfile", { idProfile })
 			.where("Friendship.Type = '1'")
 			.cache(`findAllFromFriends_${idProfile}`, 60000)
 			.getMany()
-
-		for (const friend of friends) 
+			
+		for (const friend of friends)
 			if (friend.friendProfile)
 				posts.push(...await this.findAllByIdProfile(friend.friendProfile.id))
-		
+
 		posts.push(...await this.findAllByIdProfile(idProfile))
 		posts.sort((postA, postB) => postA.id - postB.id)
 		return posts

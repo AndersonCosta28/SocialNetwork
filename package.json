@@ -24,7 +24,9 @@
 		"dev": "concurrently \"dotenv yarn workspace server dev\" \"dotenv yarn workspace reactweb start \" \"dotenv yarn workspace common start\"",
 		"build": "cross-env yarn workspace common build && concurrently \"yarn workspace server build\" \"yarn workspace reactweb build \" ",
 		"lint:fixAll": "yarn workspace server eslint --fix && yarn workspace reactweb eslint --fix",
-		"server:dev": "cross-env NODE_ENV=development concurrently \"yarn workspace server dev\" \"yarn workspace common start\""
+		"server:dev": "concurrently \"dotenv yarn workspace server dev\" \"dotenv yarn workspace common start\"",
+		"reactweb:dev": "concurrently \"dotenv yarn workspace reactweb start\" \"dotenv yarn workspace common start\"",
+		"reactweb:prod": "npx serve -s /reactweb/build"
 	},
 	"workspaces": [
 		"reactweb",
