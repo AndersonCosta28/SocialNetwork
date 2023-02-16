@@ -6,8 +6,6 @@ import OnlineFriendsSideBar from "Components/FriendsSideBar"
 import MyProfileSideBar from "Components/MyProfileSideBar"
 import Post from "Components/Post"
 import { getAxiosErrorMessage, IPost } from "common"
-import Skeleton from "react-loading-skeleton"
-import "react-loading-skeleton/dist/skeleton.css"
 import { useQuery } from "@tanstack/react-query"
 import { getUserId } from "utils"
 import { toast } from "react-hot-toast"
@@ -17,13 +15,14 @@ import InfiniteScroll from "react-infinite-scroll-component"
 import { SlClose } from "react-icons/sl"
 import ReactTextareaAutosize from "react-textarea-autosize"
 import { AiFillPicture } from "react-icons/ai"
+import ReactLoading from "react-loading"
 
 const Feed = () => {
 	const [jsxPosts, setJsxPosts] = React.useState<JSX.Element[]>([])
 	const [allPosts, setAllPosts] = React.useState<IPost[]>([])
 	const [Posts, setPosts] = React.useState<IPost[]>([])
 	const { socketId } = useSocketIo()
-	const { isLoading, isSuccess, data } = useQuery<IPost[]>({
+	const { isSuccess, data } = useQuery<IPost[]>({
 		queryKey: ["posts_feed", socketId],
 		queryFn: () => API_AXIOS.get("/post/findAllFromFriends/" + getUserId()).then((res) => res.data),
 		onError: (error: unknown) => toast.error(getAxiosErrorMessage(error)),
@@ -79,7 +78,7 @@ const Feed = () => {
 	//#endregion
 
 	//#region function to write an post
-	const handlerTextPost = (e: React.ChangeEvent<HTMLTextAreaElement>) => {		
+	const handlerTextPost = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
 		React.startTransition(() => {
 			const { value } = e.target
 			setTextPost(value)
@@ -96,7 +95,7 @@ const Feed = () => {
 				toast.error("Nothing file selected")
 				return
 			}
-	
+
 			const newFiles = [].slice.call(files)
 			if (newFiles.some((file: File) => file.size > 1000000)) toast.error("The maximum file size is 1MB")
 			else setAttachments([...attachments, ...newFiles])
@@ -174,21 +173,23 @@ const Feed = () => {
 						<input type="button" value="send" className="blueButtonActive" onClick={sendPost} />
 					</div>
 				</div>
-				{isLoading && allPosts.length === 0 ? (
-					<div style={{ padding: 20 }} className={styles.body__midSide__Skeleton}>
-						<Skeleton count={20} />
-					</div>
-				) : null}
+				{/* <div style={{ width: "30%", margin: "auto" }}>
+					<ReactLoading color="red" type="bubbles" height={100} width={100} />
+				</div> */}
 				{isSuccess && allPosts.length === 0 && data.length === 0 ? (
 					<h1 style={{ textAlign: "center" }}>Nothing to show</h1>
 				) : (
 					<InfiniteScroll
 						className={styles.body__midSide__infiniteScroll}
-						style={{ padding: "0px 5px", overflow: "hidden auto" }}
+						style={{ padding: "0px 5px", overflowY: "hidden" }}
 						dataLength={Posts.length}
 						hasMore={hasMore}
 						next={next}
-						loader={<h4>Loading...</h4>}
+						loader={
+							<div style={{ width: "100%", display: "flex", alignItems: "center", justifyContent: "center"}}>
+								<ReactLoading color="red" type="bubbles" height={100} width={100} />
+							</div>
+						}
 						endMessage={
 							<p style={{ textAlign: "center" }}>
 								<b>Yay! You have seen it all</b>
