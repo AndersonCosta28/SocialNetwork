@@ -6,7 +6,7 @@ import { StatusCode } from "status-code-enum"
 
 export default function JwtMiddleware(request: Request, response: Response, next: NextFunction): void {
 	const token = request.headers.authorization
-	const secret = process.env.REACT_APP_JWT_SECRET
+	const secret = process.env.JWT_SECRET
 	const idWebSocket = request.headers["iws"]
 
 	if (!token) throw new CustomErrorAPI("Token not provided", StatusCode.ClientErrorUnauthorized)

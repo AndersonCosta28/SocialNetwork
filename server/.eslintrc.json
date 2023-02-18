@@ -13,7 +13,7 @@
   "plugins": ["@typescript-eslint"],
   "rules": {
     "indent": ["error", "tab"],
-    "linebreak-style": ["error", "windows"],
+    "linebreak-style": ["warn", "windows"],
     "quotes": ["error", "double", { "allowTemplateLiterals": true }],
     "semi": ["error", "never"],
     "func-style": ["error", "expression", { "allowArrowFunctions": true }],

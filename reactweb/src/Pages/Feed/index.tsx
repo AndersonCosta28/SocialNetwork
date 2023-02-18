@@ -7,7 +7,7 @@ import MyProfileSideBar from "Components/MyProfileSideBar"
 import Post from "Components/Post"
 import { getAxiosErrorMessage, IPost } from "common"
 import { useQuery } from "@tanstack/react-query"
-import { getUserId } from "utils"
+import { getBase64FromBuffer, getUserId } from "utils"
 import { toast } from "react-hot-toast"
 import { API_AXIOS } from "Providers/axios"
 import { useSocketIo } from "Context/SocketIoContext"
@@ -16,11 +16,65 @@ import { SlClose } from "react-icons/sl"
 import ReactTextareaAutosize from "react-textarea-autosize"
 import { AiFillPicture } from "react-icons/ai"
 import ReactLoading from "react-loading"
+import { IoClose } from "react-icons/io5"
+import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io"
+import Avatar from "Components/Avatar"
 
 const Feed = () => {
+	//#region Function Maximize Posts
+	const [currentPostToMaximize, setCurrentPostToMaximize] = React.useState<IPost | null>(null)
+	const [currentPhotoNumber, setCurrentPhotoNumber] = React.useState(0)
+
+	const getAvatarBuffer = () => {
+		const { buffer, type } = currentPostToMaximize?.Profile.Avatar as { buffer: Buffer; type: string }
+		return { buffer, type }
+	}
+	const [showPostMaximize, setShowPostMaximize] = React.useState(false)
+
+	React.useEffect(() => {
+		if (currentPostToMaximize)
+			console.log(currentPhotoNumber + " / " + currentPostToMaximize.Attachments.length + " / " + (currentPhotoNumber !== currentPostToMaximize.Attachments.length - 1) )
+	}, [currentPhotoNumber])
+
+	const MaximizePost = currentPostToMaximize && (
+		<div className={styles.MaximizePost}>
+			<IoClose color="white" onClick={() => handleMaximizePost(false)} size={50} className={styles.MaximizePost__leftSide__icon__closePost} />
+			<div className={styles.MaximizePost__leftSide}>
+				{currentPhotoNumber !== 0 ? <IoIosArrowBack size={50} color="white" className={styles.MaximizePost__leftSide__arrow} onClick={() => setCurrentPhotoNumber(currentPhotoNumber - 1)} /> : null}
+				<div style={{ width: "100%", display: "flex", alignItems: "center", justifyContent: "center", height: "100%" }}>
+					<img className={styles.MaximizePost__leftSide__img} src={`data:${currentPostToMaximize.Attachments[currentPhotoNumber].type};base64, ${getBase64FromBuffer(currentPostToMaximize.Attachments[currentPhotoNumber].buffer)}`} />
+				</div>
+				{currentPhotoNumber !== currentPostToMaximize.Attachments.length - 1 ? <IoIosArrowForward size={50} color="white" className={styles.MaximizePost__leftSide__arrow} onClick={() => setCurrentPhotoNumber(currentPhotoNumber + 1)} /> : null}				
+			</div>
+			<div className={styles.MaximizePost__rightSide}>
+				<div className={styles.MaximizePost__rightSide__header}>
+					<Avatar base64={getBase64FromBuffer(getAvatarBuffer().buffer)} type={getAvatarBuffer().type} size={50} />
+					<div>
+						<span className={styles.MaximizePost__rightSide__header__nickName}>{currentPostToMaximize.Profile.Nickname}</span>
+						<br />
+						<span className={styles.MaximizePost__rightSide__header__date}>{new Date(currentPostToMaximize.CreateAt).toLocaleString()}</span>
+					</div>
+				</div>
+				<div className={styles.MaximizePost__rightSide__body}>
+					<span>{currentPostToMaximize.Text}</span>
+				</div>
+			</div>
+		</div>
+	)
+
+	const handleMaximizePost = (show: boolean, photoNumber = 0, post: IPost | null = null) => {		
+		document.body.style.overflow = show ? "hidden" : "auto"
+		setShowPostMaximize(show)
+		setCurrentPostToMaximize(post)
+		setCurrentPhotoNumber(photoNumber)
+	}
+	//#endregion
+
+	//#region function to infinitescroll
 	const [jsxPosts, setJsxPosts] = React.useState<JSX.Element[]>([])
 	const [allPosts, setAllPosts] = React.useState<IPost[]>([])
 	const [Posts, setPosts] = React.useState<IPost[]>([])
+	const infiniteScrollRef = React.useRef(null)
 	const { socketId } = useSocketIo()
 	const { isSuccess, data } = useQuery<IPost[]>({
 		queryKey: ["posts_feed", socketId],
@@ -31,11 +85,6 @@ const Feed = () => {
 		// initialData: [],
 		refetchOnMount: true,
 	})
-
-	const textAreaWritePost = React.useRef<HTMLTextAreaElement>(null)
-	const [textPost, setTextPost] = React.useState<string>("")
-	const [attachments, setAttachments] = React.useState<File[]>([])
-
 	React.useEffect(() => {
 		if (data)
 			if (data.length > 0 && allPosts.length === 0) setAllPosts(data)
@@ -55,9 +104,9 @@ const Feed = () => {
 			setJsxPosts([...jsxPosts])
 		}
 	}
-	//#region function to infinitescroll
+
 	const [hasMore, setHasMore] = React.useState<boolean>(true)
-	const NewPost = (post: IPost) => <Post post={post} key={"Post -> - " + Math.random()} />
+	const NewPost = (post: IPost) => <Post post={post} key={"Post -> - " + Math.random()} handleMaximizePost={handleMaximizePost} />
 
 	const next = () => {
 		if (Posts.length === 0 && data != null && data.length > 0) setHasMore(false)
@@ -75,9 +124,36 @@ const Feed = () => {
 		}, 1000)
 	}
 
+	const InfiniteScrollComponent = (
+		<InfiniteScroll
+			ref={infiniteScrollRef}
+			className={styles.body__midSide__infiniteScroll}
+			style={{ padding: "0px 5px", overflow: "hidden" /*display: showPostMaximize && currentPostToMaximize ? "none" : "block" */}}
+			dataLength={Posts.length}
+			hasMore={hasMore}
+			next={next}
+			loader={
+				<div style={{ width: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}>
+					<ReactLoading color="red" type="bubbles" height={100} width={100} />
+				</div>
+			}
+			endMessage={
+				<p style={{ textAlign: "center" }}>
+					<b>Yay! You have seen it all</b>
+				</p>
+			}
+		>
+			{jsxPosts}
+		</InfiniteScroll>
+	)
+
 	//#endregion
 
 	//#region function to write an post
+	const textAreaWritePost = React.useRef<HTMLTextAreaElement>(null)
+	const [attachments, setAttachments] = React.useState<File[]>([])
+	const [textPost, setTextPost] = React.useState<string>("")
+
 	const handlerTextPost = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
 		React.startTransition(() => {
 			const { value } = e.target
@@ -141,6 +217,7 @@ const Feed = () => {
 
 	return (
 		<div id={styles.body}>
+			{ showPostMaximize && currentPostToMaximize ? MaximizePost : null }
 			<div id={styles.body__leftSide}>
 				<div>
 					<MyProfileSideBar />
@@ -159,7 +236,6 @@ const Feed = () => {
 			<div id={styles.body__midSide}>
 				<div id={styles.WritePost} style={{ margin: "20px 5px 0px 5px" }}>
 					<ReactTextareaAutosize maxRows={10} id={styles.WritePost__TextArea} ref={textAreaWritePost} placeholder="Share your thoughts" value={textPost} onChange={handlerTextPost} />
-					{/* <textarea style={{maxHeight: 100}} id={styles.WritePost__TextArea} ref={textAreaWritePost} placeholder="Share your thoughts" value={textPost} onChange={handlerTextPost} /> */}
 					<div id={styles.WritePost_Attachments}>{ListOfAttachments}</div>
 					<div id={styles.WritePost__Options}>
 						<label htmlFor="attach_photo">
@@ -173,32 +249,7 @@ const Feed = () => {
 						<input type="button" value="send" className="blueButtonActive" onClick={sendPost} />
 					</div>
 				</div>
-				{/* <div style={{ width: "30%", margin: "auto" }}>
-					<ReactLoading color="red" type="bubbles" height={100} width={100} />
-				</div> */}
-				{isSuccess && allPosts.length === 0 && data.length === 0 ? (
-					<h1 style={{ textAlign: "center" }}>Nothing to show</h1>
-				) : (
-					<InfiniteScroll
-						className={styles.body__midSide__infiniteScroll}
-						style={{ padding: "0px 5px", overflowY: "hidden" }}
-						dataLength={Posts.length}
-						hasMore={hasMore}
-						next={next}
-						loader={
-							<div style={{ width: "100%", display: "flex", alignItems: "center", justifyContent: "center"}}>
-								<ReactLoading color="red" type="bubbles" height={100} width={100} />
-							</div>
-						}
-						endMessage={
-							<p style={{ textAlign: "center" }}>
-								<b>Yay! You have seen it all</b>
-							</p>
-						}
-					>
-						{jsxPosts}
-					</InfiniteScroll>
-				)}
+				{isSuccess && allPosts.length === 0 && data.length === 0 ? <h1 style={{ textAlign: "center" }}>Nothing to show</h1> : InfiniteScrollComponent}				
 			</div>
 
 			<div id={styles.body__rigthSide}>

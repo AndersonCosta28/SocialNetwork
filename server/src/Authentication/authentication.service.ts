@@ -16,7 +16,7 @@ export default class AuthenticationService implements IAuthenticationService {
 
 	login = async (usuarioLogin: IUserLogin): Promise<IResponseLogin> => {
 		const user = (await this.userService.findOneByName(usuarioLogin.Login, true))
-		const secret: string | undefined = process.env.REACT_APP_JWT_SECRET
+		const secret: string | undefined = process.env.JWT_SECRET
 
 		if (!user)
 			throw new CustomErrorAPI("User doesn't exist", StatusCode.ClientErrorNotFound)

@@ -13,7 +13,7 @@
   "plugins": ["react", "@typescript-eslint"],
   "rules": {
     "indent": ["error", "tab"],
-    "linebreak-style": ["error", "windows"],
+    "linebreak-style": ["warn", "windows"],
     "quotes": ["error", "double", { "allowTemplateLiterals": true }],
     "semi": ["error", "never"],
     "class-methods-use-this": ["error"],
