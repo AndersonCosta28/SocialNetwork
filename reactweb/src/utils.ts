@@ -1,4 +1,5 @@
 import { Buffer } from "buffer"
+import { IProfileInfo } from "common"
 
 export const getIsAuthenticated = () => {
 	const token = localStorage.getItem("token")
@@ -26,8 +27,14 @@ export const sleep = (milliseconds: number) => {
 	while (currentDate - date < milliseconds)
 }
 
+
 export const getBase64FromBuffer = (buffer: Buffer) => buffer ? Buffer.from(buffer).toString("base64") : ""
 
+export const getAvatarFromProfile = (profile: IProfileInfo): { buffer: Buffer, type: string, base64: string, id : number} => {
+	const avatar = profile.Avatar as { buffer: Buffer; type: string, id: number }
+	const base64 = getBase64FromBuffer(avatar.buffer)
+	return {...avatar, base64 }
+}
 export const timeSince = (date: Date) => {
 
 	const seconds = Math.floor((new Date().getTime() - date.getTime()) / 1000)

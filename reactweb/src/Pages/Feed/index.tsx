@@ -7,7 +7,7 @@ import MyProfileSideBar from "Components/MyProfileSideBar"
 import Post from "Components/Post"
 import { getAxiosErrorMessage, IPost } from "common"
 import { useQuery } from "@tanstack/react-query"
-import { getBase64FromBuffer, getUserId } from "utils"
+import { getAvatarFromProfile, getBase64FromBuffer, getUserId } from "utils"
 import { toast } from "react-hot-toast"
 import { API_AXIOS } from "Providers/axios"
 import { useSocketIo } from "Context/SocketIoContext"
@@ -19,16 +19,14 @@ import ReactLoading from "react-loading"
 import { IoClose } from "react-icons/io5"
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io"
 import Avatar from "Components/Avatar"
+import { postDefault } from "consts"
 
 const Feed = () => {
 	//#region Function Maximize Posts
-	const [currentPostToMaximize, setCurrentPostToMaximize] = React.useState<IPost | null>(null)
+	const [currentPostToMaximize, setCurrentPostToMaximize] = React.useState<IPost>(postDefault)
 	const [currentPhotoNumber, setCurrentPhotoNumber] = React.useState(0)
 
-	const getAvatarBuffer = () => {
-		const { buffer, type } = currentPostToMaximize?.Profile.Avatar as { buffer: Buffer; type: string }
-		return { buffer, type }
-	}
+	const avatarProfile = () => getAvatarFromProfile(currentPostToMaximize.Profile)
 	const [showPostMaximize, setShowPostMaximize] = React.useState(false)
 
 	React.useEffect(() => {
@@ -36,7 +34,7 @@ const Feed = () => {
 			console.log(currentPhotoNumber + " / " + currentPostToMaximize.Attachments.length + " / " + (currentPhotoNumber !== currentPostToMaximize.Attachments.length - 1) )
 	}, [currentPhotoNumber])
 
-	const MaximizePost = currentPostToMaximize && (
+	const MaximizePost = () => (
 		<div className={styles.MaximizePost}>
 			<IoClose color="white" onClick={() => handleMaximizePost(false)} size={50} className={styles.MaximizePost__leftSide__icon__closePost} />
 			<div className={styles.MaximizePost__leftSide}>
@@ -48,7 +46,7 @@ const Feed = () => {
 			</div>
 			<div className={styles.MaximizePost__rightSide}>
 				<div className={styles.MaximizePost__rightSide__header}>
-					<Avatar base64={getBase64FromBuffer(getAvatarBuffer().buffer)} type={getAvatarBuffer().type} size={50} />
+					<Avatar base64={avatarProfile().base64} type={avatarProfile().type} size={50} />
 					<div>
 						<span className={styles.MaximizePost__rightSide__header__nickName}>{currentPostToMaximize.Profile.Nickname}</span>
 						<br />
@@ -62,7 +60,7 @@ const Feed = () => {
 		</div>
 	)
 
-	const handleMaximizePost = (show: boolean, photoNumber = 0, post: IPost | null = null) => {		
+	const handleMaximizePost = (show: boolean, photoNumber = 0, post: IPost = postDefault) => {		
 		document.body.style.overflow = show ? "hidden" : "auto"
 		setShowPostMaximize(show)
 		setCurrentPostToMaximize(post)
@@ -217,7 +215,7 @@ const Feed = () => {
 
 	return (
 		<div id={styles.body}>
-			{ showPostMaximize && currentPostToMaximize ? MaximizePost : null }
+			{ showPostMaximize ? MaximizePost() : null }
 			<div id={styles.body__leftSide}>
 				<div>
 					<MyProfileSideBar />

@@ -3,8 +3,7 @@ import React from "react"
 import { API_AXIOS } from "Providers/axios"
 import { getAxiosErrorMessage, IFriend } from "common"
 import { toast } from "react-hot-toast"
-import { Buffer } from "buffer"
-import { getBase64FromBuffer, getUserId } from "utils"
+import { getAvatarFromProfile, getUserId } from "utils"
 import { useSocketIo } from "./SocketIoContext"
 import { profileDefault } from "consts"
 
@@ -38,9 +37,9 @@ export const ProtectedProvider = ({ children }: { children: React.ReactNode }) =
 			.then((res) => {
 				let profiles: IProfileInfo[] = res.data
 				profiles = profiles.map((profile: IProfileInfo) => {
-					const { buffer: avatarBuffer, type: avatarType } = profile.Avatar as { buffer: Buffer; type: string }
+					const { base64: avatarBase64, type: avatarType } = getAvatarFromProfile(profile)
 					profile.AvatarType = avatarType
-					profile.AvatarBase64 = getBase64FromBuffer(avatarBuffer)
+					profile.AvatarBase64 = avatarBase64
 					if (profile.id === getUserId()) setMyProfile(profile)
 
 					return profile

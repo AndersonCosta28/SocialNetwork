@@ -4,7 +4,7 @@ import { BiMessageDetail } from "react-icons/bi"
 import { RiMapPin2Line, RiPencilLine } from "react-icons/ri"
 import { IProfileInfo } from "common/Types/User"
 import styles from "./Profile.module.css"
-import { getUserId } from "utils"
+import { getAvatarFromProfile, getUserId } from "utils"
 import { useChat } from "Context/ChatContext"
 import { useFriendship } from "Context/FriendshipContext"
 import InteractWithTheProfile from "Components/InteractWithTheProfile"
@@ -46,9 +46,9 @@ const Profile = () => {
 				enabled: !!nickname && !!socketId,
 				onSuccess: (data: IProfileInfo) => {
 					if (data.Avatar) {
-						const avatar = data.Avatar as { buffer: Buffer; type: string; id: number }
+						const avatar = getAvatarFromProfile(data)
 						data.AvatarId = avatar.id
-						data.AvatarBase64 = avatar.buffer ? Buffer.from(avatar.buffer).toString("base64") : ""
+						data.AvatarBase64 = avatar.base64
 						data.AvatarType = avatar.type
 					}
 					setProfile(data)

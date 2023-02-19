@@ -5,11 +5,10 @@ import { BiLike } from "react-icons/bi"
 import { BsChatLeft } from "react-icons/bs"
 import { RiShareForwardLine } from "react-icons/ri"
 import { IPost } from "common"
-import { getBase64FromBuffer, timeSince } from "utils"
-import { Buffer } from "buffer"
+import { getAvatarFromProfile, getBase64FromBuffer, timeSince } from "utils"
 
-const Post = (props: { post: IPost; handleMaximizePost: (show: boolean, photoNumber: number, post: IPost | null) => void }) => {
-	const { buffer: avatarBuffer, type: avatarType } = props.post.Profile.Avatar as { buffer: Buffer; type: string }
+const Post = (props: { post: IPost; handleMaximizePost: (show: boolean, photoNumber: number, post: IPost) => void }) => {
+	const { base64: avatarBase64, type: avatarType } = getAvatarFromProfile(props.post.Profile)
 	const [show, setShow] = React.useState(false)
 
 	React.useEffect(() => {
@@ -81,7 +80,7 @@ const Post = (props: { post: IPost; handleMaximizePost: (show: boolean, photoNum
 	return (
 		<div className={styles.post} style={{ opacity: show ? 1 : 0, height: show ? "auto" : "none" }}>
 			<div className={styles.post__header}>
-				<Avatar base64={getBase64FromBuffer(avatarBuffer)} size={30} type={avatarType} />
+				<Avatar base64={avatarBase64} size={30} type={avatarType} />
 				<div>
 					<span className={styles.post__header__nickname}>{props.post.Profile.Nickname}</span>
 					{" - "}

@@ -1,4 +1,4 @@
-import { IProfileInfo } from "common"
+import { IPost, IProfileInfo } from "common"
 
 export const profileDefault: IProfileInfo = {
 	Avatar: null,
@@ -10,3 +10,5 @@ export const profileDefault: IProfileInfo = {
 	Local: "",
 	Nickname: "",
 }
+
+export const postDefault : IPost = {Attachments: [], CreateAt: new Date(), id: 0, Profile: profileDefault, Text: "", UpdateAt: new Date()}
