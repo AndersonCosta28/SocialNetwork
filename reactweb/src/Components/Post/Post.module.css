@@ -1,4 +1,3 @@
-
 /*#region Post*/
 .post > div {
 	margin: 10px;
@@ -36,7 +35,7 @@
 	max-height: 500px;
 }
 
-.post__body__image:hover{
+.post__body__image:hover {
 	cursor: pointer;
 }
 
@@ -69,6 +68,31 @@
 	width: 16px;
 	height: 16px;
 }
+
+.post__footer__buttons > div {
+	padding: 10px;
+	border-radius: 10px;
+}
+
+.post__footer__buttons__react1:hover,
+.post__footer__buttons__comments:hover,
+.post__footer__buttons__share:hover {
+	background-color: cornflowerblue;
+	color: white;
+	cursor: pointer;
+}
+
+.post__footer__buttons__react2 {
+	background-color: cornflowerblue;
+	color: white;
+}
+
+.post__footer__buttons__react2:hover {
+	color: red;
+	background-color: white;
+}
+
+
 
 .post__body__text {
 	white-space: pre-line;

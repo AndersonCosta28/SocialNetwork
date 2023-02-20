@@ -11,6 +11,7 @@ export default class AuthenticationController implements IAuthenticationControll
 	constructor(private readonly AuthenticationService: IAuthenticationService) { }
 
 	login = async (request: Request, response: Response): Promise<Response> => {
+		console.log(request.body)
 		const usuarioLogin: IUserLogin = request.body
 		const retornoDoLogin = await this.AuthenticationService.login(usuarioLogin)
 		return response.status(retornoDoLogin.code).send({ ...retornoDoLogin })

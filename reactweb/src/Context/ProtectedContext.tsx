@@ -1,4 +1,4 @@
-import { IProfileInfo } from "common/Types/User"
+import { IProfile } from "common/Types/User"
 import React from "react"
 import { API_AXIOS } from "Providers/axios"
 import { getAxiosErrorMessage, IFriend } from "common"
@@ -8,8 +8,8 @@ import { useSocketIo } from "./SocketIoContext"
 import { profileDefault } from "consts"
 
 export interface IProtectedContext {
-	allProfiles: IProfileInfo[]
-	myProfile: IProfileInfo
+	allProfiles: IProfile[]
+	myProfile: IProfile
 	myUser: IUser
 	requestToUpdateMyProfile: () => void
 	requestToUpdateFriendList: () => void
@@ -26,17 +26,17 @@ interface IUser {
 const ProtectedContext = React.createContext<IProtectedContext | null>(null)
 
 export const ProtectedProvider = ({ children }: { children: React.ReactNode }) => {
-	const [allProfiles, setAllProfiles] = React.useState<IProfileInfo[]>([])
+	const [allProfiles, setAllProfiles] = React.useState<IProfile[]>([])
 	const [myUser, setMyUser] = React.useState<IUser>({ id: 0, Login: "", Email: "", State: "" })
 	const [friendList, setFriendList] = React.useState<IFriend[]>([])
-	const [myProfile, setMyProfile] = React.useState<IProfileInfo>(profileDefault)
+	const [myProfile, setMyProfile] = React.useState<IProfile>(profileDefault)
 	const { socket, socketId } = useSocketIo()
 
 	const requestToUpdateMyProfile = () => {
 		API_AXIOS.get("/Profile")
 			.then((res) => {
-				let profiles: IProfileInfo[] = res.data
-				profiles = profiles.map((profile: IProfileInfo) => {
+				let profiles: IProfile[] = res.data
+				profiles = profiles.map((profile: IProfile) => {
 					const { base64: avatarBase64, type: avatarType } = getAvatarFromProfile(profile)
 					profile.AvatarType = avatarType
 					profile.AvatarBase64 = avatarBase64

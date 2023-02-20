@@ -2,7 +2,7 @@ import React from "react"
 import { RouteObject, useParams } from "react-router-dom"
 import { BiMessageDetail } from "react-icons/bi"
 import { RiMapPin2Line, RiPencilLine } from "react-icons/ri"
-import { IProfileInfo } from "common/Types/User"
+import { IProfile } from "common/Types/User"
 import styles from "./Profile.module.css"
 import { getAvatarFromProfile, getUserId } from "utils"
 import { useChat } from "Context/ChatContext"
@@ -36,7 +36,7 @@ const Profile = () => {
 	const [avatarFile, setAvatarFile] = React.useState<File | null>(null)
 	const [friends, setFriends] = React.useState<IFriend[]>([])
 	const [posts, setPosts] = React.useState<IPost[]>([])
-	const [profile, setProfile] = React.useState<IProfileInfo>(profileDefault)
+	const [profile, setProfile] = React.useState<IProfile>(profileDefault)
 
 	useQueries({
 		queries: [
@@ -44,7 +44,7 @@ const Profile = () => {
 				queryKey: ["profile", nickname, socketId],
 				queryFn: () => API_AXIOS.get("/profile/findOneByNickname/" + nickname).then((res) => res.data),
 				enabled: !!nickname && !!socketId,
-				onSuccess: (data: IProfileInfo) => {
+				onSuccess: (data: IProfile) => {
 					if (data.Avatar) {
 						const avatar = getAvatarFromProfile(data)
 						data.AvatarId = avatar.id

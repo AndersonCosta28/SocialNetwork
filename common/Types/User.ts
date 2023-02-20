@@ -12,7 +12,7 @@ export interface IUserSocket {
   Nickname: string
 }
 
-export interface IProfileInfo {
+export interface IProfile {
   id: number,
   Nickname: string,
   Avatar: string | File | { buffer: Buffer, type: string } | null,

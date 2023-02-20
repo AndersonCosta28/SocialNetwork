@@ -7,6 +7,7 @@ import { DataSource } from "typeorm"
 import Files from "Files/Files.entity"
 import Post from "Post/Post.entity"
 import { getErrorMessage } from "common"
+import PostReactions from "PostReactions/PostReactions.entity"
 
 const AppDataSource = new DataSource({
 	type: "mysql",
@@ -15,7 +16,7 @@ const AppDataSource = new DataSource({
 	username: process.env.DATABASE_USERNAME,
 	password: process.env.DATABASE_PASSWORD,
 	database: "socialnetwork",
-	entities: [User, Friendship, Email, Profile, Message, Files, Post],
+	entities: [User, Friendship, Email, Profile, Message, Files, Post, PostReactions],
 	// url: "mysql://root:mysqlpw@localhost:55000", //DOCKER
 	synchronize: true,
 	cache: {

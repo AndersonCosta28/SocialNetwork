@@ -29,11 +29,6 @@ const Feed = () => {
 	const avatarProfile = () => getAvatarFromProfile(currentPostToMaximize.Profile)
 	const [showPostMaximize, setShowPostMaximize] = React.useState(false)
 
-	React.useEffect(() => {
-		if (currentPostToMaximize)
-			console.log(currentPhotoNumber + " / " + currentPostToMaximize.Attachments.length + " / " + (currentPhotoNumber !== currentPostToMaximize.Attachments.length - 1) )
-	}, [currentPhotoNumber])
-
 	const MaximizePost = () => (
 		<div className={styles.MaximizePost}>
 			<IoClose color="white" onClick={() => handleMaximizePost(false)} size={50} className={styles.MaximizePost__leftSide__icon__closePost} />
@@ -78,7 +73,10 @@ const Feed = () => {
 		queryKey: ["posts_feed", socketId],
 		queryFn: () => API_AXIOS.get("/post/findAllFromFriends/" + getUserId()).then((res) => res.data),
 		onError: (error: unknown) => toast.error(getAxiosErrorMessage(error)),
-		onSuccess: (data: IPost[]) => setAllPosts(data),
+		onSuccess: (data) => {
+			console.log(data)
+			setAllPosts(data)
+		},
 		enabled: !!socketId,
 		// initialData: [],
 		refetchOnMount: true,

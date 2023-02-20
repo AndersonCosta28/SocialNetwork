@@ -1,4 +1,4 @@
-import { IProfileInfo } from "./User"
+import { IProfile } from "./User"
 
 export enum TypeOfFriendship {
   "Requested",
@@ -34,7 +34,7 @@ export interface IMessage {
 
 export interface IFriend {
   FriendshipId: number
-  FriendProfile: IProfileInfo
+  FriendProfile: IProfile
   Type: TypeOfFriendship | string
   WhoRequested: TypesOfApplicants,
 }

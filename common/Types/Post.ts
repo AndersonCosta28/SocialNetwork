@@ -1,4 +1,4 @@
-import { IProfileInfo } from "./User"
+import { IProfile } from "./User"
 
 export interface IPost {
     id: number
@@ -8,7 +8,18 @@ export interface IPost {
         type: string,
     }[]
     Text: string
-    Profile: IProfileInfo
+    Profile: IProfile
     CreateAt: Date
-    UpdateAt: Date
+    UpdateAt: Date,
+    Reactions: IReactionsPost[]
+}
+
+export enum TypePostReactions {
+    Like
+}
+
+export interface IReactionsPost {
+    id: number,
+    Profile: IProfile,
+    TypePostReaction: TypePostReactions        
 }

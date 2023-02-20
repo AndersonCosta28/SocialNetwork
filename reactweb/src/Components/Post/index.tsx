@@ -4,16 +4,44 @@ import styles from "./Post.module.css"
 import { BiLike } from "react-icons/bi"
 import { BsChatLeft } from "react-icons/bs"
 import { RiShareForwardLine } from "react-icons/ri"
-import { IPost } from "common"
+import { getAxiosErrorMessage, IPost, TypePostReactions } from "common"
 import { getAvatarFromProfile, getBase64FromBuffer, timeSince } from "utils"
+import { API_AXIOS } from "Providers/axios"
+import { useProtected } from "Context/ProtectedContext"
+import { toast } from "react-hot-toast"
 
 const Post = (props: { post: IPost; handleMaximizePost: (show: boolean, photoNumber: number, post: IPost) => void }) => {
+	const { myProfile } = useProtected()
 	const { base64: avatarBase64, type: avatarType } = getAvatarFromProfile(props.post.Profile)
 	const [show, setShow] = React.useState(false)
+	const [numberOfReactions, setNumberOfReactions] = React.useState(props.post.Reactions.length)
+	const [iWasReact, setIWasReact] = React.useState<boolean>(props.post.Reactions.some((react) => react.Profile.id === myProfile.id))
 
 	React.useEffect(() => {
 		setTimeout(() => setShow(true), 1000)
 	}, [])
+
+	const reactAnPost = (unReact = false) => {
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		const body = { idPost: props.post.id, idProfile: myProfile.id } as any
+		if (!unReact) body.typeReact = TypePostReactions.Like
+		API_AXIOS.post("reactionspost", {
+			idPost: props.post.id,
+			typeReact: TypePostReactions.Like,
+			idProfile: myProfile.id,
+		})
+			.then(() => {
+				if (unReact){
+					setIWasReact(false)
+					setNumberOfReactions(numberOfReactions - 1)
+				}
+				else {
+					setIWasReact(true)
+					setNumberOfReactions(numberOfReactions + 1)	
+				}
+			})
+			.catch((error) => toast.error(getAxiosErrorMessage(error)))
+	}
 
 	const Images = (): JSX.Element => {
 		const attachamentsLength = props.post.Attachments.length
@@ -24,7 +52,12 @@ const Post = (props: { post: IPost; handleMaximizePost: (show: boolean, photoNum
 				if (index === 3) break
 				const element = (
 					<div key={`Post ${props.post.id} attachament ${index}`} style={{ maxWidth: "100%", height: attachamentsLength === 3 ? "50%" : "33%", overflow: "hidden" }}>
-						<img onClick={() => props.handleMaximizePost(true, index, props.post)} className={styles.post__body__image} src={`data:${props.post.Attachments[index].type};base64, ${getBase64FromBuffer(props.post.Attachments[index].buffer)}`} alt="" />
+						<img
+							onClick={() => props.handleMaximizePost(true, index, props.post)}
+							className={styles.post__body__image}
+							src={`data:${props.post.Attachments[index].type};base64, ${getBase64FromBuffer(props.post.Attachments[index].buffer)}`}
+							alt=""
+						/>
 					</div>
 				)
 				subComponents.push(element)
@@ -73,7 +106,8 @@ const Post = (props: { post: IPost; handleMaximizePost: (show: boolean, photoNum
 					/>
 				</div>
 			)
-		else if (attachamentsLength === 1) return <img onClick={() => props.handleMaximizePost(true, 0, props.post)} className={styles.post__body__image} src={`data:${props.post.Attachments[0].type};base64, ${getBase64FromBuffer(props.post.Attachments[0].buffer)}`} alt="" />
+		else if (attachamentsLength === 1)
+			return <img onClick={() => props.handleMaximizePost(true, 0, props.post)} className={styles.post__body__image} src={`data:${props.post.Attachments[0].type};base64, ${getBase64FromBuffer(props.post.Attachments[0].buffer)}`} alt="" />
 		else return <></>
 	}
 
@@ -97,7 +131,7 @@ const Post = (props: { post: IPost; handleMaximizePost: (show: boolean, photoNum
 				<div className={`${styles.post__footer__numbers}`}>
 					<div>
 						<BiLike />
-						<span>x Likes</span>
+						<span>{`${numberOfReactions} Likes`}</span>
 					</div>
 					<div>
 						<BsChatLeft />
@@ -110,15 +144,22 @@ const Post = (props: { post: IPost; handleMaximizePost: (show: boolean, photoNum
 				</div>
 				<hr style={{ margin: 10 }} />
 				<div className={styles.post__footer__buttons}>
-					<div>
-						<BiLike />
-						<span>Like</span>
-					</div>
-					<div>
+					{iWasReact ? (
+						<div className={styles.post__footer__buttons__react2} onClick={() => reactAnPost(true)}>
+							<BiLike />
+							<span>Like</span>
+						</div>
+					) : (
+						<div className={styles.post__footer__buttons__react1} onClick={() => reactAnPost()}>
+							<BiLike />
+							<span>Like</span>
+						</div>
+					)}
+					<div className={styles.post__footer__buttons__comments}>
 						<BsChatLeft />
 						<span>Comments</span>
 					</div>
-					<div>
+					<div className={styles.post__footer__buttons__share}>
 						<RiShareForwardLine />
 						<span>Share</span>
 					</div>
