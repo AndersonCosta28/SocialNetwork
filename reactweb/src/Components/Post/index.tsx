@@ -9,6 +9,7 @@ import { getAvatarFromProfile, getBase64FromBuffer, timeSince } from "utils"
 import { API_AXIOS } from "Providers/axios"
 import { useProtected } from "Context/ProtectedContext"
 import { toast } from "react-hot-toast"
+import ReactTextareaAutosize from "react-textarea-autosize"
 
 const Post = (props: { post: IPost; handleMaximizePost: (show: boolean, photoNumber: number, post: IPost) => void }) => {
 	const { myProfile } = useProtected()
@@ -25,7 +26,7 @@ const Post = (props: { post: IPost; handleMaximizePost: (show: boolean, photoNum
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		const body = { idPost: props.post.id, idProfile: myProfile.id } as any
 		if (!unReact) body.typeReact = TypePostReactions.Like
-		API_AXIOS.post("reactionspost", {
+		API_AXIOS.post("postreactions", {
 			idPost: props.post.id,
 			typeReact: TypePostReactions.Like,
 			idProfile: myProfile.id,
@@ -127,7 +128,7 @@ const Post = (props: { post: IPost; handleMaximizePost: (show: boolean, photoNum
 					<Images />
 				</div>
 			</div>
-			<div className={styles.post__footer}>
+			<div className={styles.post__footer}>				
 				<div className={`${styles.post__footer__numbers}`}>
 					<div>
 						<BiLike />
@@ -143,6 +144,10 @@ const Post = (props: { post: IPost; handleMaximizePost: (show: boolean, photoNum
 					</div>
 				</div>
 				<hr style={{ margin: 10 }} />
+				<div  className={styles.post__footer__writeAnComment}>
+					<Avatar base64={myProfile.AvatarBase64} type={myProfile.AvatarType} size={20}/>
+					<ReactTextareaAutosize maxRows={10} name="writeAComment" id="writeAComment" placeholder="Write a comment" />
+				</div>
 				<div className={styles.post__footer__buttons}>
 					{iWasReact ? (
 						<div className={styles.post__footer__buttons__react2} onClick={() => reactAnPost(true)}>
@@ -155,10 +160,10 @@ const Post = (props: { post: IPost; handleMaximizePost: (show: boolean, photoNum
 							<span>Like</span>
 						</div>
 					)}
-					<div className={styles.post__footer__buttons__comments}>
+					{/* <div className={styles.post__footer__buttons__comments}>
 						<BsChatLeft />
 						<span>Comments</span>
-					</div>
+					</div> */}
 					<div className={styles.post__footer__buttons__share}>
 						<RiShareForwardLine />
 						<span>Share</span>

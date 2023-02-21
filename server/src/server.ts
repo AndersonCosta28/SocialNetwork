@@ -13,6 +13,7 @@ import { userController } from "./User"
 import JwtMiddleware from "Middleware/Jwt"
 import { postController } from "Post"
 import { postReactionsController } from "./PostReactions"
+import { postCommentsController } from "PostComments"
 
 const app = express()
 const prefix = "/api/v1/"
@@ -29,7 +30,8 @@ app.use(prefix + "message", messageController.routers())
 app.use(prefix + "profile", profileController.routers())
 app.use(prefix + "files", filesController.routers())
 app.use(prefix + "post", postController.routers())
-app.use(prefix + "reactionspost", postReactionsController.routers())
+app.use(prefix + "postReactions", postReactionsController.routers())
+app.use(prefix + "postComments", postCommentsController.routers)
 app.use(MiddlewareError) // TODO: https://expressjs.com/en/guide/error-handling.html // Writing error handlers (using next(error in controllers))
 
 
