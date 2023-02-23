@@ -1,10 +1,10 @@
 import axios from "axios"
 import { io } from "socket.io-client"
-import { getIsAuthenticated, getIWS, getNickname, getToken, getUserId } from "utils"
+import { getIWS, getNickname, getToken, getUserId } from "utils"
 
 export const connectToServerWebSocket = () =>
 	io("http://localhost:3001", {
-		auth: { authenticated: getIsAuthenticated() },
+		auth: { token: getToken() },
 		query: {
 			Nickname: getNickname(),
 			UserId: getUserId(),

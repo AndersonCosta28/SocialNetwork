@@ -16,10 +16,10 @@ export default class PostService implements IPostService {
 		const result = await this.repository.find({
 			where: { Profile: { id: idProfile } },
 			// order: { CreateAt: "DESC" },
-			cache: {
-				id: `findAllByIdProfile_${idProfile}`,
-				milliseconds: 60000
-			}
+			// cache: {
+			// 	id: `findAllByIdProfile_${idProfile}`,
+			// 	milliseconds: 60000
+			// }
 		})
 
 		return result

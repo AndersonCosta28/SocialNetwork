@@ -206,6 +206,7 @@
 	height: 100%;
 	width: 30%;
 	padding: 10px;
+	overflow: auto;
 }
 
 .MaximizePost__rightSide__header {
@@ -221,6 +222,7 @@
 .MaximizePost__rightSide__header__date {
 	font-size: 13px;
 }
+
 /*#endregion */
 
 /*#endregion*/

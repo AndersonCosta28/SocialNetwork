@@ -18,5 +18,6 @@ export const postDefault: IPost = {
 	Profile: profileDefault,
 	Text: "",
 	UpdateAt: new Date(),
-	Reactions: []
+	Reactions: [],
+	Comments: []
 }

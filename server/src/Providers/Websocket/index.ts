@@ -9,6 +9,8 @@ import { friendshipService } from "Friendship"
 import Friendship from "Friendship/Friendship.entity"
 import User from "User/User.entity"
 import { userService } from "User"
+import { verify } from "jsonwebtoken"
+
 
 export let connectedUsers: Array<IUserSocket> = []
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -24,8 +26,19 @@ export const setIo = (server: http.Server) => {
 	})
 
 	io.use((socket, next) => {
-		if (socket.handshake.auth.authenticated) next()
-		else next(new Error("Invalid"))
+		const { token } = socket.handshake.auth
+		if (token === null || token === "" || token === undefined) next(new Error("Invalid"))
+		else {
+			const secret = process.env.JWT_SECRET
+			if (!secret) {
+				next(new Error("Secret not provided"))
+				return
+			}
+			const { login, id, iat } = verify(token, secret) as { login: string, id: number, iat: number }
+			if (login && id && iat)
+				next()
+			else next(new Error("Token invalid"))
+		}
 	})
 
 	io.on("connection", (socket: Socket) => {
@@ -52,7 +65,7 @@ export const setIo = (server: http.Server) => {
 					id: 0,
 					Message: data.Message
 				}
-				
+
 				message = await messageService.create(message)
 				const imessage: IMessage = {
 					FriendshipId: message.Friendship.id,

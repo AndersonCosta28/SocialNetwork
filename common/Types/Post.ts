@@ -11,15 +11,22 @@ export interface IPost {
     Profile: IProfile
     CreateAt: Date
     UpdateAt: Date,
-    Reactions: IReactionsPost[]
+    Reactions: IPostReactions[],
+    Comments: IPostComments[]
 }
 
 export enum TypePostReactions {
     Like
 }
 
-export interface IReactionsPost {
+export interface IPostReactions {
     id: number,
     Profile: IProfile,
-    TypePostReaction: TypePostReactions        
+    TypePostReaction: TypePostReactions
+}
+
+export interface IPostComments {
+    id: number,
+    Text: string,
+    ProfileSource: IProfile
 }

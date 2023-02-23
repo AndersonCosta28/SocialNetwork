@@ -15,7 +15,6 @@ export default class PostCommentsController implements IController {
 
 	create = async (request: Request, response: Response) => {
 		const { idPost, idProfileSource, text  } = request.body
-
 		return response.status(200).send(await this.service.create(idPost, idProfileSource, text))
 	}
 

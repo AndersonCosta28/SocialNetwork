@@ -5,7 +5,7 @@ import styles from "./feed.module.css"
 import OnlineFriendsSideBar from "Components/FriendsSideBar"
 import MyProfileSideBar from "Components/MyProfileSideBar"
 import Post from "Components/Post"
-import { getAxiosErrorMessage, IPost } from "common"
+import { getAxiosErrorMessage, IPost, IPostComments } from "common"
 import { useQuery } from "@tanstack/react-query"
 import { getAvatarFromProfile, getBase64FromBuffer, getUserId } from "utils"
 import { toast } from "react-hot-toast"
@@ -28,6 +28,27 @@ const Feed = () => {
 
 	const avatarProfile = () => getAvatarFromProfile(currentPostToMaximize.Profile)
 	const [showPostMaximize, setShowPostMaximize] = React.useState(false)
+	const Comments = (): JSX.Element => (
+		<div>
+			{currentPostToMaximize.Comments.map((comment: IPostComments) => {
+				const avatarProfileSource = getAvatarFromProfile(comment.ProfileSource)
+				const [showFullComment, setShowFullComment] = React.useState(false)
+				const handleShowFullComment = () => setShowFullComment(!showFullComment)
+				const maxLengthText = 200
+				const Text = (
+					<span>
+						{comment.Text.length > maxLengthText && showFullComment ? comment.Text : comment.Text.slice(0, maxLengthText)} <br /> {comment.Text.length > maxLengthText ? <span className="span__ExpandText" onClick={handleShowFullComment}>{showFullComment ? "Read less..." : "Read more..."}</span> : null}
+					</span>
+				)
+				return (
+					<div style={{ margin: 10, display: "flex", alignItems: "baseline" }} key={`comment ${comment.id} of Post ${currentPostToMaximize.id}`}>
+						<Avatar base64={avatarProfileSource.base64} type={avatarProfileSource.type} size={20} />
+						<div style={{ backgroundColor: "#F0F2F5", padding: 10, margin: 10, borderRadius: 15, width: "max-content" }}>{Text}</div>
+					</div>
+				)
+			})}
+		</div>
+	)
 
 	const MaximizePost = () => (
 		<div className={styles.MaximizePost}>
@@ -37,7 +58,9 @@ const Feed = () => {
 				<div style={{ width: "100%", display: "flex", alignItems: "center", justifyContent: "center", height: "100%" }}>
 					<img className={styles.MaximizePost__leftSide__img} src={`data:${currentPostToMaximize.Attachments[currentPhotoNumber].type};base64, ${getBase64FromBuffer(currentPostToMaximize.Attachments[currentPhotoNumber].buffer)}`} />
 				</div>
-				{currentPhotoNumber !== currentPostToMaximize.Attachments.length - 1 ? <IoIosArrowForward size={50} color="white" className={styles.MaximizePost__leftSide__arrow} onClick={() => setCurrentPhotoNumber(currentPhotoNumber + 1)} /> : null}				
+				{currentPhotoNumber !== currentPostToMaximize.Attachments.length - 1 ? (
+					<IoIosArrowForward size={50} color="white" className={styles.MaximizePost__leftSide__arrow} onClick={() => setCurrentPhotoNumber(currentPhotoNumber + 1)} />
+				) : null}
 			</div>
 			<div className={styles.MaximizePost__rightSide}>
 				<div className={styles.MaximizePost__rightSide__header}>
@@ -48,14 +71,16 @@ const Feed = () => {
 						<span className={styles.MaximizePost__rightSide__header__date}>{new Date(currentPostToMaximize.CreateAt).toLocaleString()}</span>
 					</div>
 				</div>
+				<hr style={{ margin: "10px " }} />
 				<div className={styles.MaximizePost__rightSide__body}>
-					<span>{currentPostToMaximize.Text}</span>
+					<p>{currentPostToMaximize.Text}</p>
+					<Comments />
 				</div>
 			</div>
 		</div>
 	)
 
-	const handleMaximizePost = (show: boolean, photoNumber = 0, post: IPost = postDefault) => {		
+	const handleMaximizePost = (show: boolean, photoNumber = 0, post: IPost = postDefault) => {
 		document.body.style.overflow = show ? "hidden" : "auto"
 		setShowPostMaximize(show)
 		setCurrentPostToMaximize(post)
@@ -124,7 +149,7 @@ const Feed = () => {
 		<InfiniteScroll
 			ref={infiniteScrollRef}
 			className={styles.body__midSide__infiniteScroll}
-			style={{ padding: "0px 5px", overflow: "hidden" /*display: showPostMaximize && currentPostToMaximize ? "none" : "block" */}}
+			style={{ padding: "0px 5px", overflow: "hidden" /*display: showPostMaximize && currentPostToMaximize ? "none" : "block" */ }}
 			dataLength={Posts.length}
 			hasMore={hasMore}
 			next={next}
@@ -197,10 +222,10 @@ const Feed = () => {
 				const _allPosts = allPosts
 				_allPosts.unshift(res.data)
 				setAllPosts([..._allPosts])
+				setAttachments([])
+				setTextPost("")
 			})
 			.catch((error) => toast.error(getAxiosErrorMessage(error)))
-		setAttachments([])
-		setTextPost("")
 	}
 
 	const ListOfAttachments = attachments.map((attachment: File, index: number) => (
@@ -213,7 +238,7 @@ const Feed = () => {
 
 	return (
 		<div id={styles.body}>
-			{ showPostMaximize ? MaximizePost() : null }
+			{showPostMaximize ? MaximizePost() : null}
 			<div id={styles.body__leftSide}>
 				<div>
 					<MyProfileSideBar />
@@ -245,7 +270,7 @@ const Feed = () => {
 						<input type="button" value="send" className="blueButtonActive" onClick={sendPost} />
 					</div>
 				</div>
-				{isSuccess && allPosts.length === 0 && data.length === 0 ? <h1 style={{ textAlign: "center" }}>Nothing to show</h1> : InfiniteScrollComponent}				
+				{isSuccess && allPosts.length === 0 && data.length === 0 ? <h1 style={{ textAlign: "center" }}>Nothing to show</h1> : InfiniteScrollComponent}
 			</div>
 
 			<div id={styles.body__rigthSide}>

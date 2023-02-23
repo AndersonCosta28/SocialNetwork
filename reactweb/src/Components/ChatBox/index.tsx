@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, FormEvent } from "react"
+import React from "react"
 import styles from "./ChatBox.module.css"
 import { IMessage } from "common/Types/Friendship"
 import { useSocketIo } from "Context/SocketIoContext"
@@ -12,21 +12,21 @@ import { getAxiosErrorMessage } from "common"
 
 const ChatBox = (props: IChat) => {
 	//#region Hooks
-	const [message, setMessage] = useState<string>("")
-	const [messages, setMessages] = useState<IMessage[]>([])
-	const [textAreaFocused, setTextAreaFocused] = useState<boolean>(false)
-	const [isMinimized, setIsMinimized] = useState<boolean>(props.isMinimized)
+	const [message, setMessage] = React.useState<string>("")
+	const [messages, setMessages] = React.useState<IMessage[]>([])
+	const [textAreaFocused, setTextAreaFocused] = React.useState<boolean>(false)
+	const [isMinimized, setIsMinimized] = React.useState<boolean>(props.isMinimized)
 
 	const { socket } = useSocketIo()
 	const { closeChat, toggleMinimizeChat } = useChat()
 
-	const headerElementRef = useRef<HTMLDivElement>(null)
-	const closeElementRef = useRef<HTMLDivElement>(null)
-	const chatBodyRef = useRef<HTMLDivElement>(null)
-	const textAreaElementRef = useRef<HTMLTextAreaElement>(null)
-	const buttonSubmitMessageElementRef = useRef<HTMLInputElement>(null)
+	const headerElementRef = React.useRef<HTMLDivElement>(null)
+	const closeElementRef = React.useRef<HTMLDivElement>(null)
+	const chatBodyRef = React.useRef<HTMLDivElement>(null)
+	const textAreaElementRef = React.useRef<HTMLTextAreaElement>(null)
+	const buttonSubmitMessageElementRef = React.useRef<HTMLInputElement>(null)
 
-	useEffect(() => {	
+	React.useEffect(() => {	
 		// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 		const chatContainer = chatBodyRef.current!
 		API_AXIOS.get("/message/findByFriendship/" + props.friendshipId)
@@ -58,7 +58,7 @@ const ChatBox = (props: IChat) => {
 	//#endregion
 
 	//#region Functions
-	const handleSendMessage = (e: FormEvent<HTMLFormElement>) => {
+	const handleSendMessage = (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault()
 		const userId = Number(getUserId())
 		console.log("O id do usuário local é:" + userId)

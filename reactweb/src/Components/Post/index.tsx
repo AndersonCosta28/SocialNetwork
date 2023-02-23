@@ -26,19 +26,19 @@ const Post = (props: { post: IPost; handleMaximizePost: (show: boolean, photoNum
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		const body = { idPost: props.post.id, idProfile: myProfile.id } as any
 		if (!unReact) body.typeReact = TypePostReactions.Like
-		API_AXIOS.post("postreactions", {
+		API_AXIOS.post("/postreactions", {
 			idPost: props.post.id,
 			typeReact: TypePostReactions.Like,
 			idProfile: myProfile.id,
 		})
 			.then(() => {
-				if (unReact){
+				if (unReact) {
 					setIWasReact(false)
 					setNumberOfReactions(numberOfReactions - 1)
 				}
 				else {
 					setIWasReact(true)
-					setNumberOfReactions(numberOfReactions + 1)	
+					setNumberOfReactions(numberOfReactions + 1)
 				}
 			})
 			.catch((error) => toast.error(getAxiosErrorMessage(error)))
@@ -112,6 +112,45 @@ const Post = (props: { post: IPost; handleMaximizePost: (show: boolean, photoNum
 		else return <></>
 	}
 
+	//#region Comments
+	const [comment, setComment] = React.useState("")
+	const [textAreaFocused, setTextAreaFocused] = React.useState<boolean>(false)
+	const onFocusTextArea = () => setTextAreaFocused(true)
+	const onBlurTextArea = () => setTextAreaFocused(false)
+	const buttonSubmitMessageElementRef = React.useRef<HTMLInputElement>(null)
+	const textAreaElementRef = React.useRef<HTMLTextAreaElement>(null)
+
+	const onEnterPress = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+		if (e.key === "Enter" && e.shiftKey === false && textAreaFocused) buttonSubmitMessageElementRef.current?.click()
+	}
+
+	const SendComment = () => {
+		console.log("Teste")
+		API_AXIOS.post("/postComments", {
+			idPost: props.post.id,
+			idProfileSource: myProfile.id,
+			text: comment,
+		})
+			.then(() => {
+				toast.success("Deu bom")
+				setComment("")
+			})
+			.catch((error) => toast.error(getAxiosErrorMessage(error)))
+	}
+
+	//#endregion
+	
+	//#region Description
+	const [showFullDescription, setShowFullDescription] = React.useState(false)
+	const handleShowFullDescription = () => setShowFullDescription(!showFullDescription)
+	const maxLengthText = 200
+	const Description = (
+		<span>
+			{props.post.Text.length > maxLengthText && showFullDescription ? props.post.Text : props.post.Text.slice(0, maxLengthText)} <br /> {props.post.Text.length > maxLengthText ? <span className="span__ExpandText" onClick={handleShowFullDescription}>{showFullDescription ? "Read less..." : "Read more..."}</span> : null}
+		</span>
+	)
+
+	//#endregion
 	return (
 		<div className={styles.post} style={{ opacity: show ? 1 : 0, height: show ? "auto" : "none" }}>
 			<div className={styles.post__header}>
@@ -123,12 +162,12 @@ const Post = (props: { post: IPost; handleMaximizePost: (show: boolean, photoNum
 				</div>
 			</div>
 			<div className={styles.post__body}>
-				<p className={styles.post__body__text}>{props.post.Text}</p>
+				<p className={styles.post__body__text}>{Description}</p>
 				<div className="flex_column_center_center" id="teste" style={{ borderRadius: 10, width: "100%" }}>
 					<Images />
 				</div>
 			</div>
-			<div className={styles.post__footer}>				
+			<div className={styles.post__footer}>
 				<div className={`${styles.post__footer__numbers}`}>
 					<div>
 						<BiLike />
@@ -144,9 +183,21 @@ const Post = (props: { post: IPost; handleMaximizePost: (show: boolean, photoNum
 					</div>
 				</div>
 				<hr style={{ margin: 10 }} />
-				<div  className={styles.post__footer__writeAnComment}>
-					<Avatar base64={myProfile.AvatarBase64} type={myProfile.AvatarType} size={20}/>
-					<ReactTextareaAutosize maxRows={10} name="writeAComment" id="writeAComment" placeholder="Write a comment" />
+				<div className={styles.post__footer__writeAnComment}>
+					<Avatar base64={myProfile.AvatarBase64} type={myProfile.AvatarType} size={20} />
+					<ReactTextareaAutosize
+						maxRows={10}
+						name="writeAComment"
+						id="writeAComment"
+						placeholder="Write a comment"
+						ref={textAreaElementRef}
+						onBlur={onBlurTextArea}
+						onFocus={onFocusTextArea}
+						onKeyDown={onEnterPress}
+						onChange={(e) => setComment(e.target.value)}
+						defaultValue={comment}
+					/>
+					<input ref={buttonSubmitMessageElementRef} type="button" style={{ display: "none" }} onClick={SendComment} />
 				</div>
 				<div className={styles.post__footer__buttons}>
 					{iWasReact ? (

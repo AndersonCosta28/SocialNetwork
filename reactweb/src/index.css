@@ -177,3 +177,7 @@ code {
 	gap: 20px
 }
 
+.span__ExpandText{
+	color: #0076C0;
+    text-decoration: underline;
+}
