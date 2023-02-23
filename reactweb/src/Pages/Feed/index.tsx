@@ -21,22 +21,20 @@ import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io"
 import Avatar from "Components/Avatar"
 import { postDefault } from "consts"
 
-const Feed = () => {
-	//#region Function Maximize Posts
-	const [currentPostToMaximize, setCurrentPostToMaximize] = React.useState<IPost>(postDefault)
-	const [currentPhotoNumber, setCurrentPhotoNumber] = React.useState(0)
+import { useProtected } from "Context/ProtectedContext"
 
-	const avatarProfile = () => getAvatarFromProfile(currentPostToMaximize.Profile)
-	const [showPostMaximize, setShowPostMaximize] = React.useState(false)
-	const Comments = (): JSX.Element => (
+const Feed = () => {
+	const { myProfile } = useProtected()
+	const avatarProfile = (post: IPost) => getAvatarFromProfile(post.Profile)
+	const Comments = (props: {post: IPost}): JSX.Element => (
 		<div>
-			{currentPostToMaximize.Comments.map((comment: IPostComments) => {
+			{props.post.Comments.map((comment: IPostComments) => {
 				const avatarProfileSource = getAvatarFromProfile(comment.ProfileSource)
 				const [showFullComment, setShowFullComment] = React.useState(false)
 				const handleShowFullComment = () => setShowFullComment(!showFullComment)
 				const maxLengthText = 200
 				const Text = (
-					<span>
+					<span style={{whiteSpace: "pre-line"}}>
 						{comment.Text.length > maxLengthText && showFullComment ? comment.Text : comment.Text.slice(0, maxLengthText)} <br /> {comment.Text.length > maxLengthText ? <span className="span__ExpandText" onClick={handleShowFullComment}>{showFullComment ? "Read less..." : "Read more..."}</span> : null}
 					</span>
 				)
@@ -49,6 +47,11 @@ const Feed = () => {
 			})}
 		</div>
 	)
+	//#region Function Maximize Posts
+	const [currentPostToMaximize, setCurrentPostToMaximize] = React.useState<IPost>(postDefault)
+	const [currentPhotoNumber, setCurrentPhotoNumber] = React.useState(0)
+
+	const [showPostMaximize, setShowPostMaximize] = React.useState(false)
 
 	const MaximizePost = () => (
 		<div className={styles.MaximizePost}>
@@ -64,7 +67,7 @@ const Feed = () => {
 			</div>
 			<div className={styles.MaximizePost__rightSide}>
 				<div className={styles.MaximizePost__rightSide__header}>
-					<Avatar base64={avatarProfile().base64} type={avatarProfile().type} size={50} />
+					<Avatar base64={avatarProfile(currentPostToMaximize).base64} type={avatarProfile(currentPostToMaximize).type} size={50} />
 					<div>
 						<span className={styles.MaximizePost__rightSide__header__nickName}>{currentPostToMaximize.Profile.Nickname}</span>
 						<br />
@@ -74,7 +77,7 @@ const Feed = () => {
 				<hr style={{ margin: "10px " }} />
 				<div className={styles.MaximizePost__rightSide__body}>
 					<p>{currentPostToMaximize.Text}</p>
-					<Comments />
+					<Comments post={currentPostToMaximize}/>
 				</div>
 			</div>
 		</div>
@@ -86,6 +89,76 @@ const Feed = () => {
 		setCurrentPostToMaximize(post)
 		setCurrentPhotoNumber(photoNumber)
 	}
+	//#endregion
+
+	//#region ModalPostComment
+
+	const [ showModalPostComment, setShowModalPostComment] = React.useState(false)
+	const [currentPostToComment, setCurrentPostToComment] = React.useState(postDefault)
+	const handleModalPostComment = (show: boolean, post: IPost = postDefault) => {
+		document.body.style.overflow = show ? "hidden" : "auto"
+		setShowModalPostComment(show)
+		setCurrentPostToComment(post)
+	}
+
+	const [comment, setComment] = React.useState("")
+	const [textAreaFocused, setTextAreaFocused] = React.useState<boolean>(false)
+	const onFocusTextArea = () => setTextAreaFocused(true)
+	const onBlurTextArea = () => setTextAreaFocused(false)
+	const buttonSubmitMessageElementRef = React.useRef<HTMLInputElement>(null)
+	const textAreaElementRef = React.useRef<HTMLTextAreaElement>(null)
+
+	const onEnterPress = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+		if (e.key === "Enter" && e.shiftKey === false && textAreaFocused) buttonSubmitMessageElementRef.current?.click()
+	}
+
+	const SendComment = () => {
+		if (!buttonSubmitMessageElementRef.current) {
+			toast.error("Button to send comment is undefined")
+			return
+		}
+
+		const button = buttonSubmitMessageElementRef.current
+		button.disabled = true
+		API_AXIOS.post("/postComments", {
+			idPost: currentPostToComment.id,
+			idProfileSource: myProfile.id,
+			text: comment,
+		})
+			.then(() => {
+				toast.success("Comentário adicionado")
+				setComment("")
+			})
+			.catch((error) => toast.error(getAxiosErrorMessage(error)))
+			.finally(() => button.disabled = false)
+	}
+
+	const ModalCommentToPost =  (
+		<div className={styles.Modal__curtain}>
+			<IoClose color="black" onClick={() => handleModalPostComment(false)} size={30} className={styles.Modal__PostComment__Close} />
+			<div className={styles.Modal__PostComment}>
+				<div className={styles.Modal__PostComment__WriteAComment}>
+					<Avatar base64={myProfile.AvatarBase64} type={myProfile.AvatarType} size={20} />
+					<ReactTextareaAutosize
+						maxRows={10}
+						name="writeAComment"
+						id="writeAComment"
+						placeholder="Write a comment"
+						ref={textAreaElementRef}
+						onBlur={onBlurTextArea}
+						onFocus={onFocusTextArea}
+						onKeyDown={onEnterPress}
+						onChange={(e) => setComment(e.target.value)}
+						value={comment}
+					/>
+					<input ref={buttonSubmitMessageElementRef} type="button" style={{ display: "none" }} onClick={SendComment} />
+
+				</div>
+				<Comments  post={currentPostToComment}/>
+			</div>
+		</div>
+	)
+
 	//#endregion
 
 	//#region function to infinitescroll
@@ -127,7 +200,7 @@ const Feed = () => {
 	}
 
 	const [hasMore, setHasMore] = React.useState<boolean>(true)
-	const NewPost = (post: IPost) => <Post post={post} key={"Post -> - " + Math.random()} handleMaximizePost={handleMaximizePost} />
+	const NewPost = (post: IPost) => <Post post={post} key={"Post -> - " + Math.random()}handleMaximizePost={handleMaximizePost} handleModalPostComment={handleModalPostComment} />
 
 	const next = () => {
 		if (Posts.length === 0 && data != null && data.length > 0) setHasMore(false)
@@ -238,7 +311,8 @@ const Feed = () => {
 
 	return (
 		<div id={styles.body}>
-			{showPostMaximize ? MaximizePost() : null}
+			{showPostMaximize ? MaximizePost(): null}
+			{showModalPostComment ? ModalCommentToPost :  null}
 			<div id={styles.body__leftSide}>
 				<div>
 					<MyProfileSideBar />
@@ -279,11 +353,11 @@ const Feed = () => {
 		</div>
 	)
 }
-
 export const FeedRoute: RouteObject = {
 	path: "",
 	element: <Feed />,
 	errorElement: <ErrorPage />,
 }
+
 
 export default Feed

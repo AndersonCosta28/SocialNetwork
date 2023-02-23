@@ -1,3 +1,6 @@
+#ArrowOptions {
+	border-radius: 20px;
+}
 /*#region header*/
 #header {
 	height: 10vh;

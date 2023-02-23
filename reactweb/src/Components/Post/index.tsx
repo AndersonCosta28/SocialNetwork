@@ -9,41 +9,22 @@ import { getAvatarFromProfile, getBase64FromBuffer, timeSince } from "utils"
 import { API_AXIOS } from "Providers/axios"
 import { useProtected } from "Context/ProtectedContext"
 import { toast } from "react-hot-toast"
-import ReactTextareaAutosize from "react-textarea-autosize"
 
-const Post = (props: { post: IPost; handleMaximizePost: (show: boolean, photoNumber: number, post: IPost) => void }) => {
+interface PropsPost { 
+	post: IPost; 
+	handleMaximizePost: (show: boolean, photoNumber: number, post: IPost) => void 
+	handleModalPostComment: (show: boolean, post: IPost) => void
+}
+
+const Post = (props: PropsPost) => {
 	const { myProfile } = useProtected()
 	const { base64: avatarBase64, type: avatarType } = getAvatarFromProfile(props.post.Profile)
 	const [show, setShow] = React.useState(false)
-	const [numberOfReactions, setNumberOfReactions] = React.useState(props.post.Reactions.length)
-	const [iWasReact, setIWasReact] = React.useState<boolean>(props.post.Reactions.some((react) => react.Profile.id === myProfile.id))
 
 	React.useEffect(() => {
 		setTimeout(() => setShow(true), 1000)
 	}, [])
-
-	const reactAnPost = (unReact = false) => {
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		const body = { idPost: props.post.id, idProfile: myProfile.id } as any
-		if (!unReact) body.typeReact = TypePostReactions.Like
-		API_AXIOS.post("/postreactions", {
-			idPost: props.post.id,
-			typeReact: TypePostReactions.Like,
-			idProfile: myProfile.id,
-		})
-			.then(() => {
-				if (unReact) {
-					setIWasReact(false)
-					setNumberOfReactions(numberOfReactions - 1)
-				}
-				else {
-					setIWasReact(true)
-					setNumberOfReactions(numberOfReactions + 1)
-				}
-			})
-			.catch((error) => toast.error(getAxiosErrorMessage(error)))
-	}
-
+	
 	const Images = (): JSX.Element => {
 		const attachamentsLength = props.post.Attachments.length
 		let Component: JSX.Element = <></>
@@ -111,32 +92,36 @@ const Post = (props: { post: IPost; handleMaximizePost: (show: boolean, photoNum
 			return <img onClick={() => props.handleMaximizePost(true, 0, props.post)} className={styles.post__body__image} src={`data:${props.post.Attachments[0].type};base64, ${getBase64FromBuffer(props.post.Attachments[0].buffer)}`} alt="" />
 		else return <></>
 	}
+	//#region Reactions
 
-	//#region Comments
-	const [comment, setComment] = React.useState("")
-	const [textAreaFocused, setTextAreaFocused] = React.useState<boolean>(false)
-	const onFocusTextArea = () => setTextAreaFocused(true)
-	const onBlurTextArea = () => setTextAreaFocused(false)
-	const buttonSubmitMessageElementRef = React.useRef<HTMLInputElement>(null)
-	const textAreaElementRef = React.useRef<HTMLTextAreaElement>(null)
-
-	const onEnterPress = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-		if (e.key === "Enter" && e.shiftKey === false && textAreaFocused) buttonSubmitMessageElementRef.current?.click()
-	}
-
-	const SendComment = () => {
-		console.log("Teste")
-		API_AXIOS.post("/postComments", {
+	const [numberOfReactions, setNumberOfReactions] = React.useState(props.post.Reactions.length)
+	const [iWasReact, setIWasReact] = React.useState<boolean>(props.post.Reactions.some((react) => react.Profile.id === myProfile.id))
+	const reactAnPost = (unReact = false) => {
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		const body = { idPost: props.post.id, idProfile: myProfile.id } as any
+		if (!unReact) body.typeReact = TypePostReactions.Like
+		API_AXIOS.post("/postreactions", {
 			idPost: props.post.id,
-			idProfileSource: myProfile.id,
-			text: comment,
+			typeReact: TypePostReactions.Like,
+			idProfile: myProfile.id,
 		})
 			.then(() => {
-				toast.success("Deu bom")
-				setComment("")
+				if (unReact) {
+					setIWasReact(false)
+					setNumberOfReactions(numberOfReactions - 1)
+				}
+				else {
+					setIWasReact(true)
+					setNumberOfReactions(numberOfReactions + 1)
+				}
 			})
 			.catch((error) => toast.error(getAxiosErrorMessage(error)))
 	}
+
+	//#endregion
+
+	//#region Comments
+	const [numberOfComments/*, setNumberOfComments*/] = React.useState(props.post.Comments.length)	
 
 	//#endregion
 	
@@ -145,12 +130,17 @@ const Post = (props: { post: IPost; handleMaximizePost: (show: boolean, photoNum
 	const handleShowFullDescription = () => setShowFullDescription(!showFullDescription)
 	const maxLengthText = 200
 	const Description = (
-		<span>
-			{props.post.Text.length > maxLengthText && showFullDescription ? props.post.Text : props.post.Text.slice(0, maxLengthText)} <br /> {props.post.Text.length > maxLengthText ? <span className="span__ExpandText" onClick={handleShowFullDescription}>{showFullDescription ? "Read less..." : "Read more..."}</span> : null}
+		<span style={{whiteSpace: "pre-line"}}>
+			{props.post.Text.length > maxLengthText && showFullDescription ? props.post.Text.trim() : props.post.Text.slice(0, maxLengthText).trim()} <br /> {props.post.Text.length > maxLengthText ? <span className="span__ExpandText" onClick={handleShowFullDescription}>{showFullDescription ? "Read less..." : "Read more..."}</span> : null}
 		</span>
 	)
 
 	//#endregion
+	
+	//#region 
+
+	//#endregion
+	
 	return (
 		<div className={styles.post} style={{ opacity: show ? 1 : 0, height: show ? "auto" : "none" }}>
 			<div className={styles.post__header}>
@@ -162,10 +152,12 @@ const Post = (props: { post: IPost; handleMaximizePost: (show: boolean, photoNum
 				</div>
 			</div>
 			<div className={styles.post__body}>
-				<p className={styles.post__body__text}>{Description}</p>
-				<div className="flex_column_center_center" id="teste" style={{ borderRadius: 10, width: "100%" }}>
-					<Images />
-				</div>
+				{props.post.Text.trim().length > 0 ? <p className={styles.post__body__text}>{Description}</p>: null}
+				{props.post.Attachments.length > 0 &&
+					<div className="flex_column_center_center" style={{ borderRadius: 10, width: "100%" }}>
+						<Images />
+					</div>
+				}
 			</div>
 			<div className={styles.post__footer}>
 				<div className={`${styles.post__footer__numbers}`}>
@@ -175,7 +167,7 @@ const Post = (props: { post: IPost; handleMaximizePost: (show: boolean, photoNum
 					</div>
 					<div>
 						<BsChatLeft />
-						<span>x Comments</span>
+						<span>{`${numberOfComments} Comments`}</span>
 					</div>
 					<div>
 						<RiShareForwardLine />
@@ -183,22 +175,7 @@ const Post = (props: { post: IPost; handleMaximizePost: (show: boolean, photoNum
 					</div>
 				</div>
 				<hr style={{ margin: 10 }} />
-				<div className={styles.post__footer__writeAnComment}>
-					<Avatar base64={myProfile.AvatarBase64} type={myProfile.AvatarType} size={20} />
-					<ReactTextareaAutosize
-						maxRows={10}
-						name="writeAComment"
-						id="writeAComment"
-						placeholder="Write a comment"
-						ref={textAreaElementRef}
-						onBlur={onBlurTextArea}
-						onFocus={onFocusTextArea}
-						onKeyDown={onEnterPress}
-						onChange={(e) => setComment(e.target.value)}
-						defaultValue={comment}
-					/>
-					<input ref={buttonSubmitMessageElementRef} type="button" style={{ display: "none" }} onClick={SendComment} />
-				</div>
+				
 				<div className={styles.post__footer__buttons}>
 					{iWasReact ? (
 						<div className={styles.post__footer__buttons__react2} onClick={() => reactAnPost(true)}>
@@ -211,10 +188,10 @@ const Post = (props: { post: IPost; handleMaximizePost: (show: boolean, photoNum
 							<span>Like</span>
 						</div>
 					)}
-					{/* <div className={styles.post__footer__buttons__comments}>
+					<div onClick={() => props.handleModalPostComment(true, props.post)} className={styles.post__footer__buttons__comments}>
 						<BsChatLeft />
-						<span>Comments</span>
-					</div> */}
+						<span >Comments</span>
+					</div>
 					<div className={styles.post__footer__buttons__share}>
 						<RiShareForwardLine />
 						<span>Share</span>

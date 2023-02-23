@@ -28,6 +28,7 @@
 }
 .post__body > * {
 	margin: 10px 0px;
+	white-space: pre-wrap;
 }
 
 .post__body__image {
@@ -91,25 +92,6 @@
 	color: red;
 	background-color: white;
 }
-
-.post__footer__writeAnComment {
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	gap: 10px;
-}
-
-.post__footer__writeAnComment textarea {
-	width: 80%;
-	border-radius: 5px;
-	border: 0px;
-	background: #f0f2f5;
-	height: 30px;
-	padding: 10px;
-	resize: none;
-}
-
-.post__body__text {
-	white-space: pre-line;
-}
 /*#endregion*/
+
+
