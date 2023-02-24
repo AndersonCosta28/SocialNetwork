@@ -4,12 +4,12 @@ import { BiMessageDetail } from "react-icons/bi"
 import { RiMapPin2Line, RiPencilLine } from "react-icons/ri"
 import { IProfile } from "common/Types/User"
 import styles from "./Profile.module.css"
-import { getAvatarFromProfile, getUserId } from "utils"
+import { getUserId } from "utils"
 import { useChat } from "Context/ChatContext"
 import { useFriendship } from "Context/FriendshipContext"
 import InteractWithTheProfile from "Components/InteractWithTheProfile"
 import { API_AXIOS } from "Providers/axios"
-import { getAxiosErrorMessage, IFriend, IPost, TypeOfFriendship } from "common"
+import { IFiles, getAxiosErrorMessage, IFriend, IPosts, TypeOfFriendship } from "common"
 import { toast } from "react-hot-toast"
 import { Buffer } from "buffer"
 import Avatar from "Components/Avatar"
@@ -18,8 +18,7 @@ import TagInfo from "Components/TagInfo"
 import { useSocketIo } from "Context/SocketIoContext"
 import Skeleton from "react-loading-skeleton"
 import "react-loading-skeleton/dist/skeleton.css"
-import { useQueries } from "@tanstack/react-query"
-import { profileDefault } from "consts"
+import { postsDefault, profileDefault } from "consts"
 
 const Profile = () => {
 	//#region External Hooks
@@ -35,62 +34,79 @@ const Profile = () => {
 	const [isPreview, setIsPreview] = React.useState<boolean>(false)
 	const [avatarFile, setAvatarFile] = React.useState<File | null>(null)
 	const [friends, setFriends] = React.useState<IFriend[]>([])
-	const [posts, setPosts] = React.useState<IPost[]>([])
+	const [posts, setPosts] = React.useState<IPosts>(postsDefault)
 	const [profile, setProfile] = React.useState<IProfile>(profileDefault)
 
-	useQueries({
-		queries: [
-			{
-				queryKey: ["profile", nickname, socketId],
-				queryFn: () => API_AXIOS.get("/profile/findOneByNickname/" + nickname).then((res) => res.data),
-				enabled: profile.id === 0 && !!socketId,
-				onSuccess: (data: IProfile) => {
-					if (data.Avatar) {
-						const avatar = getAvatarFromProfile(data)
-						data.AvatarId = avatar.id
-						data.AvatarBase64 = avatar.base64
-						data.AvatarType = avatar.type
-					}
-					console.log("Executou 1")
-					setProfile(data)
-				},
-				onError: (error: unknown) => toast.error(getAxiosErrorMessage(error)),
-			},
-			{
-				queryKey: ["friends", nickname, socketId, profile.id],
-				queryFn: () => API_AXIOS.post("/friendship", { UserId: profile.id }).then((res) => res.data),
-				enabled: profile.id !== 0 && !!socketId,
-				onSuccess: (data: IFriend[]) => {
-					console.log("Executou 2")
-					setFriends(data)
-				},
-				onError: (error: unknown) => toast.error(getAxiosErrorMessage(error)),
-			},
-			{
-				queryKey: ["posts", nickname, socketId, profile.id],
-				queryFn: () => API_AXIOS.get("/post/findAllByIdProfile/" + profile.id).then((res) => res.data),
-				enabled: profile.id !== 0 && !!socketId,
-				onSuccess: (data: IPost[]) => {
-					console.log("Executou 3")
-					React.startTransition(() => {
-						setPosts(data)
-					})
-				},
-				onError: (error: unknown) => toast.error(getAxiosErrorMessage(error)),
-				cacheTime: 0
-			},
-		],
-	})
+	// useQueries({
+	// 	queries: [
+	// 		{
+	// 			queryKey: ["profile", nickname, socketId],
+	// 			queryFn: () =>,
+	// 			enabled: profile.id === 0 && !!socketId,
+	// 			onSuccess: (data: IProfile) => {
+	// 				if (data.Avatar) {
+	// 					const avatar = getAvatarFromProfile(data)
+	// 					data.AvatarId = avatar.id
+	// 					data.AvatarBase64 = avatar.base64
+	// 					data.AvatarType = avatar.type
+	// 				}
+	// 				console.log("Executou 1")
+	// 				setProfile(data)
+	// 			},
+	// 			onError: (error: unknown) => toast.error(getAxiosErrorMessage(error)),
+	// 		},
+	// 		{
+	// 			queryKey: ["friends", nickname, socketId, profile.id],
+	// 			queryFn: () => ,
+	// 			enabled: profile.id !== 0 && !!socketId,
+	// 			onSuccess: (data: IFriend[]) => {
+	// 				console.log("Executou 2")
+	// 				setFriends(data)
+	// 			},
+	// 			onError: (error: unknown) => toast.error(getAxiosErrorMessage(error)),
+	// 		},
+	// 		{
+	// 			queryKey: ["posts", nickname, socketId, profile.id],
+	// 			queryFn: () => ,
+	// 			enabled: profile.id !== 0 && !!socketId,
+	// 			onSuccess: (data: IPost[]) => {
+	// 				console.log("Executou 3")
+	// 				React.startTransition(() => {
+	// 					setPosts(data)
+	// 				})
+	// 			},
+	// 			onError: (error: unknown) => toast.error(getAxiosErrorMessage(error)),
+	// 			cacheTime: 0
+	// 		},
+	// 	],
+	// })
 
 	React.useEffect(() => {
-		console.log("EXECUTANDO 1")
-		return () => {
-			console.log("EXECUTANDO 2")
-			setPosts([])
-			setFriends([])
-			setProfile(profileDefault)
+		if (socketId) {
+			if (profile.id === 0)
+				API_AXIOS.get<IProfile>("/profile/findOneByNickname/" + nickname)
+					.then((res) => {
+						setProfile(res.data)
+					})
+					.catch((error) => toast.error(getAxiosErrorMessage(error)))
+			if (profile.id !== 0) {
+				API_AXIOS.post<IFriend[]>("/friendship", { UserId: profile.id })
+					.then((res) => setFriends(res.data))
+					.catch((error) => toast.error(getAxiosErrorMessage(error)))
+				API_AXIOS.get<IPosts>("/post/findAllByIdProfile/" + profile.id)
+					.then((res) => {						
+						setPosts(res.data)
+					})
+					.catch((error) => toast.error(getAxiosErrorMessage(error)))
+			}
 		}
-	}, [])
+		// return () => {
+		// 	console.log("EXECUTANDO 2")
+		// 	setPosts([])
+		// 	setFriends([])
+		// 	setProfile(profileDefault)
+		// }
+	}, [socketId, profile])
 
 	//#endregion
 
@@ -148,9 +164,10 @@ const Profile = () => {
 		const formData = new FormData()
 		formData.append("avatar", avatarFile)
 		try {
-			await API_AXIOS({ url: "/files/changeAvatar/" + profile.AvatarId, method: "post", headers: { "Content-Type": "multipart/form-data" }, data: formData })
+			await API_AXIOS({ url: "/files/changeAvatar/" + (profile.Avatar as IFiles).id, method: "post", headers: { "Content-Type": "multipart/form-data" }, data: formData })
 			const __profile = profile
-			__profile.AvatarBase64 = Buffer.from(await avatarFile.arrayBuffer()).toString("base64")
+			__profile.Avatar = __profile.Avatar as IFiles
+			__profile.Avatar.base64 = Buffer.from(await avatarFile.arrayBuffer()).toString("base64")
 			setProfile(__profile)
 			setIsPreview(false)
 			requestToUpdateMyProfile()
@@ -222,7 +239,7 @@ const Profile = () => {
 					<input type="file" id={styles.avatar__input} onChange={handlerAvatar} accept="image/*" />
 				</div>
 			) : null}
-			{profile.Avatar === null ? <Skeleton circle={true} count={1} style={{ height: 150, width: 150, zIndex: 4 }} /> : <Avatar size={150} base64={profile.AvatarBase64} type={profile.AvatarType} />}
+			{profile.Avatar === null ? <Skeleton circle={true} count={1} style={{ height: 150, width: 150, zIndex: 4 }} /> : <Avatar size={150} base64={(profile.Avatar as IFiles).base64} type={(profile.Avatar as IFiles).type} />}
 		</div>
 	)
 
@@ -255,7 +272,7 @@ const Profile = () => {
 					{Description}
 					<div id="container__tag__info" className="flex_row_center_center">
 						<TagInfo number={friends.length} title="Friends" />
-						<TagInfo number={posts.length} title="Posts" />
+						<TagInfo number={posts.Posts.length} title="Posts" />
 					</div>
 				</div>
 				{SocialButtons}

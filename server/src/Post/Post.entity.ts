@@ -1,5 +1,4 @@
 import Files from "Files/Files.entity"
-import Friendship from "Friendship/Friendship.entity"
 import PostComments from "PostComments/PostComments.entity"
 import PostReactions from "PostReactions/PostReactions.entity"
 import Profile from "Profile/Profile.entity"
@@ -16,7 +15,7 @@ export default class Post {
     @OneToMany(() => Files, files => files.Post, { eager: true, cascade: true, nullable: true })
     	Attachments?: Files[]
 
-    @ManyToOne(() => Profile, profile => profile.id, { eager: true })
+    @ManyToOne(() => Profile, profile => profile.Posts)
     	Profile: Profile
 
     @OneToMany(() => PostReactions, postReactions => postReactions.Post, { eager: true })
@@ -30,6 +29,4 @@ export default class Post {
 
     @UpdateDateColumn()
     	UpdateAt: Date
-
-    Friends?: Friendship
 }

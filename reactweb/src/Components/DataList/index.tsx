@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom"
 import { getUserId } from "utils"
 import { useProtected } from "Context/ProtectedContext"
 import Avatar from "Components/Avatar"
+import { IFiles } from "common"
 
 const index = () => {
 	const navigate = useNavigate()
@@ -19,7 +20,7 @@ const index = () => {
 		ListItems.length > 0 ? (
 			ListItems.map((item: IProfile, index: number, array) => (
 				<li key={`${index + 1}/${array.length}-itemFinded`} onClick={() => navigateToProfile(item)} style={{ padding: 10, display: "flex", flexDirection: "row", justifyContent: "space-around", borderRadius: 5 }}>
-					<Avatar base64={item.AvatarBase64} size={30} type={item.AvatarType} key={"avatar-data-lista" + item.id + "-" + index} />
+					<Avatar base64={(item.Avatar as IFiles).base64} size={30} type={(item.Avatar as IFiles).type} key={"avatar-data-lista" + item.id + "-" + index} />
 					<span>{item.Nickname}</span>
 				</li>
 			))

@@ -4,6 +4,7 @@ export * from "./Types/User"
 export * from "./Types/Email"
 export * from './Types/CustomErrors'
 export * from "./Types/Post"
+export * from "./Types/Files"
 
 export const addHours = (date: Date, hours: number) => {
     var copiedDate = new Date(date.getTime());

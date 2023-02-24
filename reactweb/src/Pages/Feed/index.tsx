@@ -7,7 +7,7 @@ import MyProfileSideBar from "Components/MyProfileSideBar"
 import MaximizePost from "Components/MaximizePost"
 import ModalCommentToPost from "Components/ModalCommentToPost"
 import { usePostContext } from "Context/PostContext"
-import InfniteScrollComponent from "Components/InfniteScrollComponent"
+import InfniteScrollComponent from "Components/InfiniteScrollComponent"
 import WriteAPost from "Components/WriteAPost"
 
 const Feed = () => {

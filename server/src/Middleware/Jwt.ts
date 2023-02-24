@@ -4,7 +4,7 @@ import { verify } from "jsonwebtoken"
 import { connectedUsers } from "Providers/Websocket"
 import { StatusCode } from "status-code-enum"
 
-export default function JwtMiddleware(request: Request, response: Response, next: NextFunction): void {
+export default function JwtMiddleware(request: Request, response: Response, next: NextFunction): void {	
 	const token = request.headers.authorization
 	const secret = process.env.JWT_SECRET
 	const idWebSocket = request.headers["iws"]

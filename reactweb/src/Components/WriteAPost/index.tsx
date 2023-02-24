@@ -60,9 +60,12 @@ const WriteAPost = () => {
 			data: formData,
 		})
 			.then((res) => {
-				const _allPosts = allPosts
-				_allPosts.unshift(res.data)
-				setAllPosts([..._allPosts])
+				// const _allPosts = allPosts
+				allPosts.forEach((posts) => {
+					if (posts.Profile.id === myProfile.id) posts.Posts.unshift(res.data)
+				})
+				// _allPosts.unshift(res.data)
+				setAllPosts([...allPosts])
 				setAttachments([])
 				setTextPost("")
 			})

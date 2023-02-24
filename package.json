@@ -19,13 +19,14 @@
 	},
 	"scripts": {
 		"start": "yarn start:prebuild && yarn start:run",
-		"start:run": "cross-env concurrently \"yarn workspace server start\" \"yarn workspace reactweb start \" \"yarn workspace common start\"",
+		"start:run": "cross-env concurrently \"yarn workspace server start\" \"yarn workspace reactweb start \" \"yarn workspace common build\"",
 		"start:prebuild": "yarn lint:fixAll && yarn build",
-		"dev": "concurrently \"dotenv yarn workspace server dev\" \"dotenv yarn workspace reactweb start \" \"dotenv yarn workspace common start\"",
+		"dev": "concurrently \"dotenv yarn workspace server dev\" \"dotenv yarn workspace reactweb start \" \"dotenv yarn workspace common build\"",
 		"build": "cross-env yarn workspace common build && concurrently \"yarn workspace server build\" \"yarn workspace reactweb build \" ",
 		"lint:fixAll": "yarn workspace server eslint --fix && yarn workspace reactweb eslint --fix",
-		"server:dev": "concurrently \"dotenv yarn workspace server dev\" \"dotenv yarn workspace common start\"",
-		"reactweb:dev": "concurrently \"dotenv yarn workspace reactweb start\" \"dotenv yarn workspace common start\"",
+		"server:dev": "concurrently \"dotenv yarn workspace server dev\" \"dotenv yarn workspace common build\"",
+		"reactweb:dev": "yarn common:build && dotenv yarn workspace reactweb start",
+		"common:build": "yarn workspace common build",
 		"reactweb:prod": "npx serve -s ./reactweb"
 	},
 	"workspaces": [

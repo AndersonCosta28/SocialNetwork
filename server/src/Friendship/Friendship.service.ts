@@ -42,21 +42,15 @@ export default class FriendshipService implements IFriendshipService {
 		for (const friendship of friendships) {
 			const friendProfile = friendship.Source.id === idUser ? friendship.Target : friendship.Source
 			const buffer: Buffer | undefined = friendProfile.Avatar?.buffer
-			const AvatarBase64 = buffer ? Buffer.from(buffer).toString("base64") : ""
 			friendList.push({
 				FriendshipId: friendship.id,
 				Type: friendship.Type,
 				WhoRequested: friendship.Source.id === idUser ? TypesOfApplicants.Me : TypesOfApplicants.Other,
 				FriendProfile: {					
 					...friendProfile,
-					AvatarType: friendProfile.Avatar?.type ?? "",
-					AvatarBase64,
-					AvatarId: friendProfile.Avatar?.id ?? 0,
 					Avatar: buffer?.toString() ?? "",
 					Description: friendProfile.Description ?? "",					
 					Local: friendProfile.Local ?? "",
-					// Post: [],
-					// Friends: []
 				}
 			})
 		}

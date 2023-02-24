@@ -14,8 +14,15 @@ const InfniteScrollComponent = () => {
 	const [Posts, setPosts] = React.useState<IPost[]>([])
 	const infiniteScrollRef = React.useRef(null)
 	React.useEffect(() => {
-		console.log(jsxPosts.length)
-		if (allPosts && allPosts.length > 0) updatePosts([...allPosts], [...Posts])
+		if (allPosts && allPosts.length > 0) {
+			const localAllPost: IPost[] = []
+			allPosts.forEach((_allpost) => {
+				_allpost.Posts.forEach((post) => {
+					localAllPost.push({ ...post, Profile: _allpost.Profile })
+				})
+			})
+			updatePosts([...localAllPost], [...Posts])
+		}
 	}, [allPosts])
 
 	const updatePosts = (_allPosts: IPost[], _oldPosts: IPost[]) => {
@@ -24,12 +31,11 @@ const InfniteScrollComponent = () => {
 			setPosts([..._oldPosts, ...newPosts])
 			getMorePosts(newPosts)
 		}
-		else 
+		else
 			React.startTransition(() => {
 				jsxPosts.unshift(NewPost(_allPosts[0]))
 				setJsxPosts([...jsxPosts])
 			})
-		
 	}
 
 	const [hasMore, setHasMore] = React.useState<boolean>(true)

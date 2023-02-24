@@ -6,6 +6,7 @@ import { UserStates } from "common/Types/User"
 import ResendEmailActivation from "Pages/Email/Activation/ResendEmailActivation"
 import { useNavigate } from "react-router-dom"
 import Avatar from "Components/Avatar"
+import { IFiles } from "common"
 // import TagInfo from "Components/TagInfo"
 // import { TypeOfFriendship } from "common"
 
@@ -26,7 +27,7 @@ const MyProfileSideBar = () => {
 	return (
 		<div id={styles.content}>
 			<div onClick={goToMyProfile} className={`flex_column_center_center ${styles.content__profile}`}>
-				<div id={styles.content__top}>{myProfile && <Avatar size={100} base64={myProfile.AvatarBase64} type={myProfile.AvatarType} />}</div>
+				<div id={styles.content__top}>{myProfile && <Avatar size={100} base64={(myProfile.Avatar as IFiles).base64} type={(myProfile.Avatar as IFiles).type} />}</div>
 				<div id={styles.content__mid}>
 					<h2 id={styles.content__profile__nickname}>{myProfile.Nickname}</h2>
 					<span id={styles.content__profile__description}>{myProfile.Description}</span>

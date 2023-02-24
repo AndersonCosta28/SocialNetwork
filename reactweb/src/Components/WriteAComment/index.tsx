@@ -1,4 +1,4 @@
-import { getAxiosErrorMessage } from "common"
+import { getAxiosErrorMessage, IFiles } from "common"
 import Avatar from "Components/Avatar"
 import { usePostContext } from "Context/PostContext"
 import { useProtected } from "Context/ProtectedContext"
@@ -49,7 +49,7 @@ const WriteAComment = (props: { style?: React.CSSProperties; }) => {
 	}
 	return (
 		<div style={{ ...props.style }} className={styles.WriteAComment}>
-			<Avatar base64={myProfile.AvatarBase64} type={myProfile.AvatarType} size={20} />
+			<Avatar base64={(myProfile.Avatar as IFiles).base64} type={(myProfile.Avatar as IFiles).type} size={20} />
 			<ReactTextareaAutosize
 				maxRows={10}
 				name="writeAComment"

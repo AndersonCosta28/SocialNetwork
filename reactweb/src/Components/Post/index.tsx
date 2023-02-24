@@ -4,8 +4,8 @@ import styles from "./Post.module.css"
 import { BiLike } from "react-icons/bi"
 import { BsChatLeft } from "react-icons/bs"
 import { RiShareForwardLine } from "react-icons/ri"
-import { getAxiosErrorMessage, IPost, TypePostReactions } from "common"
-import { getAvatarFromProfile, getBase64FromBuffer, timeSince } from "utils"
+import { IFiles, getAxiosErrorMessage, IPost, TypePostReactions } from "common"
+import { timeSince } from "utils"
 import { API_AXIOS } from "Providers/axios"
 import { useProtected } from "Context/ProtectedContext"
 import { toast } from "react-hot-toast"
@@ -18,7 +18,7 @@ interface PropsPost {
 const Post = (props: PropsPost) => {
 	const { myProfile } = useProtected()
 	const { handleMaximizePost, handleModalPostComment } = usePostContext()
-	const { base64: avatarBase64, type: avatarType } = getAvatarFromProfile(props.post.Profile)
+	const { base64: avatarBase64, type: avatarType } = props.post.Profile.Avatar as IFiles
 	const [show, setShow] = React.useState(false)
 
 	React.useEffect(() => {
@@ -37,7 +37,7 @@ const Post = (props: PropsPost) => {
 						<img
 							onClick={() => handleMaximizePost(true, index, props.post)}
 							className={styles.post__body__image}
-							src={`data:${props.post.Attachments[index].type};base64, ${getBase64FromBuffer(props.post.Attachments[index].buffer)}`}
+							src={`data:${props.post.Attachments[index].type};base64, ${props.post.Attachments[index].base64}`}
 							alt=""
 						/>
 					</div>
@@ -58,7 +58,7 @@ const Post = (props: PropsPost) => {
 							style={{ width: "100%" }}
 							onClick={() => handleMaximizePost(true, 0, props.post)}
 							className={styles.post__body__image}
-							src={`data:${props.post.Attachments[0].type};base64, ${getBase64FromBuffer(props.post.Attachments[0].buffer)}`}
+							src={`data:${props.post.Attachments[0].type};base64, ${props.post.Attachments[0].base64}`}
 							alt=""
 						/>
 					</div>
@@ -75,7 +75,7 @@ const Post = (props: PropsPost) => {
 						style={{ width: "50%" }}
 						onClick={() => handleMaximizePost(true, 0, props.post)}
 						className={styles.post__body__image}
-						src={`data:${props.post.Attachments[0].type};base64, ${getBase64FromBuffer(props.post.Attachments[0].buffer)}`}
+						src={`data:${props.post.Attachments[0].type};base64, ${props.post.Attachments[0].base64}`}
 						alt=""
 					/>
 					<img
@@ -83,13 +83,13 @@ const Post = (props: PropsPost) => {
 						style={{ width: "50%" }}
 						onClick={() => handleMaximizePost(true, 1, props.post)}
 						className={styles.post__body__image}
-						src={`data:${props.post.Attachments[1].type};base64, ${getBase64FromBuffer(props.post.Attachments[1].buffer)}`}
+						src={`data:${props.post.Attachments[1].type};base64, ${props.post.Attachments[1].base64}`}
 						alt=""
 					/>
 				</div>
 			)
 		else if (attachamentsLength === 1)
-			return <img onClick={() => handleMaximizePost(true, 0, props.post)} className={styles.post__body__image} src={`data:${props.post.Attachments[0].type};base64, ${getBase64FromBuffer(props.post.Attachments[0].buffer)}`} alt="" />
+			return <img onClick={() => handleMaximizePost(true, 0, props.post)} className={styles.post__body__image} src={`data:${props.post.Attachments[0].type};base64, ${props.post.Attachments[0].base64}`} alt="" />
 		else return <></>
 	}
 	//#region Reactions

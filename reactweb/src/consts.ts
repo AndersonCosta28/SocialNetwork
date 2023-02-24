@@ -1,10 +1,7 @@
-import { IPost, IProfile } from "common"
+import { IPost, IPosts, IProfile } from "common"
 
 export const profileDefault: IProfile = {
 	Avatar: null,
-	AvatarBase64: "",
-	AvatarId: 0,
-	AvatarType: "",
 	Description: "",
 	id: 0,
 	Local: "",
@@ -20,4 +17,9 @@ export const postDefault: IPost = {
 	UpdateAt: new Date(),
 	Reactions: [],
 	Comments: []
+}
+
+export const postsDefault: IPosts = {
+	Posts: [],
+	Profile: profileDefault
 }

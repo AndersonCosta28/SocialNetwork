@@ -5,7 +5,7 @@ import { useChat } from "Context/ChatContext"
 import { IUserSocket } from "common/Types/User"
 import { useSocketIo } from "Context/SocketIoContext"
 import { useFriendship } from "Context/FriendshipContext"
-import { IFriend, TypeOfFriendship, TypesOfApplicants } from "common"
+import { IFiles, IFriend, TypeOfFriendship, TypesOfApplicants } from "common"
 import Avatar from "Components/Avatar"
 import { useProtected } from "Context/ProtectedContext"
 
@@ -37,7 +37,7 @@ const OnlineFriendsSideBar = () => {
 				.sort((_, item2: IFriend & { online: boolean }) => (item2.online ? 1 : -1))
 				.map((item: IFriend & { online: boolean }, index: number) => (
 					<li style={{ display: tab === Tab.FriendList ? "flex" : "none" }} className={styles.list__item__online} key={index + "-friendOnline"} onClick={() => openChat(item)}>
-						<Avatar size={30} base64={item.FriendProfile.AvatarBase64} type={item.FriendProfile.AvatarType} key={item.FriendProfile.AvatarId + "-" + item.FriendProfile.Nickname + "-Avatar"} />
+						<Avatar size={30} base64={(item.FriendProfile.Avatar as IFiles).base64} type={(item.FriendProfile.Avatar as IFiles).type} key={(item.FriendProfile.Avatar as IFiles).id + "-" + item.FriendProfile.Nickname + "-Avatar"} />
 						<span>{item.FriendProfile.Nickname}</span>
 						{item.online && <BsFillCircleFill size={7} color={"green"} />}
 					</li>
@@ -52,7 +52,7 @@ const OnlineFriendsSideBar = () => {
 				.map((item: IFriend, index: number) => (
 					<li style={{ display: tab === Tab.RequestList ? "flex" : "none" }} className={styles.list__item__request} key={index + "-friendRequest"}>
 						<div className="flex_column_center_center">
-							<Avatar size={50} base64={item.FriendProfile.AvatarBase64} type={item.FriendProfile.AvatarType} key={item.FriendProfile.AvatarId + "-" + item.FriendProfile.Nickname + "-Avatar"} />
+							<Avatar size={50} base64={(item.FriendProfile.Avatar as IFiles).base64} type={(item.FriendProfile.Avatar as IFiles).type} key={(item.FriendProfile.Avatar as IFiles).id + "-" + item.FriendProfile.Nickname + "-Avatar"} />
 							<span>{item.FriendProfile.Nickname}</span>
 						</div>
 						{item.WhoRequested === TypesOfApplicants.Other && (

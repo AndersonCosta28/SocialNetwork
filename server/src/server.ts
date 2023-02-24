@@ -13,12 +13,14 @@ import JwtMiddleware from "Middleware/Jwt"
 import { postController } from "Post"
 import { postReactionsController } from "./PostReactions"
 import { postCommentsController } from "PostComments"
+import compression from "compression"
 
 const app = express()
 const prefix = "/api/v1/"
 
 app.use(express.json())
 app.use(cors())
+app.use(compression({ level: 9 }))
 
 app.get(prefix + "ping", (request: Request, response: Response) => response.send("<b>pong</b>"))
 app.use(prefix + "authentication", authenticationController.routers())

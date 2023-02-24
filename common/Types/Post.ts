@@ -1,18 +1,20 @@
+import { IFiles } from "./Files"
 import { IProfile } from "./User"
 
 export interface IPost {
     id: number
-    Attachments: {
-        buffer: Buffer
-        id: number,
-        type: string,
-    }[]
+    Attachments: IFiles[]
     Text: string
-    Profile: IProfile
     CreateAt: Date
     UpdateAt: Date,
     Reactions: IPostReactions[],
     Comments: IPostComments[]
+    Profile: IProfile
+}
+
+export interface IPosts {
+    Profile: IProfile,
+    Posts: IPost[]
 }
 
 export enum TypePostReactions {
