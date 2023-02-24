@@ -1,0 +1,52 @@
+.Modal__curtain {
+	background-color: rgb(255 255 255 / 80%);
+    z-index: 1;
+    width: 100vw;
+    height: 100vh;
+    position: fixed;
+	display: flex;
+    justify-content: center;
+	top: 0px;
+}
+
+.Modal__PostComment {
+	display: flex;
+	gap: 10px;
+	width: 50%;
+    height: 90%;
+    z-index: 2;
+	position: relative;
+	flex-direction: column;
+	overflow-y: auto;
+}
+
+.Modal__PostComment__Close {
+	top: 30px;
+    right: 30px;
+	position: fixed;
+	border-radius: 15px;
+	cursor: pointer;
+}
+
+.Modal__PostComment__Close:hover {
+	background-color: #9e9e9e;
+}
+
+.Modal__PostComment__WriteAComment {
+	display: flex;
+	align-items: baseline;
+	justify-content: center;
+    height: max-content;
+    width: 100%;
+	gap: 10px;
+}
+
+.Modal__PostComment__WriteAComment textarea {
+	width: 100%;
+	border-radius: 5px;
+	border: 0px;
+	background: #f0f2f5;
+	height: 30px;
+	padding: 10px;
+	resize: none;
+}

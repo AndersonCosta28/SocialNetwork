@@ -6,6 +6,8 @@ import { toast } from "react-hot-toast"
 import { getAvatarFromProfile, getUserId } from "utils"
 import { useSocketIo } from "./SocketIoContext"
 import { profileDefault } from "consts"
+import Skeleton from "react-loading-skeleton"
+import "react-loading-skeleton/dist/skeleton.css"
 
 export interface IProtectedContext {
 	allProfiles: IProfile[]
@@ -33,6 +35,7 @@ export const ProtectedProvider = ({ children }: { children: React.ReactNode }) =
 	const { socket, socketId } = useSocketIo()
 
 	const requestToUpdateMyProfile = () => {
+		console.log("Chamou função 4")
 		API_AXIOS.get("/Profile")
 			.then((res) => {
 				let profiles: IProfile[] = res.data
@@ -75,7 +78,7 @@ export const ProtectedProvider = ({ children }: { children: React.ReactNode }) =
 	}, [socket, socketId])
 
 	const values = { allProfiles, myProfile, myUser, requestToUpdateMyProfile, friendList, requestToUpdateFriendList }
-	return <ProtectedContext.Provider value={values}>{children}</ProtectedContext.Provider>
+	return <ProtectedContext.Provider value={values}>{myProfile.id === 0 ? <Skeleton count={15} borderRadius={10} style={{margin: "10px 0px"}} /> : children}</ProtectedContext.Provider>
 }
 
 // eslint-disable-next-line @typescript-eslint/no-non-null-assertion

@@ -7,7 +7,10 @@ import { ChatProvider } from "Context/ChatContext"
 import { ProtectedProvider } from "Context/ProtectedContext"
 import { ProfileRoute } from "Pages/Profile"
 import { FriendshipProvider } from "Context/FriendshipContext"
-import { getIsAuthenticated, getNickname, getUserId } from "utils"
+import { getIsAuthenticated } from "utils"
+import { PostProvider } from "Context/PostContext"
+
+
 
 const Protected = () => {
 	const { isAuthenticated, setIsAuthenticated } = useAuth()
@@ -15,17 +18,19 @@ const Protected = () => {
 	setIsAuthenticated(getIsAuthenticated())
 
 	React.useEffect(() => {
-		if (!isAuthenticated || !getUserId() || !getNickname()) navigate("/login", { replace: true })
+		if (!isAuthenticated) navigate("/login", { replace: true })
 	}, [])
 
-	if (!isAuthenticated || !getUserId() || !getNickname()) return <Navigate to={"/login"} replace />
+	if (!isAuthenticated) return <Navigate to={"/login"} replace />	
 	else
 		return (
 			<ProtectedProvider>
 				<FriendshipProvider>
 					<ChatProvider>
 						<HomePage>
-							<Outlet />
+							<PostProvider>
+								<Outlet />
+							</PostProvider>
 						</HomePage>
 					</ChatProvider>
 				</FriendshipProvider>

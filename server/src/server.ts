@@ -2,7 +2,6 @@ import express, { Request, Response } from "express"
 import cors from "cors"
 import http from "http"
 import "express-async-errors"
-
 import { MiddlewareError } from "./Middleware/Error"
 import { messageController } from "./Message"
 import { profileController } from "./Profile"

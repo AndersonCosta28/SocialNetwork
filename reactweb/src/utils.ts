@@ -1,5 +1,5 @@
 import { Buffer } from "buffer"
-import { IProfile } from "common"
+import { IPost, IProfile } from "common"
 
 export const getIsAuthenticated = () => {
 	const token = localStorage.getItem("token")
@@ -18,6 +18,8 @@ export const onClickOutSideComponent = (element: HTMLElement | null, target: Nod
 	if (!element.contains(target)) callback()
 }
 
+
+
 export const sleep = (milliseconds: number) => {
 	const date = Date.now()
 	let currentDate = null
@@ -27,13 +29,14 @@ export const sleep = (milliseconds: number) => {
 	while (currentDate - date < milliseconds)
 }
 
+export const avatarProfile = (post: IPost) => getAvatarFromProfile(post.Profile)
 
 export const getBase64FromBuffer = (buffer: Buffer) => buffer ? Buffer.from(buffer).toString("base64") : ""
 
-export const getAvatarFromProfile = (profile: IProfile): { buffer: Buffer, type: string, base64: string, id : number} => {
+export const getAvatarFromProfile = (profile: IProfile): { buffer: Buffer, type: string, base64: string, id: number } => {
 	const avatar = profile.Avatar as { buffer: Buffer; type: string, id: number }
 	const base64 = getBase64FromBuffer(avatar.buffer)
-	return {...avatar, base64 }
+	return { ...avatar, base64 }
 }
 export const timeSince = (date: Date) => {
 

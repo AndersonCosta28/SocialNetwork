@@ -181,3 +181,11 @@ code {
 	color: #0076C0;
     text-decoration: underline;
 }
+
+.compenentDefault {
+	padding: 10px;
+	border-radius: 15px;
+	box-shadow: 0px 0px 5px 2px rgb(182, 182, 182);
+	background-color: white;
+	margin: 20px 0px;
+}

@@ -43,7 +43,7 @@ const Profile = () => {
 			{
 				queryKey: ["profile", nickname, socketId],
 				queryFn: () => API_AXIOS.get("/profile/findOneByNickname/" + nickname).then((res) => res.data),
-				enabled: !!nickname && !!socketId,
+				enabled: profile.id === 0 && !!socketId,
 				onSuccess: (data: IProfile) => {
 					if (data.Avatar) {
 						const avatar = getAvatarFromProfile(data)
@@ -51,16 +51,17 @@ const Profile = () => {
 						data.AvatarBase64 = avatar.base64
 						data.AvatarType = avatar.type
 					}
+					console.log("Executou 1")
 					setProfile(data)
 				},
 				onError: (error: unknown) => toast.error(getAxiosErrorMessage(error)),
-				initialData: profileDefault,
 			},
 			{
 				queryKey: ["friends", nickname, socketId, profile.id],
 				queryFn: () => API_AXIOS.post("/friendship", { UserId: profile.id }).then((res) => res.data),
-				enabled: !!nickname && !!socketId,
+				enabled: profile.id !== 0 && !!socketId,
 				onSuccess: (data: IFriend[]) => {
+					console.log("Executou 2")
 					setFriends(data)
 				},
 				onError: (error: unknown) => toast.error(getAxiosErrorMessage(error)),
@@ -68,14 +69,28 @@ const Profile = () => {
 			{
 				queryKey: ["posts", nickname, socketId, profile.id],
 				queryFn: () => API_AXIOS.get("/post/findAllByIdProfile/" + profile.id).then((res) => res.data),
-				enabled: !!nickname && !!socketId,
+				enabled: profile.id !== 0 && !!socketId,
 				onSuccess: (data: IPost[]) => {
-					setPosts(data)
+					console.log("Executou 3")
+					React.startTransition(() => {
+						setPosts(data)
+					})
 				},
 				onError: (error: unknown) => toast.error(getAxiosErrorMessage(error)),
+				cacheTime: 0
 			},
 		],
 	})
+
+	React.useEffect(() => {
+		console.log("EXECUTANDO 1")
+		return () => {
+			console.log("EXECUTANDO 2")
+			setPosts([])
+			setFriends([])
+			setProfile(profileDefault)
+		}
+	}, [])
 
 	//#endregion
 

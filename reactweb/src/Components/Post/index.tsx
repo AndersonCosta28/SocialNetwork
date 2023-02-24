@@ -9,22 +9,22 @@ import { getAvatarFromProfile, getBase64FromBuffer, timeSince } from "utils"
 import { API_AXIOS } from "Providers/axios"
 import { useProtected } from "Context/ProtectedContext"
 import { toast } from "react-hot-toast"
+import { usePostContext } from "Context/PostContext"
 
-interface PropsPost { 
-	post: IPost; 
-	handleMaximizePost: (show: boolean, photoNumber: number, post: IPost) => void 
-	handleModalPostComment: (show: boolean, post: IPost) => void
+interface PropsPost {
+	post: IPost
 }
 
 const Post = (props: PropsPost) => {
 	const { myProfile } = useProtected()
+	const { handleMaximizePost, handleModalPostComment } = usePostContext()
 	const { base64: avatarBase64, type: avatarType } = getAvatarFromProfile(props.post.Profile)
 	const [show, setShow] = React.useState(false)
 
 	React.useEffect(() => {
 		setTimeout(() => setShow(true), 1000)
 	}, [])
-	
+
 	const Images = (): JSX.Element => {
 		const attachamentsLength = props.post.Attachments.length
 		let Component: JSX.Element = <></>
@@ -35,7 +35,7 @@ const Post = (props: PropsPost) => {
 				const element = (
 					<div key={`Post ${props.post.id} attachament ${index}`} style={{ maxWidth: "100%", height: attachamentsLength === 3 ? "50%" : "33%", overflow: "hidden" }}>
 						<img
-							onClick={() => props.handleMaximizePost(true, index, props.post)}
+							onClick={() => handleMaximizePost(true, index, props.post)}
 							className={styles.post__body__image}
 							src={`data:${props.post.Attachments[index].type};base64, ${getBase64FromBuffer(props.post.Attachments[index].buffer)}`}
 							alt=""
@@ -56,7 +56,7 @@ const Post = (props: PropsPost) => {
 						<img
 							key={`Post ${props.post.id} attachament ${0}`}
 							style={{ width: "100%" }}
-							onClick={() => props.handleMaximizePost(true, 0, props.post)}
+							onClick={() => handleMaximizePost(true, 0, props.post)}
 							className={styles.post__body__image}
 							src={`data:${props.post.Attachments[0].type};base64, ${getBase64FromBuffer(props.post.Attachments[0].buffer)}`}
 							alt=""
@@ -73,7 +73,7 @@ const Post = (props: PropsPost) => {
 					<img
 						key={`Post ${props.post.id} attachament ${0}`}
 						style={{ width: "50%" }}
-						onClick={() => props.handleMaximizePost(true, 0, props.post)}
+						onClick={() => handleMaximizePost(true, 0, props.post)}
 						className={styles.post__body__image}
 						src={`data:${props.post.Attachments[0].type};base64, ${getBase64FromBuffer(props.post.Attachments[0].buffer)}`}
 						alt=""
@@ -81,7 +81,7 @@ const Post = (props: PropsPost) => {
 					<img
 						key={`Post ${props.post.id} attachament ${1}`}
 						style={{ width: "50%" }}
-						onClick={() => props.handleMaximizePost(true, 1, props.post)}
+						onClick={() => handleMaximizePost(true, 1, props.post)}
 						className={styles.post__body__image}
 						src={`data:${props.post.Attachments[1].type};base64, ${getBase64FromBuffer(props.post.Attachments[1].buffer)}`}
 						alt=""
@@ -89,7 +89,7 @@ const Post = (props: PropsPost) => {
 				</div>
 			)
 		else if (attachamentsLength === 1)
-			return <img onClick={() => props.handleMaximizePost(true, 0, props.post)} className={styles.post__body__image} src={`data:${props.post.Attachments[0].type};base64, ${getBase64FromBuffer(props.post.Attachments[0].buffer)}`} alt="" />
+			return <img onClick={() => handleMaximizePost(true, 0, props.post)} className={styles.post__body__image} src={`data:${props.post.Attachments[0].type};base64, ${getBase64FromBuffer(props.post.Attachments[0].buffer)}`} alt="" />
 		else return <></>
 	}
 	//#region Reactions
@@ -121,26 +121,31 @@ const Post = (props: PropsPost) => {
 	//#endregion
 
 	//#region Comments
-	const [numberOfComments/*, setNumberOfComments*/] = React.useState(props.post.Comments.length)	
+	const [numberOfComments /*, setNumberOfComments*/] = React.useState(props.post.Comments.length)
 
 	//#endregion
-	
+
 	//#region Description
 	const [showFullDescription, setShowFullDescription] = React.useState(false)
 	const handleShowFullDescription = () => setShowFullDescription(!showFullDescription)
 	const maxLengthText = 200
 	const Description = (
-		<span style={{whiteSpace: "pre-line"}}>
-			{props.post.Text.length > maxLengthText && showFullDescription ? props.post.Text.trim() : props.post.Text.slice(0, maxLengthText).trim()} <br /> {props.post.Text.length > maxLengthText ? <span className="span__ExpandText" onClick={handleShowFullDescription}>{showFullDescription ? "Read less..." : "Read more..."}</span> : null}
+		<span style={{ whiteSpace: "pre-line" }}>
+			{props.post.Text.length > maxLengthText && showFullDescription ? props.post.Text.trim() : props.post.Text.slice(0, maxLengthText).trim()} <br />{" "}
+			{props.post.Text.length > maxLengthText ? (
+				<span className="span__ExpandText" onClick={handleShowFullDescription}>
+					{showFullDescription ? "Read less..." : "Read more..."}
+				</span>
+			) : null}
 		</span>
 	)
 
 	//#endregion
-	
-	//#region 
+
+	//#region
 
 	//#endregion
-	
+
 	return (
 		<div className={styles.post} style={{ opacity: show ? 1 : 0, height: show ? "auto" : "none" }}>
 			<div className={styles.post__header}>
@@ -152,12 +157,12 @@ const Post = (props: PropsPost) => {
 				</div>
 			</div>
 			<div className={styles.post__body}>
-				{props.post.Text.trim().length > 0 ? <p className={styles.post__body__text}>{Description}</p>: null}
-				{props.post.Attachments.length > 0 &&
+				{props.post.Text.trim().length > 0 ? <p className={styles.post__body__text}>{Description}</p> : null}
+				{props.post.Attachments.length > 0 && (
 					<div className="flex_column_center_center" style={{ borderRadius: 10, width: "100%" }}>
 						<Images />
 					</div>
-				}
+				)}
 			</div>
 			<div className={styles.post__footer}>
 				<div className={`${styles.post__footer__numbers}`}>
@@ -175,7 +180,7 @@ const Post = (props: PropsPost) => {
 					</div>
 				</div>
 				<hr style={{ margin: 10 }} />
-				
+
 				<div className={styles.post__footer__buttons}>
 					{iWasReact ? (
 						<div className={styles.post__footer__buttons__react2} onClick={() => reactAnPost(true)}>
@@ -188,9 +193,9 @@ const Post = (props: PropsPost) => {
 							<span>Like</span>
 						</div>
 					)}
-					<div onClick={() => props.handleModalPostComment(true, props.post)} className={styles.post__footer__buttons__comments}>
+					<div onClick={() => handleModalPostComment(true, props.post)} className={styles.post__footer__buttons__comments}>
 						<BsChatLeft />
-						<span >Comments</span>
+						<span>Comments</span>
 					</div>
 					<div className={styles.post__footer__buttons__share}>
 						<RiShareForwardLine />

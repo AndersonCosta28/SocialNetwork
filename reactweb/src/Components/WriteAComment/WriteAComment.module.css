@@ -1,0 +1,18 @@
+.WriteAComment {
+	display: flex;
+	align-items: baseline;
+	justify-content: center;
+    height: max-content;
+    width: 100%;
+	gap: 10px;
+}
+
+.WriteAComment textarea {
+	width: 100%;
+	border-radius: 5px;
+	border: 0px;
+	background: #f0f2f5;
+	height: 30px;
+	padding: 10px;
+	resize: none;
+}

@@ -72,7 +72,7 @@ const OnlineFriendsSideBar = () => {
 	)
 
 	return (
-		<div id={styles.list}>
+		<div id={styles.list} className="compenentDefault">
 			<div className={styles.list__header}>
 				<h3 className={`${tab === Tab.FriendList ? styles.title__active : ""}`} onClick={() => setTab(Tab.FriendList)}>
 					Friends

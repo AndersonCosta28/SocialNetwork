@@ -26,7 +26,7 @@
 		"lint:fixAll": "yarn workspace server eslint --fix && yarn workspace reactweb eslint --fix",
 		"server:dev": "concurrently \"dotenv yarn workspace server dev\" \"dotenv yarn workspace common start\"",
 		"reactweb:dev": "concurrently \"dotenv yarn workspace reactweb start\" \"dotenv yarn workspace common start\"",
-		"reactweb:prod": "npx serve -s /reactweb/build"
+		"reactweb:prod": "npx serve -s ./reactweb"
 	},
 	"workspaces": [
 		"reactweb",
