@@ -5,7 +5,7 @@ import { useSocketIo } from "Context/SocketIoContext"
 import { BiSend } from "react-icons/bi"
 import { GrClose } from "react-icons/gr"
 import { IChat, useChat } from "Context/ChatContext"
-import { getUserId } from "utils"
+import { getIsAuthenticated, getUserId } from "utils"
 import { API_AXIOS } from "Providers/axios"
 import { toast } from "react-hot-toast"
 import { getAxiosErrorMessage } from "common"
@@ -54,8 +54,10 @@ const ChatBox = (props: IChat) => {
 			})
 
 		return () => {
-			console.log("Desligou")
-			if (socket) socket.off("message")
+			if (socket && !getIsAuthenticated()) {
+				console.log("Desligou no chatbox")
+				socket.off("message")
+			}
 		}
 	}, [socket])
 	//#endregion
@@ -89,6 +91,7 @@ const ChatBox = (props: IChat) => {
 		const value = !isMinimized
 		toggleMinimizeChat(props.chatId, value)
 		setIsMinimized(value)
+		scrollToTheEnd()
 	}
 
 	const onClickOnHeaderElement = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
@@ -101,6 +104,8 @@ const ChatBox = (props: IChat) => {
 	const onEnterPress = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
 		if (e.key === "Enter" && e.shiftKey === false && textAreaFocused) buttonSubmitMessageElementRef.current?.click()
 	}
+
+	React.useEffect(() => scrollToTheEnd(), [isMinimized])
 
 	//#endregion
 	return (
