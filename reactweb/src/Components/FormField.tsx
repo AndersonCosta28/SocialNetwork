@@ -7,7 +7,7 @@ export type FormFieldProps = {
 	onChange: (e: React.ChangeEvent<HTMLInputElement>) => void
 	onBlur?: (e?: React.FocusEvent<HTMLInputElement, Element>) => void
     type: string
-	invalidMessages: InvalidMessage[]
+	invalidMessages?: InvalidMessage[]
 }
 
 export type InvalidMessage = {
@@ -23,7 +23,7 @@ const FormField = (props: FormFieldProps) => (
 		<div className="form__field__container">
 			<input type={props.type} name={props.id} id={props.id} onChange={props.onChange} placeholder="" autoComplete={props.autoComplete} onBlur={props.onBlur} />
 		</div>
-		{props.invalidMessages.map((invalid: InvalidMessage, index: number) => invalid.isInvalid ? <p className="form__field__message" key={invalid.message + "-" + index}>{invalid.message}</p> : null )}
+		{props.invalidMessages && props.invalidMessages.map((invalid: InvalidMessage, index: number) => invalid.isInvalid ? <p className="form__field__message" key={invalid.message + "-" + index}>{invalid.message}</p> : null )}
 	</div>
 )
 

@@ -71,7 +71,7 @@ const Register = () => {
 	const [user, setUser] = React.useState<IUserRegister>(userProfileEmpty)
 	const [confirmPassword, setConfirmPassword] = React.useState<string>("")
 	const [disableButtonOnFormError, setDisableButtonOnFormError] = React.useState<boolean>(false)
-
+	const [confirmTerms, setConfirmTerms] = React.useState<boolean>(false)
 	const { createAccount, disableButtonOnRequest } = useAuth()
 
 	const reducer = (state: FormError, action: ActionFormError): FormError => {
@@ -99,15 +99,19 @@ const Register = () => {
 					isDuplicated: verifyDuplicateField(fromApi.message, "Email"),
 				},
 			}
-		
-		
+
 		return state
 	}
 
 	const [formError, dispatchFormError] = React.useReducer(reducer, formErrorInitialValue)
 
 	React.useEffect(() => {
-		setDisableButtonOnFormError(Object.values(formError).map((i) => Object.values(i)).reduce((acc, curValue) => acc.concat(curValue), []).some((value) => value === true))
+		setDisableButtonOnFormError(
+			Object.values(formError)
+				.map((i) => Object.values(i))
+				.reduce((acc, curValue) => acc.concat(curValue), [])
+				.some((value) => value === true)
+		)
 	}, [formError])
 	//#endregion
 
@@ -144,7 +148,7 @@ const Register = () => {
 	//#endregion
 
 	return (
-		<div className="page" style={{backgroundColor: "white"}}>
+		<div className="page" style={{ backgroundColor: "white" }}>
 			<div className="page__header"></div>
 			<div className="page__body">
 				<form className="form" autoComplete="off" onSubmit={onSubmitForm}>
@@ -178,8 +182,19 @@ const Register = () => {
 						invalidMessages={[{ message: "Passwords do not match", isInvalid: formError.ConfirmPassword.matchPassword }]}
 					/>
 					<FormField label={FIELDS.EMAIL} id={FIELDS.EMAIL} type="email" onChange={handlerUser} invalidMessages={[{ isInvalid: formError.Email.isDuplicated, message: "A user with that email already exists" }]} />
+					<div className="flex_row_center_center" style={{ height: 30, gap: 10 }}>
+						<input type="checkbox" name="agree" id="agree" onChange={(e) => (setConfirmTerms(e.target.checked))} checked={confirmTerms}/>
+						<label htmlFor="agree">
+							Do you agree with the{" "}
+							<a href="https://github.com/AndersonCosta28/SocialNetwork" target={"_blank"} rel="noreferrer">
+								terms
+							</a>
+							?
+						</label>
+					</div>
 					<div className="form__options">
-						<input type="submit" value="Create account" className="form__options__buttonSubmit" disabled={disableButtonOnRequest || disableButtonOnFormError} />
+						{/* confirmTerms, setConfirmTerms */}
+						<input type="submit" value="Create account" className="form__options__buttonSubmit" disabled={disableButtonOnRequest || disableButtonOnFormError || !confirmTerms} />
 					</div>
 				</form>
 			</div>

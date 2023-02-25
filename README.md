@@ -1,6 +1,6 @@
 # SocialNetwork
-This is the social network project under construction, try it, have fun and contribute. \
-**Despite being an Open Source project, in its current maturity it does not have moderate measures for data protection, so the project executed locally or connecting to the cloud bank (perhaps in the future) is the sole responsibility of the user, we hope that this will encourage the contribution to strengthen and make you more secure.**
+This is the social network project under construction, try it, have fun and contribute.
+**Despite being an Open Source project, in its current maturity it does not have moderate measures for data protection, so the project and data running locally or connecting to a centralized cloud database (perhaps in the future) is the sole responsibility of the user, we hope this will encourage contribution to strengthen and make it safer.**
 
 # Technologies used
 * NodeJS
