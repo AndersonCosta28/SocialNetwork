@@ -102,3 +102,13 @@ export const setIo = (server: http.Server) => {
 }
 
 export const getIo = () => io
+
+export const NotifyFriendship = (friendShip: Friendship) => {
+	const connectecUserSource = connectedUsers.find((user: IUserSocket) => user.UserId === friendShip.Source.id)
+	const connectecUserTarget = connectedUsers.find((user: IUserSocket) => user.UserId === friendShip.Target.id)
+	if (connectecUserSource)
+		getIo().to(connectecUserSource.SocketID).emit("update_list_friend", "Teste")
+
+	if (connectecUserTarget)
+		getIo().to(connectecUserTarget.SocketID).emit("update_list_friend", "Teste")
+}

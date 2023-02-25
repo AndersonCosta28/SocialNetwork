@@ -69,7 +69,6 @@ export const ProtectedProvider = ({ children }: { children: React.ReactNode }) =
 				console.log("Atualizando a lista de amigos a pedido do servidor")
 				requestToUpdateFriendList()
 			})
-
 		}
 	}, [socket, socketId])
 
