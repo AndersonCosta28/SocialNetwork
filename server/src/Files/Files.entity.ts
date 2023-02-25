@@ -19,7 +19,7 @@ export default class Files {
 	base64?: string
 
 	@AfterLoad()
-	afterLoad(){		
+	afterLoad?(){		
 		this.base64 = this.buffer ? Buffer.from(this.buffer).toString("base64") : ""
 		delete this.buffer
 	}

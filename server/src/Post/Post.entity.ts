@@ -12,7 +12,7 @@ export default class Post {
     @Column({ type: "longtext" })
     	Text: string
 
-    @OneToMany(() => Files, files => files.Post)
+    @OneToMany(() => Files, files => files.Post, { cascade: true, nullable: true })
     	Attachments?: Files[]
 
     @ManyToOne(() => Profile, profile => profile.Posts)

@@ -1,13 +1,13 @@
 import Files from "Files/Files.entity"
 import Friendship from "Friendship/Friendship.entity"
 import AppDataSource from "Providers/Database/DataSource"
-import { DeepPartial, Repository } from "typeorm"
+import { Repository } from "typeorm"
 import Post from "./Post.entity"
 
 export interface IPostService {
 	findAllByIdProfile: (idProfile: number) => Promise<Post[]>
 	findAllFromFriends: (idProfile: number) => Promise<Post[]>
-	create: (idProfile: number, files: DeepPartial<Files[]>, Text: string) => Promise<Post>
+	create: (idProfile: number, files: Partial<Files>[], Text: string) => Promise<Post>
 	findOneBy: (idPost: number) => Promise<Post>
 }
 
@@ -44,9 +44,9 @@ export default class PostService implements IPostService {
 		return posts
 	}
 
-	create = async (idProfile: number, files: DeepPartial<Files[]>, Text: string): Promise<Post> => {
+	create = async (idProfile: number, files: Partial<Files>[], Text: string): Promise<Post> => {
 		const postCreated = this.repository.create({
-			Attachments: files,
+			Attachments: [...files],
 			Profile: { id: idProfile },
 			Text
 		})
