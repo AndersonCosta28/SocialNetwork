@@ -32,7 +32,7 @@ const MaximizePost = () => {
 				</div>
 				<hr style={{ margin: "10px " }} />
 				<div className={styles.MaximizePost__rightSide__body}>
-					<p>{post.Text}</p>
+					<p className={styles.MaximePost__rightSide__body__postText}>{post.Text}</p>
 					<WriteAComment />
 					<PostComments />
 				</div>

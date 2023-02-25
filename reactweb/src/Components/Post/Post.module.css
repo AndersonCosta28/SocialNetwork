@@ -34,6 +34,7 @@
 .post__body__image {
 	max-width: 643px;
 	max-height: 500px;
+	width: inherit;
 }
 
 .post__body__image:hover {
@@ -75,7 +76,7 @@
 	border-radius: 10px;
 }
 
-.post__footer__buttons__react1:hover,
+.post__footer__buttons__react__like:hover,
 .post__footer__buttons__comments:hover,
 .post__footer__buttons__share:hover {
 	background-color: cornflowerblue;
@@ -83,14 +84,15 @@
 	cursor: pointer;
 }
 
-.post__footer__buttons__react2 {
+.post__footer__buttons__react__unlike {
 	background-color: cornflowerblue;
+	cursor: pointer;
+	transition: background-color 0.5s;
 	color: white;
 }
 
-.post__footer__buttons__react2:hover {
-	color: red;
-	background-color: white;
+.post__footer__buttons__react__unlike:hover {	
+	background-color: #D73743;	
 }
 /*#endregion*/
 

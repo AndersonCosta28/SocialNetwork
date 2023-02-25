@@ -64,6 +64,7 @@
 .MaximizePost__rightSide__header {
 	display: flex;
 	align-items: center;
+	gap: 10px;
 }
 
 .MaximizePost__rightSide__header__nickName {
@@ -73,6 +74,11 @@
 
 .MaximizePost__rightSide__header__date {
 	font-size: 13px;
+}
+
+.MaximePost__rightSide__body__postText {
+	margin: 20px 10px;
+	white-space: pre-line;
 }
 
 /*#endregion */

@@ -33,7 +33,7 @@ const WriteAComment = (props: { style?: React.CSSProperties; }) => {
 		API_AXIOS.post("/postComments", {
 			idPost: post.id,
 			idProfileSource: myProfile.id,
-			text: comment,
+			text: comment.trim(),
 		})
 			.then((res) => {
 				toast.success("Comentário adicionado")

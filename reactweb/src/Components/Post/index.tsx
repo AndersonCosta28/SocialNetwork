@@ -4,7 +4,7 @@ import styles from "./Post.module.css"
 import { BiLike } from "react-icons/bi"
 import { BsChatLeft } from "react-icons/bs"
 import { RiShareForwardLine } from "react-icons/ri"
-import { IFiles, getAxiosErrorMessage, IPost, TypePostReactions } from "common"
+import { IFiles, getAxiosErrorMessage, IPost, TypePostReactions, IPostReactions } from "common"
 import { timeSince } from "utils"
 import { API_AXIOS } from "Providers/axios"
 import { useProtected } from "Context/ProtectedContext"
@@ -15,30 +15,33 @@ import { postDefault } from "consts"
 import Skeleton from "react-loading-skeleton"
 import "react-loading-skeleton/dist/skeleton.css"
 
-
-interface PropsPost {
-	post: IPost
-}
-
-const Post = (props: PropsPost) => {
+const Post = (props: { post: IPost }) => {
 	const { myProfile } = useProtected()
-	const { handleMaximizePost, handleModalPostComment } = usePostContext()
+	const { handleMaximizePost, handleModalPostComment, post: postOnContext } = usePostContext()
 	const [post, setPost] = React.useState<IPost>(postDefault)
 	const [show, setShow] = React.useState(false)
 
 	React.useEffect(() => {
 		API_AXIOS.get<IPost>("/post/" + props.post.id)
 			.then((res) => {
-				// console.log(res.data)
 				setPost(res.data)
-				setNumberOfReactions(res.data.Reactions.length)
-				setNumberOfComments(res.data.Comments.length)
+				updateInfo(res.data)
 				setShow(true)
 			})
 			.catch((error) => {
 				toast.error(getAxiosErrorMessage(error))
-			})		
+			})
 	}, [])
+
+	React.useEffect(() => {
+		if (postOnContext.id === post.id) updateInfo(post)
+	}, [postOnContext])
+
+	const updateInfo = (_post: IPost) => {
+		setNumberOfComments(_post.Comments.length)
+		setNumberOfReactions(_post.Reactions.length)
+		setIWasReact(_post.Reactions.some((react) => react.Profile.id === myProfile.id))
+	}
 
 	const Images = (): JSX.Element => {
 		const attachamentsLength = post.Attachments.length
@@ -46,20 +49,25 @@ const Post = (props: PropsPost) => {
 		const subComponents: JSX.Element[] = []
 		if (attachamentsLength > 2) {
 			for (let index = 1; index < attachamentsLength; index++) {
-				if (index === 3) break
-				const element = (
+				let element = <></>
+				if (index === 3 && attachamentsLength > 3) {
+					element = (
+						<div key={`More photos from post ${post.id} `} style={{ width: "100%", height: "33%", display: "flex", justifyContent: "center", alignItems: "center" }}>
+							<span> {`+${attachamentsLength - 3} photos`}</span>
+						</div>
+					)
+					subComponents.push(element)
+					break
+				}
+
+				element = (
 					<div key={`Post ${post.id} attachament ${index}`} style={{ maxWidth: "100%", height: attachamentsLength === 3 ? "50%" : "33%", overflow: "hidden" }}>
 						<img onClick={() => handleMaximizePost(true, index, post)} className={styles.post__body__image} src={`data:${post.Attachments[index].type};base64, ${post.Attachments[index].base64}`} alt="" />
 					</div>
 				)
 				subComponents.push(element)
 			}
-			if (attachamentsLength > 3)
-				subComponents.push(
-					<div key={`More photos from post ${post.id} `} style={{ width: "100%", height: "33%", display: "flex", justifyContent: "center", alignItems: "center" }}>
-						<span> {`+${attachamentsLength - 3} photos`}</span>
-					</div>
-				)
+
 			Component = (
 				<div style={{ height: 500, overflow: "hidden", display: "flex", alignItems: "center", flexDirection: "row", width: "100%" }}>
 					<div style={{ width: "50%" }}>
@@ -103,26 +111,26 @@ const Post = (props: PropsPost) => {
 	}
 	//#region Reactions
 
-	const [numberOfReactions, setNumberOfReactions] = React.useState(0)
-	const [iWasReact, setIWasReact] = React.useState<boolean>(post.Reactions.some((react) => react.Profile.id === myProfile.id))
+	const [numberOfReactions, setNumberOfReactions] = React.useState(post.Reactions.length)
+
+	const [iWasReact, setIWasReact] = React.useState<boolean>(false)
 	const reactAnPost = (unReact = false) => {
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		const body = { idPost: post.id, idProfile: myProfile.id } as any
+		const body: {
+			idPost: number,
+			idProfile: number,
+			typeReact?: TypePostReactions
+		} = { idPost: post.id, idProfile: myProfile.id }
 		if (!unReact) body.typeReact = TypePostReactions.Like
-		API_AXIOS.post("/postreactions", {
+		API_AXIOS.post<IPostReactions[]>("/postreactions", {
 			idPost: post.id,
 			typeReact: TypePostReactions.Like,
 			idProfile: myProfile.id,
 		})
-			.then(() => {
-				if (unReact) {
-					setIWasReact(false)
-					setNumberOfReactions(numberOfReactions - 1)
-				}
-				else {
-					setIWasReact(true)
-					setNumberOfReactions(numberOfReactions + 1)
-				}
+			.then((res) => {
+				setIWasReact(!unReact)
+				post.Reactions = res.data
+				setPost(post)
+				updateInfo(post)
 			})
 			.catch((error) => toast.error(getAxiosErrorMessage(error)))
 	}
@@ -130,7 +138,7 @@ const Post = (props: PropsPost) => {
 	//#endregion
 
 	//#region Comments
-	const [numberOfComments, setNumberOfComments] = React.useState(0)
+	const [numberOfComments, setNumberOfComments] = React.useState(post.Comments.length)
 
 	//#endregion
 
@@ -151,18 +159,16 @@ const Post = (props: PropsPost) => {
 
 	//#endregion
 
-	//#region
-
-	//#endregion
-
 	return (
 		//style={{ opacity: show ? 1 : 0, height: show ? "auto" : "none" }}
 		<div className={styles.post}>
 			<div className={styles.post__header}>
-				{!show ?
-					<><Skeleton circle={true} height={30} width={30}></Skeleton></>
-					: <>
-
+				{!show ? (
+					<>
+						<Skeleton circle={true} height={30} width={30}></Skeleton>
+					</>
+				) : (
+					<>
 						<Avatar base64={(post.Profile.Avatar as IFiles).base64} size={30} type={(post.Profile.Avatar as IFiles).type} />
 						<div>
 							<span className={styles.post__header__nickname}>{post.Profile.Nickname}</span>
@@ -170,7 +176,7 @@ const Post = (props: PropsPost) => {
 							<span className={styles.post__header__time}>{timeSince(new Date(post.CreateAt))}</span>
 						</div>
 					</>
-				}
+				)}
 			</div>
 			{!show ? (
 				<div className="flex_column_center_center" style={{ borderRadius: 10, width: "100%" }}>
@@ -205,12 +211,12 @@ const Post = (props: PropsPost) => {
 
 						<div className={styles.post__footer__buttons}>
 							{iWasReact ? (
-								<div className={styles.post__footer__buttons__react2} onClick={() => reactAnPost(true)}>
+								<div className={styles.post__footer__buttons__react__unlike} onClick={() => reactAnPost(true)}>
 									<BiLike />
 									<span>Like</span>
 								</div>
 							) : (
-								<div className={styles.post__footer__buttons__react1} onClick={() => reactAnPost()}>
+								<div className={styles.post__footer__buttons__react__like} onClick={() => reactAnPost()}>
 									<BiLike />
 									<span>Like</span>
 								</div>

@@ -14,8 +14,8 @@ const PostComments = (): JSX.Element => {
 				const maxLengthText = 200
 				const Text = (
 					<span style={{ whiteSpace: "pre-line" }}>
-						{comment.Text.length > maxLengthText && showFullComment ? comment.Text : comment.Text.slice(0, maxLengthText)} <br />{" "}
-						{comment.Text.length > maxLengthText ? (
+						{comment.Text.trim().length > maxLengthText && showFullComment ? comment.Text.trim() : comment.Text.trim().slice(0, maxLengthText)} <br />{" "}
+						{comment.Text.trim().length > maxLengthText ? (
 							<span className="span__ExpandText" onClick={handleShowFullComment}>
 								{showFullComment ? "Read less..." : "Read more..."}
 							</span>
