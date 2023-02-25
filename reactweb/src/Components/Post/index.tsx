@@ -29,6 +29,7 @@ const Post = (props: PropsPost) => {
 	React.useEffect(() => {
 		API_AXIOS.get<IPost>("/post/" + props.post.id)
 			.then((res) => {
+				// console.log(res.data)
 				setPost(res.data)
 				setNumberOfReactions(res.data.Reactions.length)
 				setNumberOfComments(res.data.Comments.length)

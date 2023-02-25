@@ -8,7 +8,7 @@ export interface IPostService {
 	findAllByIdProfile: (idProfile: number) => Promise<Post[]>
 	findAllFromFriends: (idProfile: number) => Promise<Post[]>
 	create: (idProfile: number, files: DeepPartial<Files[]>, Text: string) => Promise<Post>
-	findOneBy:(idPost: number) => Promise<Post> 
+	findOneBy: (idPost: number) => Promise<Post>
 }
 
 export default class PostService implements IPostService {
@@ -56,13 +56,18 @@ export default class PostService implements IPostService {
 	}
 
 	findOneBy = async (idPost: number): Promise<Post> => {
-		const post = await this.repository.findOne({ where: { id: idPost }, relations: {
-			Attachments: true,
-			Comments: true,
-			Profile: true,
-			Reactions: true,
-			
-		} })
+		const post = await this.repository.findOne({
+			where: { id: idPost }, relations: {
+				Attachments: true,
+				Comments: {
+					ProfileSource: {
+						Avatar: true,						
+					}
+				},
+				Profile: true,
+				Reactions: true,
+			}
+		})
 		if (!post) throw new Error("Post not found")
 		return post
 	}

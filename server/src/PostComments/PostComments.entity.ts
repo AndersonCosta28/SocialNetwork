@@ -4,17 +4,17 @@ import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, Up
 
 @Entity()
 export default class PostComments {
-    @PrimaryGeneratedColumn()
-    	id: number
+	@PrimaryGeneratedColumn()
+		id: number
 
-    @Column({type: "longtext"})
-    	Text: string
+	@Column({ type: "longtext" })
+		Text: string
 
-    @ManyToOne(() => Profile, { eager: true })
-    	ProfileSource: Profile
+	@ManyToOne(() => Profile, { eager: true })
+		ProfileSource: Profile
 
-    @ManyToOne(() => Post, post => post.Comments)
-    	PostTarget: Post
+	@ManyToOne(() => Post, post => post.Comments)
+		PostTarget: Post
 
 	@CreateDateColumn()
 		CreateAt: Date
