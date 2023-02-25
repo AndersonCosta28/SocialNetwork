@@ -26,26 +26,29 @@ const ChatBox = (props: IChat) => {
 	const textAreaElementRef = React.useRef<HTMLTextAreaElement>(null)
 	const buttonSubmitMessageElementRef = React.useRef<HTMLInputElement>(null)
 
-	React.useEffect(() => {	
-		// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-		const chatContainer = chatBodyRef.current!
+	const scrollToTheEnd = () => {
+		const chatContainer = chatBodyRef.current
+		if (chatContainer) chatContainer.scrollTop = chatContainer.scrollHeight
+	}
+
+	React.useEffect(() => {
 		API_AXIOS.get("/message/findByFriendship/" + props.friendshipId)
-			.then(res => {
+			.then((res) => {
 				setMessages(res.data)
 				setTimeout(() => {
-					chatContainer.scrollTop = chatContainer.scrollHeight
+					scrollToTheEnd()
 				}, 500)
 			})
-			.catch(error => {
+			.catch((error) => {
 				toast.error(getAxiosErrorMessage(error))
-			})			
+			})
 
 		if (socket)
 			socket.on("message", (data: IMessage) => {
 				if ((data.FromId === props.targetUserId && data.ToId === getUserId()) || (data.ToId === props.targetUserId && data.FromId === getUserId())) {
-					setMessages((prevState: IMessage[]) => ([ ...prevState, data ]))
+					setMessages((prevState: IMessage[]) => [...prevState, data])
 					setTimeout(() => {
-						chatContainer.scrollTop = chatContainer.scrollHeight
+						scrollToTheEnd()
 					}, 500)
 				}
 			})
@@ -61,7 +64,6 @@ const ChatBox = (props: IChat) => {
 	const handleSendMessage = (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault()
 		const userId = Number(getUserId())
-		console.log("O id do usuário local é:" + userId)
 		if (!socket || !userId) return
 
 		const messageToSend: IMessage = {
@@ -69,7 +71,7 @@ const ChatBox = (props: IChat) => {
 			ToId: props.targetUserId,
 			Message: message.trim(),
 			id: 0,
-			FriendshipId: props.friendshipId
+			FriendshipId: props.friendshipId,
 		}
 
 		socket.timeout(4000).emit("message", messageToSend, (error: unknown, response: unknown) => {
@@ -80,19 +82,16 @@ const ChatBox = (props: IChat) => {
 	}
 
 	const close = () => {
-		console.log("Fechando o chat")
 		closeChat(props.chatId)
 	}
 
 	const minimize = () => {
-		console.log("Minimizando o chat")
 		const value = !isMinimized
 		toggleMinimizeChat(props.chatId, value)
 		setIsMinimized(value)
 	}
 
 	const onClickOnHeaderElement = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-		console.log(isMinimized)
 		if (closeElementRef.current?.contains(e.target as Node)) close()
 		else minimize()
 	}
@@ -109,7 +108,7 @@ const ChatBox = (props: IChat) => {
 			<div className={styles.content__header} onClick={onClickOnHeaderElement} ref={headerElementRef}>
 				<span>{props.targetNickname}</span>
 				<div ref={closeElementRef}>
-					<GrClose className={styles.content__header__closeChat}/>
+					<GrClose className={styles.content__header__closeChat} />
 				</div>
 			</div>
 			{isMinimized ? null : (

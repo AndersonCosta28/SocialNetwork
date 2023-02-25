@@ -32,7 +32,7 @@ export default class PostService implements IPostService {
 			.where("Friendship.targetId = :idProfile", { idProfile })
 			.orWhere("Friendship.sourceId = :idProfile", { idProfile })
 			.where("Friendship.Type = '1'")
-			.cache(`findAllFromFriends_${idProfile}`, 60000)
+			// .cache(`findAllFromFriends_${idProfile}`, 60000)
 			.getMany()
 
 		for (const friend of friends)

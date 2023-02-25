@@ -43,7 +43,7 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
 				openChatByIdFriend(data.FriendshipId)
 			})
 		return () => {
-			console.log("Desligou")
+			console.log("Desligou" + socket !== null)
 			if (socket) socket.off("message")
 		}
 	}, [chats, friendList])

@@ -1,8 +1,7 @@
 import { Repository } from "typeorm"
 import Friendship from "./Friendship.entity"
 import { IFriend, TypesOfApplicants, TypeOfFriendship } from "common/Types/Friendship"
-import { CustomErrorAPI } from "common"
-import { Buffer } from "buffer"
+import { CustomErrorAPI, IFiles } from "common"
 
 export interface IFriendshipService {
 	findAllByUser: (idUser: number) => Promise<IFriend[]>
@@ -21,19 +20,21 @@ export default class FriendshipService implements IFriendshipService {
 		const friendList: IFriend[] = []
 		const friendships: Friendship[] = await this.repository.find({
 			relations: {
-				Source: true,
-				Target: true,
+				Source: {
+					Avatar: true
+				},
+				Target: {
+					Avatar: true
+				}
 			},
 			select: {
 				Source: {
 					id: true,
-					Nickname: true,
-					// Level: true,          
+					Nickname: true,				
 				},
 				Target: {
 					id: true,
-					Nickname: true,
-					// Level: true,
+					Nickname: true,				
 				},
 			},
 			where: [{ Source: { id: idUser } }, { Target: { id: idUser } }],
@@ -41,15 +42,14 @@ export default class FriendshipService implements IFriendshipService {
 
 		for (const friendship of friendships) {
 			const friendProfile = friendship.Source.id === idUser ? friendship.Target : friendship.Source
-			const buffer: Buffer | undefined = friendProfile.Avatar?.buffer
 			friendList.push({
 				FriendshipId: friendship.id,
 				Type: friendship.Type,
 				WhoRequested: friendship.Source.id === idUser ? TypesOfApplicants.Me : TypesOfApplicants.Other,
-				FriendProfile: {					
+				FriendProfile: {
 					...friendProfile,
-					Avatar: buffer?.toString() ?? "",
-					Description: friendProfile.Description ?? "",					
+					Avatar: friendProfile.Avatar as IFiles,
+					Description: friendProfile.Description ?? "",
 					Local: friendProfile.Local ?? "",
 				}
 			})

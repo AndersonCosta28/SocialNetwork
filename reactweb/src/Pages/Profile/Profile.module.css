@@ -38,6 +38,13 @@
 	justify-content: space-evenly;
 }
 
+/* #previewImage__div {
+	width: 200px;
+	height: 200px;
+	background-color: rgb(133, 131, 131);
+	border-radius: 50%;
+} */
+
 #previewImage__img {
 	height: 200px;
 	width: 200px;

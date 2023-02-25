@@ -243,7 +243,9 @@ const Profile = () => {
 
 	const PreviewAvatar = isPreview ? (
 		<div className="shadow_white" id={styles.previewImage}>
-			<img id={styles.previewImage__img} src={URL.createObjectURL(avatarFile as File)} alt="Profile_Photo_Preview" />
+			<div className="flex_row_center_center" id={styles.previewImage__div}>
+				<img id={styles.previewImage__img} src={URL.createObjectURL(avatarFile as File)} alt="Profile_Photo_Preview" />
+			</div>
 			<div id={styles.previewImage__buttons}>
 				<input type="button" value="Confirm" className="blueButtonActive" onClick={() => sendAvatar()} />
 				<input type="button" value="Cancel" className="blueButtonActive" onClick={() => setIsPreview(false)} />
@@ -285,3 +287,4 @@ export const ProfileRoute: RouteObject = {
 	element: <Profile />,
 	path: "/profile/:nickname",
 }
+

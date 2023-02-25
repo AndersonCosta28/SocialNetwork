@@ -5,6 +5,7 @@ import { API_AXIOS } from "Providers/axios"
 import React from "react"
 import { toast } from "react-hot-toast"
 import { AiFillPicture } from "react-icons/ai"
+import { BiSend } from "react-icons/bi"
 import { SlClose } from "react-icons/sl"
 import ReactTextareaAutosize from "react-textarea-autosize"
 import styles from "./WriteAPost.module.css"
@@ -15,6 +16,7 @@ const WriteAPost = () => {
 	const [textPost, setTextPost] = React.useState<string>("")
 	const { allPosts, setAllPosts } = usePostContext()
 	const { myProfile } = useProtected()
+	const [disableButton, setDisableButton] = React.useState<boolean>(false)
 
 	const handlerTextPost = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
 		React.startTransition(() => {
@@ -47,6 +49,7 @@ const WriteAPost = () => {
 	}
 
 	const sendPost = () => {
+		setDisableButton(true)
 		const formData = new FormData()
 		const content = {
 			Text: textPost,
@@ -66,11 +69,12 @@ const WriteAPost = () => {
 				setTextPost("")
 			})
 			.catch((error) => toast.error(getAxiosErrorMessage(error)))
+			.finally(() => setDisableButton(false))
 	}
 
 	const ListOfAttachments = attachments.map((attachment: File, index: number) => (
 		<div style={{ border: "1px solid black", width: 100, height: 100, position: "relative" }} key={"attachament-" + index}>
-			<SlClose id={styles.WritePost__Attachments__RemoveAttachemnt} onClick={() => removeAttachment(index)} />
+			<SlClose id={styles.WriteAPost__Attachments__RemoveAttachemnt} onClick={() => removeAttachment(index)} />
 			<img src={URL.createObjectURL(attachment)} alt={"attachament-" + index} width={100} height={100} />
 		</div>
 	))
@@ -79,15 +83,22 @@ const WriteAPost = () => {
 			<ReactTextareaAutosize maxRows={10} id={styles.WriteAPost__TextArea} ref={textAreaWriteAPost} placeholder="Share your thoughts" value={textPost} onChange={handlerTextPost} />
 			<div id={styles.WriteAPost_Attachments}>{ListOfAttachments}</div>
 			<div id={styles.WriteAPost__Options}>
-				<label htmlFor="attach_photo">
-					<AiFillPicture size={30} />
-				</label>
-				<input type="file" style={{ display: "none" }} id="attach_photo" accept="image/*" multiple onChange={handlerAttachments} />
+				
+				<div>
+					<label htmlFor="attach_photo" className={`flex_row_center_center ${styles.WriteAPost__Options__AttachImages}`}>
+						<AiFillPicture size={30} color="white" />
+						Attach images
+					</label>
+					<input type="file" style={{ display: "none" }} id="attach_photo" accept="image/*" multiple onChange={handlerAttachments} />
+				</div>
 				{/* <label htmlFor="attach_video">
 						<RiMovieFill size={30} />
 					</label>
 					<input type="file" style={{ display: "none" }} id="attach_video" accept="video/*" multiple /> */}
-				<input type="button" value="send" className="blueButtonActive" onClick={sendPost} />
+
+				
+				<BiSend className={disableButton ? "blueButtonDisable" : "blueButtonActive"} size={30} onClick={() => !disableButton && sendPost()}  />
+				{/* <input type="button" value="Send" className="blueButtonActive"  /> */}
 			</div>
 		</div>
 	)
