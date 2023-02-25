@@ -14,15 +14,9 @@ const InfniteScrollComponent = () => {
 	const [Posts, setPosts] = React.useState<IPost[]>([])
 	const infiniteScrollRef = React.useRef(null)
 	React.useEffect(() => {
-		if (allPosts && allPosts.length > 0) {
-			const localAllPost: IPost[] = []
-			allPosts.forEach((_allpost) => {
-				_allpost.Posts.forEach((post) => {
-					localAllPost.push({ ...post, Profile: _allpost.Profile })
-				})
-			})
-			updatePosts([...localAllPost], [...Posts])
-		}
+		if (allPosts && allPosts.length > 0) 
+			updatePosts([...allPosts], [...Posts])
+		
 	}, [allPosts])
 
 	const updatePosts = (_allPosts: IPost[], _oldPosts: IPost[]) => {

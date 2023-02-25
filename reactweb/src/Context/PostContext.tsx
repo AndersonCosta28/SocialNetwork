@@ -8,8 +8,8 @@ import { useProtected } from "./ProtectedContext"
 import { useSocketIo } from "./SocketIoContext"
 
 interface IPostProvider {
-	allPosts: IPosts[]
-	setAllPosts: React.Dispatch<React.SetStateAction<IPosts[]>>
+	allPosts: IPost[]
+	setAllPosts: React.Dispatch<React.SetStateAction<IPost[]>>
 	queryAllPosts: UseQueryResult<IPosts[], unknown>
 	post: IPost
 	setPost: React.Dispatch<React.SetStateAction<IPost>>
@@ -49,7 +49,7 @@ export const PostProvider = ({ children }: { children: React.ReactNode }) => {
 	//#region allPosts
 	const { socketId } = useSocketIo()
 	const { myProfile } = useProtected()
-	const [allPosts, setAllPosts] = React.useState<IPosts[]>([])
+	const [allPosts, setAllPosts] = React.useState<IPost[]>([])
 
 	const queryAllPosts = useQuery<IPosts[]>({
 		queryKey: [socketId],
@@ -57,7 +57,13 @@ export const PostProvider = ({ children }: { children: React.ReactNode }) => {
 		onError: (error: unknown) => toast.error(getAxiosErrorMessage(error)),
 		onSuccess: (data) => {
 			console.log("CHamou a query de todos os posts")
-			setAllPosts(data)
+			const localAllPost: IPost[] = []
+			data.forEach((_data) => {
+				_data.Posts.forEach((post) => {
+					localAllPost.push({ ...post, Profile: _data.Profile })
+				})
+			})
+			setAllPosts(localAllPost)
 		},
 		enabled: !!socketId && allPosts.length === 0,
 		cacheTime: 0
