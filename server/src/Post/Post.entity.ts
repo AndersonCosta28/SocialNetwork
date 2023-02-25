@@ -12,16 +12,16 @@ export default class Post {
     @Column({ type: "longtext" })
     	Text: string
 
-    @OneToMany(() => Files, files => files.Post, { eager: true, cascade: true, nullable: true })
+    @OneToMany(() => Files, files => files.Post)
     	Attachments?: Files[]
 
     @ManyToOne(() => Profile, profile => profile.Posts)
     	Profile: Profile
 
-    @OneToMany(() => PostReactions, postReactions => postReactions.Post, { eager: true })
+    @OneToMany(() => PostReactions, postReactions => postReactions.Post)
     	Reactions: PostReactions
 
-    @OneToMany(() => PostComments, postComments => postComments.PostTarget, { eager: true })
+    @OneToMany(() => PostComments, postComments => postComments.PostTarget)
     	Comments: PostComments
 
     @CreateDateColumn()

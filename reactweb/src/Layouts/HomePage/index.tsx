@@ -33,8 +33,7 @@ const HomePage = ({ children }: { children: ReactNode }) => {
 
 	const goToHomePage = () => navigate("/")
 
-	return (
-        
+	return (        
 		<div onClick={onClickPage} style={{height: "100%", userSelect: "none"}}>
 			<div id={styles.header} className={`shadow_white`}>
 				<div id={styles.header__leftSide}>

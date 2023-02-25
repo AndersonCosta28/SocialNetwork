@@ -12,11 +12,6 @@ export interface IPost {
     Profile: IProfile
 }
 
-export interface IPosts {
-    Profile: IProfile,
-    Posts: IPost[]
-}
-
 export enum TypePostReactions {
     Like
 }

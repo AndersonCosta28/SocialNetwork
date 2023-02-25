@@ -1,5 +1,5 @@
 import { useQuery, UseQueryResult } from "@tanstack/react-query"
-import { getAxiosErrorMessage, IPost, IPosts } from "common"
+import { getAxiosErrorMessage, IPost } from "common"
 import { postDefault } from "consts"
 import { API_AXIOS } from "Providers/axios"
 import React from "react"
@@ -10,7 +10,7 @@ import { useSocketIo } from "./SocketIoContext"
 interface IPostProvider {
 	allPosts: IPost[]
 	setAllPosts: React.Dispatch<React.SetStateAction<IPost[]>>
-	queryAllPosts: UseQueryResult<IPosts[], unknown>
+	queryAllPosts: UseQueryResult<IPost[], unknown>
 	post: IPost
 	setPost: React.Dispatch<React.SetStateAction<IPost>>
 	photoNumber: number
@@ -51,19 +51,12 @@ export const PostProvider = ({ children }: { children: React.ReactNode }) => {
 	const { myProfile } = useProtected()
 	const [allPosts, setAllPosts] = React.useState<IPost[]>([])
 
-	const queryAllPosts = useQuery<IPosts[]>({
+	const queryAllPosts = useQuery<IPost[]>({
 		queryKey: [socketId],
 		queryFn: () => API_AXIOS.get("/post/findAllFromFriends/" + myProfile.id).then((res) => res.data),
 		onError: (error: unknown) => toast.error(getAxiosErrorMessage(error)),
 		onSuccess: (data) => {
-			console.log("CHamou a query de todos os posts")
-			const localAllPost: IPost[] = []
-			data.forEach((_data) => {
-				_data.Posts.forEach((post) => {
-					localAllPost.push({ ...post, Profile: _data.Profile })
-				})
-			})
-			setAllPosts(localAllPost)
+			setAllPosts(data)
 		},
 		enabled: !!socketId && allPosts.length === 0,
 		cacheTime: 0

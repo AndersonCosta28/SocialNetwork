@@ -10,8 +10,6 @@ import { FriendshipProvider } from "Context/FriendshipContext"
 import { getIsAuthenticated } from "utils"
 import { PostProvider } from "Context/PostContext"
 
-
-
 const Protected = () => {
 	const { isAuthenticated, setIsAuthenticated } = useAuth()
 	const navigate = useNavigate()

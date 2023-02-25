@@ -9,7 +9,7 @@ import { useChat } from "Context/ChatContext"
 import { useFriendship } from "Context/FriendshipContext"
 import InteractWithTheProfile from "Components/InteractWithTheProfile"
 import { API_AXIOS } from "Providers/axios"
-import { IFiles, getAxiosErrorMessage, IFriend, IPosts, TypeOfFriendship } from "common"
+import { IFiles, getAxiosErrorMessage, IFriend, TypeOfFriendship, IPost } from "common"
 import { toast } from "react-hot-toast"
 import { Buffer } from "buffer"
 import Avatar from "Components/Avatar"
@@ -18,7 +18,7 @@ import TagInfo from "Components/TagInfo"
 import { useSocketIo } from "Context/SocketIoContext"
 import Skeleton from "react-loading-skeleton"
 import "react-loading-skeleton/dist/skeleton.css"
-import { postsDefault, profileDefault } from "consts"
+import { profileDefault } from "consts"
 
 const Profile = () => {
 	//#region External Hooks
@@ -34,80 +34,78 @@ const Profile = () => {
 	const [isPreview, setIsPreview] = React.useState<boolean>(false)
 	const [avatarFile, setAvatarFile] = React.useState<File | null>(null)
 	const [friends, setFriends] = React.useState<IFriend[]>([])
-	const [posts, setPosts] = React.useState<IPosts>(postsDefault)
+	const [posts, setPosts] = React.useState<IPost[]>([])
 	const [profile, setProfile] = React.useState<IProfile>(profileDefault)
 
-	// useQueries({
-	// 	queries: [
-	// 		{
-	// 			queryKey: ["profile", nickname, socketId],
-	// 			queryFn: () =>,
-	// 			enabled: profile.id === 0 && !!socketId,
-	// 			onSuccess: (data: IProfile) => {
-	// 				if (data.Avatar) {
-	// 					const avatar = getAvatarFromProfile(data)
-	// 					data.AvatarId = avatar.id
-	// 					data.AvatarBase64 = avatar.base64
-	// 					data.AvatarType = avatar.type
-	// 				}
-	// 				console.log("Executou 1")
-	// 				setProfile(data)
-	// 			},
-	// 			onError: (error: unknown) => toast.error(getAxiosErrorMessage(error)),
-	// 		},
-	// 		{
-	// 			queryKey: ["friends", nickname, socketId, profile.id],
-	// 			queryFn: () => ,
-	// 			enabled: profile.id !== 0 && !!socketId,
-	// 			onSuccess: (data: IFriend[]) => {
-	// 				console.log("Executou 2")
-	// 				setFriends(data)
-	// 			},
-	// 			onError: (error: unknown) => toast.error(getAxiosErrorMessage(error)),
-	// 		},
-	// 		{
-	// 			queryKey: ["posts", nickname, socketId, profile.id],
-	// 			queryFn: () => ,
-	// 			enabled: profile.id !== 0 && !!socketId,
-	// 			onSuccess: (data: IPost[]) => {
-	// 				console.log("Executou 3")
-	// 				React.startTransition(() => {
-	// 					setPosts(data)
-	// 				})
-	// 			},
-	// 			onError: (error: unknown) => toast.error(getAxiosErrorMessage(error)),
-	// 			cacheTime: 0
-	// 		},
-	// 	],
-	// })
-
+	//#region Request To API
+	// The queries 2 and 3, look at on devtools, are perform when we are leave from page
+	// so then we using use React.useEffect below
+	/*
+	useQueries({
+		queries: [
+			{
+				queryKey: ["profile", nickname, socketId],
+				queryFn: () => API_AXIOS.get<IProfile>("/profile/findOneByNickname/" + nickname).then((res) => res.data),
+				enabled: profile.id === 0 && !!socketId,
+				onSuccess: (data: IProfile) => {
+					console.log("Executou 1")
+					setProfile(data)
+				},
+				onError: (error: unknown) => toast.error(getAxiosErrorMessage(error)),
+			},
+			{
+				queryKey: ["friends", nickname, socketId, profile.id],
+				queryFn: () => API_AXIOS.post<IFriend[]>("/friendship", { UserId: profile.id }).then((res) => res.data),
+				enabled: profile.id !== 0 && !!socketId,
+				onSuccess: (data: IFriend[]) => {
+					console.log("Executou 2")
+					setFriends(data)
+				},
+				onError: (error: unknown) => toast.error(getAxiosErrorMessage(error)),
+			},
+			{
+				queryKey: ["posts", nickname, socketId, profile.id],
+				queryFn: () => API_AXIOS.get<IPost[]>("/post/findAllByIdProfile/" + profile.id).then((res) => res.data),
+				enabled: profile.id !== 0 && !!socketId,
+				onSuccess: (data: IPost[]) => {
+					console.log("Executou 3")
+					React.startTransition(() => {
+						setPosts(data)
+					})
+				},
+				onError: (error: unknown) => toast.error(getAxiosErrorMessage(error)),
+				cacheTime: 0,
+			},
+		],
+	})
+	*/
 	React.useEffect(() => {
 		if (socketId) {
-			if (profile.id === 0)
+			if (profile.id === 0) {
+				console.log("Executando 1")
 				API_AXIOS.get<IProfile>("/profile/findOneByNickname/" + nickname)
-					.then((res) => {
-						setProfile(res.data)
-					})
+					.then((res) => setProfile(res.data))
 					.catch((error) => toast.error(getAxiosErrorMessage(error)))
+			}
+
 			if (profile.id !== 0) {
+				console.log("Executando 2")
 				API_AXIOS.post<IFriend[]>("/friendship", { UserId: profile.id })
 					.then((res) => setFriends(res.data))
 					.catch((error) => toast.error(getAxiosErrorMessage(error)))
-				API_AXIOS.get<IPosts>("/post/findAllByIdProfile/" + profile.id)
-					.then((res) => {						
-						setPosts(res.data)
-					})
+				API_AXIOS.get<IPost[]>("/post/findAllByIdProfile/" + profile.id)
+					.then((res) => setPosts(res.data))
 					.catch((error) => toast.error(getAxiosErrorMessage(error)))
 			}
 		}
-		// return () => {
-		// 	console.log("EXECUTANDO 2")
-		// 	setPosts([])
-		// 	setFriends([])
-		// 	setProfile(profileDefault)
-		// }
+		return () => {
+			console.log("EXECUTANDO 3")
+			// setPosts([])
+			// setFriends([])
+			// setProfile(profileDefault)
+		}
 	}, [socketId, profile])
-
+	//#endregion
 	//#endregion
 
 	//#region Functions
@@ -272,7 +270,7 @@ const Profile = () => {
 					{Description}
 					<div id="container__tag__info" className="flex_row_center_center">
 						<TagInfo number={friends.length} title="Friends" />
-						<TagInfo number={posts.Posts.length} title="Posts" />
+						<TagInfo number={posts.length} title="Posts" />
 					</div>
 				</div>
 				{SocialButtons}

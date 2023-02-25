@@ -1,12 +1,12 @@
 /*#region Post*/
-.post > div {
+/* .post > div {
 	margin: 10px;
-}
+} */
 
 .post {
 	position: static;
-	height: 0px;
-	opacity: 0;
+	/* height: 0px;
+	opacity: 0; */
 	transition: height 0.5s, opacity 1s;
 	padding: 10px;
 	border-radius: 10px;

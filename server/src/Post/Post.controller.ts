@@ -11,15 +11,21 @@ export default class PostController implements IController {
 	constructor(private readonly service: IPostService) { }
 	routers = () => {
 		const router: Router = Router()
+		router.get("/:id", this.findOneBy)
 		router.get("/findAllByIdProfile/:id", this.findAllByIdProfile)
 		router.get("/findAllFromFriends/:id", MiddlewareVerifyIds, this.findAllFromFriends)
 		router.post("/create/:id", MiddlewareVerifyIds, upload.fields([{ name: "Attachments" }, { name: "Content" }]), this.create)
 		return router
 	}
 
+	findOneBy = async (request: Request, response: Response): Promise<Response> => {
+		const { id } = request.params
+		return response.send(await this.service.findOneBy(Number(id)))
+	}
+
 	findAllByIdProfile = async (request: Request, response: Response): Promise<Response> => {
 		const { id } = request.params
-		return response.send(await this.service.findAllByIdProfile(Number(id), false))
+		return response.send(await this.service.findAllByIdProfile(Number(id)))
 	}
 
 	findAllFromFriends = async (request: Request, response: Response): Promise<Response> => {
