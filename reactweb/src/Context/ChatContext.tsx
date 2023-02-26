@@ -26,10 +26,10 @@ export interface IChat {
 export const ChatProvider = ({ children }: { children: ReactNode }) => {
 	const chatInicialize = JSON.parse(localStorage.getItem("chats") ?? "[]")
 	const [chats, setChats] = useState<IChat[]>(chatInicialize)
-	const handlerChats = (chats: IChat[]) => {
-		setChats(chats)
+	const handlerChats = (newChats: IChat[]) => {
+		setChats([...newChats])
 		localStorage.removeItem("chats")
-		localStorage.setItem("chats", JSON.stringify(chats))
+		localStorage.setItem("chats", JSON.stringify(newChats))
 	}
 	const { socket } = useSocketIo()
 	const { friendList } = useProtected()
@@ -40,10 +40,12 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
 				openChatByIdFriend(data.FriendshipId)
 			})
 		return () => {
-			console.log("Desligou no context")
-			if (socket !== null && !getIsAuthenticated()) socket.off("message")
+			if (socket !== null && !getIsAuthenticated()) {
+				console.log("Desligou no context")
+				socket.off("message")
+			}
 		}
-	}, [friendList])
+	}, [chats, friendList])
 
 	const openChatByIdFriend = (idFriendship: number) => {
 		const friend = friendList.find((friend: IFriend) => friend.FriendshipId === idFriendship)
